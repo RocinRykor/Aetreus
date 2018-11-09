@@ -1,8 +1,8 @@
 package com.rocinrykor.aetreusbot.baxter;
 
-public class Hunger extends Meter {
+public class Playfulness extends Meter {
 
-	private static String name = "Hunger";
+	private static String name = "Playfulness";
 	private static int meterLevel;
 	private static int decayRate = 10;
 	private static int regenRate = 0;
@@ -52,5 +52,5 @@ public class Hunger extends Meter {
 	public void setIsRegenerating(boolean isRegenerating) {
 		this.isRegenerating = isRegenerating;
 	}
-	
+
 }

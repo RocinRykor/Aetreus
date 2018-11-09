@@ -16,14 +16,15 @@ public class BaxterController extends Thread {
 	 * */
 	
 	private static JDA baxterJDA;
-	static boolean baxterOnline;
+	private static boolean baxterOnline;
 	static String presenceDefault = "Type \"&Baxter Help\" to begin";
 	
 	static int sleepTime = 5;
 	
 	static int debugNum = 0;
+	
 	public static void StartBaxter() { 
-		if (baxterOnline) {
+		if (isBaxterOnline()) {
 			return;
 		}
 		
@@ -35,20 +36,21 @@ public class BaxterController extends Thread {
 		
 		try {
 			baxterJDA = new JDABuilder(AccountType.BOT).setToken(BotInfo.getBAXTER_TOKEN()).build();
-			SetPresence(presenceDefault);
-			baxterOnline = true;
-			
-			UpdateTimer();
 		} catch (Exception e) {
-			// TODO: handle exception
+			System.out.println("BAXTER JDA ERROR");
+			return;
 		}
 		
+		SetPresence(presenceDefault);
+		setBaxterOnline(true);
+		
+		UpdateTimer();
 	}
 
 	private static void UpdateTimer() {
 		new Thread() {
 			public void run() {
-				while (baxterOnline) {
+				while (isBaxterOnline()) {
 					try {
 						Thread.sleep(sleepTime * 1000);
 					} catch (InterruptedException e) {
@@ -62,13 +64,14 @@ public class BaxterController extends Thread {
 	}
 
 	protected static void Update() {
-		if (baxterOnline) {
+		if (isBaxterOnline()) {
+			Meter.Update();
 		}
 	}
 
 	public static void StopBaxter() {
-		if (baxterOnline) {
-			baxterOnline = false;
+		if (isBaxterOnline()) {
+			setBaxterOnline(false);
 			baxterJDA.shutdown();
 		}
 	}
@@ -83,6 +86,14 @@ public class BaxterController extends Thread {
 	
 	public static void ResetPresence() {
 		SetPresence(presenceDefault);
+	}
+
+	public static boolean isBaxterOnline() {
+		return baxterOnline;
+	}
+
+	public static void setBaxterOnline(boolean baxterOnline) {
+		BaxterController.baxterOnline = baxterOnline;
 	}
 
 }

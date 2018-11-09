@@ -1,10 +1,10 @@
 package com.rocinrykor.aetreusbot.baxter;
 
-public class Hunger extends Meter {
+public class Sleep extends Meter {
 
-	private static String name = "Hunger";
+	private static String name = "Sleep";
 	private static int meterLevel;
-	private static int decayRate = 10;
+	private static int decayRate = 15;
 	private static int regenRate = 0;
 	private static boolean isRegenerating= false;
 	
@@ -52,5 +52,5 @@ public class Hunger extends Meter {
 	public void setIsRegenerating(boolean isRegenerating) {
 		this.isRegenerating = isRegenerating;
 	}
-	
+
 }

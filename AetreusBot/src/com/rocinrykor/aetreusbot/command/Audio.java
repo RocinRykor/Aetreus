@@ -33,8 +33,8 @@ public class Audio extends Command {
 				+ "Perhaps something to announce to everyone that you have arrived \n"
 				+ "Maybe, you wish to sing a song, or delcare the longevity of various musical genres. \n"
 				+ "Well then, never fear, because I am here! \n\n"
-				+ "To designate a song to play type in the command and then put a link to the track withen quotation marks. \n"
-				+ "Example &audio \"https://www.youtube.com/watch?v=ttKn1eGKTew\"";
+				+ "To designate a song to play type in the the following command \"&audio play\" and then put a link to the track withen quotation marks. \n"
+				+ "Example &audio play \"https://www.youtube.com/watch?v=ttKn1eGKTew\"";
 	}
 
 	@Override

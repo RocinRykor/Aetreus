@@ -34,8 +34,7 @@ public class Delete extends Command {
 	public String helpMessage() {
 		return "Is the text channels getting a little too bloated? Do you want to start fresh or just tidy them up before the next tabletop session? \n"
 				+ "Well by using the delete command folled by the number of messages you wish to delete, I will start tidying up the channel message by message. \n"
-				+ "Do not worry, I will ignore any important message, that is to say any message with an attachment or that is pinned to the channel. \n\n"
-				+ "Please note that this is a bit of a slow process, about 1 message every 5 seconds or so, otherwise the server gets a bit bogged down.";
+				+ "Do not worry, I will ignore any important message, that is to say any message with an attachment or that is pinned to the channel. \n";
 	}
 
 	@Override
