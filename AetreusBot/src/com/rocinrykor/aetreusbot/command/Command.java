@@ -22,6 +22,7 @@ public abstract class Command {
 		commands.add(new Delete());
 		commands.add(new Audio());
 		commands.add(new Baxter());
+		commands.add(new Flood());
 	}
 
 	public boolean compare(String main) {

@@ -1,6 +1,6 @@
 package com.rocinrykor.aetreusbot.command;
 
-import java.util.List;
+import java.util.ArrayList;
 
 import com.rocinrykor.aetreusbot.BotController;
 import com.rocinrykor.aetreusbot.command.CommandParser.CommandContainer;
@@ -10,7 +10,11 @@ import net.dv8tion.jda.core.entities.MessageHistory;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
 public class Delete extends Command {
-
+	
+	private static ArrayList<Message> messageList;
+	private static MessageHistory messageHistory;
+	private static int remainingAmount;
+	
 	@Override
 	public String getName() {
 		return "Delete";
@@ -46,7 +50,7 @@ public class Delete extends Command {
 
 	@Override
 	public boolean deleteCallMessage() {
-		return false;
+		return true;
 	}
 	
 	String messageID = "";
@@ -63,16 +67,58 @@ public class Delete extends Command {
 		
 		int deleteAmount = GetDeleteAmount(primaryArg);
 		
-		try {
-			event.getMessage().delete().queue();
-		} catch (Exception e) {
-			System.out.println("ERROR: CANNOT DELETE");
-		}
+		messageList = new ArrayList<>();
+			
+    	remainingAmount = deleteAmount;
+    	
+    	messageHistory = event.getChannel().getHistoryBefore(messageID, 10).complete();
 		
-		new Thread(new Runnable() {
-		    public void run() {
+    	new Thread() {
+    		public void run() {
+    			while (remainingAmount > 0) {
+            		if (remainingAmount >= 100) {
+            			messageHistory = event.getChannel().getHistoryBefore(messageID, 100).complete();
+            			if (messageHistory.size() < 100) {
+            				remainingAmount = 0;
+            			} else {
+            				remainingAmount -= messageHistory.size();
+            			}
+            		} else {
+            			messageHistory = event.getChannel().getHistoryBefore(messageID, remainingAmount).complete();
+            			if (messageHistory.size() < remainingAmount) {
+            				remainingAmount = 0;
+            			} else {
+            				remainingAmount -= messageHistory.size();
+            			}
+            		}
+            		
+        			messageList.addAll(messageHistory.getRetrievedHistory());
+        			messageID = messageList.get(messageList.size() - 1).getId();
+            	}
+        	    
+        	    System.out.println("Number of messages collected: " + messageList.size());
+        	    
+        	    for (Message message : Delete.messageList) {
+        	    	if (message.isPinned() || !message.getAttachments().isEmpty()) {
+        	    		System.out.println("Message Protected - Skipped");
+        	    	} else {
+        	    		try {
+        	    			message.delete().queue();
+						} catch (Exception e) {
+							System.out.println("ERROR: CANNOT DELETE");
+						}
+        	    		
+        	    	}
+        	    }
+        	    
+        	    System.out.println("Deletion Complete!");
+    		}
+    	}.start();
+    }
+			
+			/*
+		     * public void run() {
 		    	int refreshTime = 5;
-		    	
 		    	int remainingAmount = deleteAmount;
 		    	
 		    	while (remainingAmount > 0) {
@@ -121,9 +167,8 @@ public class Delete extends Command {
 			        System.out.println("Deletion Complete!");
 		    	}
 		    }
-		}).start();
-	}
-
+		     * */
+	
 	private int GetDeleteAmount(String Arg) {
 		 int defaultAmount = 10;
 		 
