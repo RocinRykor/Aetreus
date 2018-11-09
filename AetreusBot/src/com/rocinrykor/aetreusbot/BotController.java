@@ -17,6 +17,12 @@ import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
 public class BotController {
+	
+/* 
+ * Main Controller for Aetreus
+ * On program start, starts Aetreus
+ * Used to call new messages and change bot "playing" status
+ * */
 	static AudioPlayerManager playerManager;
 	
 	BotInfo info;

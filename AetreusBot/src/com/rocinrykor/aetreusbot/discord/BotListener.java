@@ -14,6 +14,11 @@ import net.dv8tion.jda.core.events.user.update.GenericUserPresenceEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
 public class BotListener extends ListenerAdapter{
+	
+	/* 
+	 * 
+	 * */
+	
 	public static ArrayList<String> validChannels;
 	
 	private String errorRestricted;
@@ -29,6 +34,8 @@ public class BotListener extends ListenerAdapter{
 	}
 
 	private void InitChannels() {
+		//Adds list of available channels to any command listed as channel restricted
+		//TODO - Add these channels to config file instead.
 		validChannels = new ArrayList<>();
 		
 		validChannels.add("rolling");
@@ -39,12 +46,15 @@ public class BotListener extends ListenerAdapter{
 	public void onReady(ReadyEvent event) {
 		super.onReady(event);
 		
-		System.out.println("Bot Ready!");
 		BotController.InitVars();
+		System.out.println("Bot Ready!");
 	}
 
 	@Override
 	public void onMessageReceived(MessageReceivedEvent event) {
+		/*
+		 * With each message, check if it is a valid call to the bot -> check if command is valid -> compare against channel restriction and user permission if needed -> execute the command
+		 * */
 		String rawInput = event.getMessage().getContentRaw();
 		boolean isBot = event.getAuthor().isBot();
 
@@ -66,7 +76,7 @@ public class BotListener extends ListenerAdapter{
 						if (!isValidChannel(event)) {
 							DeleteCallMessage(event);
 							event.getAuthor().openPrivateChannel().complete().sendMessage(errorRestricted).queue();
-							break;
+							return;
 						} 
 					}
 
@@ -75,13 +85,12 @@ public class BotListener extends ListenerAdapter{
 					} else {
 						event.getChannel().sendMessage(cmd.user.getAsMention() + ", you are not allowed to use this command.").queue();
 					}
-
+					
 					break;
 				}
 			}
 			
 			if (commandFound) {
-				System.out.println("Command Found");
 				return;
 			}
 			

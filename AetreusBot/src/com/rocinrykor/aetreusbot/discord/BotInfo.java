@@ -8,6 +8,10 @@ import java.io.IOException;
 import java.util.Properties;
 
 public class BotInfo {
+	
+	/* 
+	 * Grabs the important information from the bot from a generated config file
+	 * */
 	private static String BOT_TOKEN = ""; //Token for loading the bot.
 	private static String BOT_PREFIX = ""; //Prefix character for chat messages.
 	private static String BOT_GUILD = ""; //Guild that the bot searchs for

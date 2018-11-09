@@ -8,6 +8,13 @@ import net.dv8tion.jda.core.JDABuilder;
 import net.dv8tion.jda.core.entities.Game;
 
 public class BaxterController extends Thread {
+	
+	/* 
+	 * Baxter Controller
+	 * Starts and maintains separate JDA for Baxter so that he can use his own "Playing Status"
+	 * While active, has a constantly running timer to send an update to Baxter on a regular basis
+	 * */
+	
 	private static JDA baxterJDA;
 	static boolean baxterOnline;
 	static String presenceDefault = "Type \"&Baxter Help\" to begin";
