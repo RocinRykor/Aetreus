@@ -2,7 +2,7 @@ package com.rocinrykor.aetreusbot.baxter;
 
 import java.util.ArrayList;
 
-import com.rocinrykor.aetreusbot.command.Command;
+import com.rocinrykor.aetreusbot.command.Baxter;
 
 public abstract class Meter {
 
@@ -19,6 +19,7 @@ public abstract class Meter {
 		meters.add(new Health()); //Don't add meters after this one, ensure that it is last.
 		
 		InitMeter();
+		Baxter.InitCommands();
 	}
 	
 	public abstract String getName();
