@@ -6,6 +6,7 @@ public class Hygiene extends Meter {
 	private static int meterLevel;
 	private static int decayRate = 5;
 	private static int regenRate = 0;
+	private static int regenAmount = 0;
 	private static boolean isRegenerating= false;
 	
 	@Override
@@ -41,6 +42,16 @@ public class Hygiene extends Meter {
 	@Override
 	public void setRegenRate(int regenRate) {
 		this.regenRate = regenRate;
+	}
+	
+	@Override
+	public int getRegenAmount() {
+		return regenAmount;
+	}
+
+	@Override
+	public void setRegenAmount(int regenAmount) {
+		this.regenAmount = regenAmount;
 	}
 	
 	@Override

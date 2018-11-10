@@ -4,6 +4,7 @@ import java.awt.Color;
 
 import com.rocinrykor.aetreusbot.BotController;
 import com.rocinrykor.aetreusbot.baxter.BaxterController;
+import com.rocinrykor.aetreusbot.baxter.Health;
 import com.rocinrykor.aetreusbot.baxter.Meter;
 import com.rocinrykor.aetreusbot.command.CommandParser.CommandContainer;
 
@@ -46,6 +47,8 @@ public class Baxter extends Command {
 	public boolean deleteCallMessage() {
 		return true;
 	}
+	
+	public static final Color VERY_LIGHT_GREEN = new Color(102,255,102);
 
 	@Override
 	public void execute(String primaryArg, String[] secondaryArg, String trimmedNote, MessageReceivedEvent event,
@@ -73,7 +76,7 @@ public class Baxter extends Command {
 		EmbedBuilder builder = new EmbedBuilder();
 		
 		builder.setTitle("Baxter Status");
-		builder.setColor(Color.YELLOW);
+		builder.setColor(HealthToColor());
 		
 		for (Meter meter : Meter.meters) { 
 			builder.addField(meter.getName(), "Meter Level: " + meter.getMeterLevel(), false);
@@ -81,6 +84,22 @@ public class Baxter extends Command {
 		
 		event.getChannel().sendMessage(builder.build()).queue();
 		
+	}
+
+	private Color HealthToColor() {
+		int meterValue = Meter.meters.get(Meter.meters.size() -1).getMeterLevel();
+		
+		if (meterValue > 800) {
+			return Color.GREEN;
+		} else if (meterValue > 600 && meterValue <= 800) {
+			return VERY_LIGHT_GREEN;
+		} else if (meterValue > 400 && meterValue <= 600) {
+			return Color.YELLOW;
+		} else if (meterValue > 200 && meterValue <= 400) {
+			return Color.ORANGE;
+		} else {
+			return Color.RED;
+		}
 	}
 
 	@Override

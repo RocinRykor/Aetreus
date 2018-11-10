@@ -31,6 +31,9 @@ public abstract class Meter {
 	public abstract int getRegenRate();
 	public abstract void setRegenRate(int regenRate);
 	
+	public abstract int getRegenAmount();
+	public abstract void setRegenAmount(int regenAmount);
+	
 	public abstract boolean getIsRegenerating();
 	public abstract void setIsRegenerating(boolean isRegenerating);
 	
@@ -42,7 +45,12 @@ public abstract class Meter {
 	}
 
 	private static int StartingValue() {
-		return (int) (((Math.random() * 10) + 1) * 50) + 500;
+		int baseValue = (int) ((Math.random() * 10 ) + 1);
+		int totalValue = (baseValue * 50) + 500;
+		
+		System.out.println("Base: " + baseValue + " | Total: " + totalValue);
+		
+		return totalValue;
 	}
 
 	public static void Update() {
@@ -64,7 +72,16 @@ public abstract class Meter {
 		
 		int totalDecayRate = decayRate * BoolToBinary(!meter.getIsRegenerating());
 		
-		return (Math.max(meterLevel - totalDecayRate, 0));
+		int newValue = (Math.max(meterLevel - totalDecayRate, 0));
+		
+		if (newValue <= 250 && !meter.getIsRegenerating()) {
+			if ((Math.random() * 10) <= 1) {
+				meter.setRegenAmount(500);
+				meter.setIsRegenerating(true);
+			}
+		}
+		
+		return newValue;
 	}
 
 	private static int BoolToBinary(boolean input) {

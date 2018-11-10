@@ -6,6 +6,7 @@ public class Health extends Meter {
 	private static int meterLevel;
 	private static int decayRate = 0;
 	private static int regenRate = 0;
+	private static int regenAmount = 0;
 	private static boolean isRegenerating= false;
 	
 	public String getName() {
@@ -40,6 +41,16 @@ public class Health extends Meter {
 	@Override
 	public void setRegenRate(int regenRate) {
 		this.regenRate = regenRate;
+	}
+	
+	@Override
+	public int getRegenAmount() {
+		return regenAmount;
+	}
+
+	@Override
+	public void setRegenAmount(int regenAmount) {
+		this.regenAmount = regenAmount;
 	}
 	
 	@Override
