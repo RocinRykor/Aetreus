@@ -114,59 +114,6 @@ public class Delete extends Command {
     		}
     	}.start();
     }
-			
-			/*
-		     * public void run() {
-		    	int refreshTime = 5;
-		    	int remainingAmount = deleteAmount;
-		    	
-		    	while (remainingAmount > 0) {
-		    		
-		    		MessageHistory messageHistory = event.getChannel().getHistoryBefore(messageID, 10).complete();
-		    		
-		    		if (remainingAmount >= 100) {
-		    			messageHistory = event.getChannel().getHistoryBefore(messageID, 100).complete();
-		    			System.out.println(messageHistory.size());
-		    			if (messageHistory.size() < 100) {
-		    				remainingAmount = 0;
-		    			} else {
-		    				remainingAmount -= messageHistory.size();
-		    			}
-		    		} else {
-		    			messageHistory = event.getChannel().getHistoryBefore(messageID, remainingAmount).complete();
-		    			if (messageHistory.size() < remainingAmount) {
-		    				remainingAmount = 0;
-		    			} else {
-		    				remainingAmount -= messageHistory.size();
-		    			}
-		    		}
-		    		
-					List<Message> messageList = messageHistory.getRetrievedHistory();
-		        	
-		        	System.out.println("Starting Deletion of "+ messageList.size() +" Messages, Exptected completion in "+ messageList.size() * refreshTime +" Seconds.");
-		        	System.out.println("Remaining Amount: " + remainingAmount);
-		        	
-			        for (int i = 0; i < messageList.size(); i++) {
-						boolean isPinned = messageList.get(i).isPinned();
-						boolean isEmpty = messageList.get(i).getAttachments().isEmpty();
-												
-			        	if (isPinned || !isEmpty) {
-			        		System.out.println("Message protected - skipping");
-			        		messageID = messageList.get(i).getId();
-			        	} else {
-			        		try {
-			        			messageList.get(i).delete().queue();
-			        			Thread.sleep(refreshTime * 1000);
-							} catch (Exception e) {
-								System.out.println("ERROR: CANNOT DELETE");
-							}
-			        	}
-					}
-			        
-			        System.out.println("Deletion Complete!");
-		    	}
-		    }
-		     * */
 	
 	private int GetDeleteAmount(String Arg) {
 		 int defaultAmount = 10;
