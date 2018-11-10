@@ -15,7 +15,8 @@ public abstract class Meter {
 		meters.add(new Sleep());
 		meters.add (new Hygiene());
 		meters.add(new Playfulness());
-		meters.add(new Health());
+		
+		meters.add(new Health()); //Don't add meters after this one, ensure that it is last.
 		
 		InitMeter();
 	}
@@ -57,13 +58,46 @@ public abstract class Meter {
 		System.out.println("Update");
 		for (Meter meter : Meter.meters) {
 			if (meter.getName().equalsIgnoreCase("Health")) {
-				//Calculate Total Health
+				CalculateHealth(meter);
 			} else {
 				meter.setMeterLevel(MeterDecay(meter));
-				System.out.println("Meter: " + meter.getName() + " | Level: " + meter.getMeterLevel());
-				//Regen Check
+				
+				if (meter.getIsRegenerating()) {
+					int tmpRegenRate = CalcRegenRate(meter);
+					meter.setMeterLevel(MeterRegen(meter, tmpRegenRate));
+					CalcRemainingRegen(meter, tmpRegenRate);
+					
+					System.out.println(meter.getRegenAmount() + " | " + meter.getIsRegenerating());
+				}
 			}
 		}
+	}
+
+	private static void CalculateHealth(Meter meter) {
+		int totalMeterLevel = 0;
+		for (int i = 0; i < meters.size() - 1; i++) {
+			totalMeterLevel += meters.get(i).getMeterLevel();
+		}
+		
+		int avgMeterLevel = (totalMeterLevel / (meters.size() - 1));
+		
+		meter.setMeterLevel(avgMeterLevel);
+	}
+
+	private static void CalcRemainingRegen(Meter meter, int tmpRegenRate) {
+		meter.setRegenAmount(meter.getRegenAmount() - tmpRegenRate);
+		if (meter.getRegenAmount() <= 0) {
+			meter.setIsRegenerating(false);
+		}
+	}
+
+	private static int CalcRegenRate(Meter meter) {
+		int regenRate = (int) Math.max(meter.getRegenAmount() * .2, 15);
+		return Math.min(regenRate, meter.getRegenAmount());
+	}
+
+	private static int MeterRegen(Meter meter, int tmpRegenRate) {
+		return Math.min(meter.getMeterLevel() + tmpRegenRate, 1000);
 	}
 
 	private static int MeterDecay(Meter meter) {

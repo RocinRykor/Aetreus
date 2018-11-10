@@ -4,7 +4,6 @@ import java.awt.Color;
 
 import com.rocinrykor.aetreusbot.BotController;
 import com.rocinrykor.aetreusbot.baxter.BaxterController;
-import com.rocinrykor.aetreusbot.baxter.Health;
 import com.rocinrykor.aetreusbot.baxter.Meter;
 import com.rocinrykor.aetreusbot.command.CommandParser.CommandContainer;
 
