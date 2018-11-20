@@ -23,6 +23,7 @@ public abstract class Command {
 		commands.add(new Audio());
 		commands.add(new Baxter());
 		commands.add(new Flood());
+		commands.add(new Talk());
 	}
 
 	public boolean compare(String main) {

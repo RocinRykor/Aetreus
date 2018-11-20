@@ -56,7 +56,6 @@ public abstract class Meter {
 	}
 
 	public static void Update() {
-		System.out.println("Update");
 		for (Meter meter : Meter.meters) {
 			if (meter.getName().equalsIgnoreCase("Health")) {
 				CalculateHealth(meter);
@@ -67,8 +66,6 @@ public abstract class Meter {
 					int tmpRegenRate = CalcRegenRate(meter);
 					meter.setMeterLevel(MeterRegen(meter, tmpRegenRate));
 					CalcRemainingRegen(meter, tmpRegenRate);
-					
-					System.out.println(meter.getRegenAmount() + " | " + meter.getIsRegenerating());
 				}
 			}
 		}

@@ -84,7 +84,13 @@ public class Audio extends Command {
 		
 		JoinChannel(guild, user, event);
 		
-		manager.loadTrack(textChannel, source);
+		if (source != null) {
+			manager.loadTrack(textChannel, source);
+		} else {
+			source = "C:\\Users\\Rocin Rykor\\Documents\\Aetreus Bot\\Audio Tracks\\ERROR.mp3";
+			manager.loadTrack(textChannel, source);
+			
+		}
 	}
 
 	private void SkipTrack(Guild guild, MessageReceivedEvent event) {
@@ -117,6 +123,9 @@ public class Audio extends Command {
 				BotController.sendMessage("You must be connect to a voice channel.", event);;
 			}
 			guild.getAudioManager().openAudioConnection(voiceChannel);
+			
+			TextChannel textChannel = event.getTextChannel();
+			manager.loadTrack(textChannel, "C:\\Users\\Rocin Rykor\\Documents\\Aetreus Bot\\Audio Tracks\\I_AM_HERE.mp3");
 		}
 	}
 
