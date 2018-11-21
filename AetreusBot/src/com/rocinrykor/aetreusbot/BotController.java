@@ -9,6 +9,7 @@ import com.rocinrykor.aetreusbot.discord.BotListener;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 
 import net.dv8tion.jda.core.AccountType;
+import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
 import net.dv8tion.jda.core.entities.Game;
@@ -93,6 +94,10 @@ public class BotController {
 	
 	public static void sendMessage(String message, MessageReceivedEvent event) {
 		event.getChannel().sendMessage(message).queue();
+	}
+	
+	public static void sendMessage(EmbedBuilder builder, MessageReceivedEvent event) {
+		event.getChannel().sendMessage(builder.build()).queue();
 	}
 	
 	public static void main(String[] args) {
