@@ -1,12 +1,15 @@
 package com.rocinrykor.aetreusbot.command;
 
+import java.awt.Color;
 import java.util.ArrayList;
 
 import org.apache.commons.collections4.map.HashedMap;
 
 import com.rocinrykor.aetreusbot.BotController;
 import com.rocinrykor.aetreusbot.command.CommandParser.CommandContainer;
+import com.rocinrykor.aetreusbot.discord.DiscordUtil;
 
+import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
 public class Shadowrun extends Command {
@@ -49,7 +52,7 @@ public class Shadowrun extends Command {
 		return false;
 	}
 	
-	String message;
+	String title, header, message;
 	
 	//All rules that will be handled by settings
 	boolean ruleGreaterThanHalf = true;
@@ -71,6 +74,8 @@ public class Shadowrun extends Command {
 	
 	HashedMap<Integer, String> basicRollTable = new HashedMap<>();
 	HashedMap<Integer, String> primeRollTable = new HashedMap<>();
+	
+	Color color;
 	
 	ArrayList<Integer> rollResults = new ArrayList<>();
 	int countOne = 0;
@@ -100,6 +105,8 @@ public class Shadowrun extends Command {
 	@Override
 	public void execute(String primaryArg, String[] secondaryArg, String trimmedNote, MessageReceivedEvent event,
 			CommandContainer cmd) {
+		
+		color = Color.GRAY;
 		
 		if (primaryArg.equalsIgnoreCase("help")) {
 			sendMessage(helpMessage(), event);
@@ -137,32 +144,43 @@ public class Shadowrun extends Command {
 	}
 
 	private void BeginRoller(String primaryArg, MessageReceivedEvent event) {
+		message = "";
+		
+		EmbedBuilder builder = new EmbedBuilder();
+		
 		if (passModifierCheck) {
 			int dicePool = Integer.parseInt(primaryArg);
 			
 			if (flagInitiative) {
-				message = "Starting Initiative Roll: \n";
+				title = "Initiative Roll:";
+				header = "Initiative Modifer: " + modifierInitiative;
 				InitiativeRoller(dicePool);
 			} else if (flagExtended) {
-				message = "Starting Extended Roll: \n";
+				title = "Extended Roll:";
+				header = "Extended Test Dice Pool: " + dicePool + " vs Threshold of " + modifierExtended;
 				ExtendedRoller(dicePool);
 			} else {
-				message = "Starting Success Roll: \n";
-				BasicRoll(dicePool);
+				title = "Success Roll:";
+				header = "Dice Pool: " + dicePool;
+				BasicRoll(dicePool, false);
 			}
 			
 		} else {
 			//fail
 			message = "Oops, looks like there is an error with one of the flags, please check them and try again \n"
 					+ "Please use \"&sr help\" for more info";
+			sendMessage(message, event);
+			return;
 		}
 		
-		sendMessage(message, event);
+		builder.setColor(color);
+		builder.setTitle(title);
+		builder.addField(header, DiscordUtil.MessageToCode(message), true);
+		
+		sendMessage(builder, event);
 	}
 
 	private void ExtendedRoller(int dicePool) {
-		message += "Extended Test Starting Dice Pool: " + dicePool + " vs Threshold of " + modifierExtended + " \n\n";
-		
 		int remainingDice = dicePool;
 		int totalHits = 0;
 		int attempts = 0;
@@ -170,7 +188,7 @@ public class Shadowrun extends Command {
 		boolean glitchStopped = false;
 		
 		while (remainingDice > 0 && totalHits < modifierExtended) {
-			BasicRoll(remainingDice);
+			BasicRoll(remainingDice, true);
 			
 			totalHits += countHit;
 			remainingDice -= 1;
@@ -197,13 +215,17 @@ public class Shadowrun extends Command {
 		
 		if (glitchStopped) {
 			message += "Result: Failure!";
+			color = Color.RED;
+			
 		} else {
 			message += "\nTotal Hits: " + totalHits + "\n";
 			
 			if (totalHits >= modifierExtended) {
 				message += "Result: Success! You passed the threshold of " + modifierExtended + " in " + attempts + " attempts!";
+				color = Color.GREEN;
 			} else {
 				message += "Result: Failure! You failed to pass the threshold of " + modifierExtended + "!";
+				color = Color.RED;
 			}
 		}
 		
@@ -212,8 +234,6 @@ public class Shadowrun extends Command {
 	private void InitiativeRoller(int dicePool) {
 		rollResults.clear();
 		int valueTotal = 0;
-		
-		message += "Initiative Modifer: " + modifierInitiative + "\n";
 		
 		for (int i = 0; i < dicePool; i++) {
 			int dieValue = RollDice();
@@ -226,7 +246,7 @@ public class Shadowrun extends Command {
 		message += "Your total initiative is: " + (valueTotal + modifierInitiative);
 	}
 
-	private void BasicRoll(int dicePool) {
+	private void BasicRoll(int dicePool, boolean inline) {
 		rollResults.clear();
 		
 		isGlitch = false;
@@ -237,8 +257,6 @@ public class Shadowrun extends Command {
 		countHit = 0;
 		
 		String parseRoll;
-		
-		message += "Dice Pool: " + dicePool + " | ";
 		
 		for (int i = 0; i < dicePool; i++) {
 			rollResults.add(i, RollDice());
@@ -258,9 +276,19 @@ public class Shadowrun extends Command {
 			}
 		}
 		
-		message += "Ones: " + countOne + " | "
-				+ "Misses: " + countMiss + " | "
-				+ "Hits: " + countHit + "\n";
+		if (inline) {
+			message += "Dice Pool: " + dicePool + " | " 
+					+ "Hits: " + countHit + " | "
+					+ "Misses: " + countMiss + " | "
+					+ "Ones: " + countOne + "\n";
+		} else {
+			message += "Hits: " + countHit + "\n"
+					+ "Misses: " + countMiss + "\n"
+					+ "Ones: " + countOne + "\n\n";
+		}
+		
+		color = new Color(DiscordUtil.SlidingColorScale(countHit, dicePool), 255, DiscordUtil.SlidingColorScale(countHit, dicePool));
+		
 		
 		if (flagVerbose || ruleAlwaysVerbose) {
 			VerboseMode(rollResults);
@@ -275,7 +303,7 @@ public class Shadowrun extends Command {
 	}
 	
 	private void VerboseMode(ArrayList<Integer> rollResults) {
-		message += "{";
+		message += "[";
 		
 		for (int i = 0; i < rollResults.size(); i++) {
 			if (i==0) {
@@ -285,7 +313,7 @@ public class Shadowrun extends Command {
 			}
 		}
 		
-		message += "} \n";
+		message += "] \n";
 	}
 
 	private void GlitchCheck(int dicePool) {
@@ -295,9 +323,11 @@ public class Shadowrun extends Command {
 			if (countHit == 0) {
 				message += "Critical Glitch! \n";
 				isCritGlitch = true;
+				color = Color.RED;
 			} else {
 				message += "Glitch! \n";
 				isGlitch = true;
+				color = Color.ORANGE;
 			}
 		} 
 	}
@@ -307,10 +337,13 @@ public class Shadowrun extends Command {
 		
 		if (countHit > modifierThreshold) {
 			resultThreshold = "Success!";
+			color = Color.GREEN;
 		} else if (countHit == modifierThreshold) {
 			resultThreshold = "Tie!";
+			color = Color.GRAY;
 		} else {
 			resultThreshold = "Failure!";
+			color = Color.RED;
 		}
 		
 		message += "Automatic Test vs Threshold of " + modifierThreshold + ": " + resultThreshold + "\n";
@@ -387,6 +420,10 @@ public class Shadowrun extends Command {
 	@Override
 	public void sendMessage(String message, MessageReceivedEvent event) {
 		BotController.sendMessage(message, event);
+	}
+	
+	public void sendMessage(EmbedBuilder builder, MessageReceivedEvent event) {
+		BotController.sendMessage(builder, event);
 	}
 
 }
