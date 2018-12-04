@@ -2,8 +2,7 @@ package com.rocinrykor.aetreusbot.command;
 
 import java.awt.Color;
 import java.util.ArrayList;
-
-import org.apache.commons.collections4.map.HashedMap;
+import java.util.HashMap;
 
 import com.rocinrykor.aetreusbot.BotController;
 import com.rocinrykor.aetreusbot.command.CommandParser.CommandContainer;
@@ -72,8 +71,8 @@ public class Shadowrun extends Command {
 	//Glitch Checks
 	boolean isGlitch, isCritGlitch;
 	
-	HashedMap<Integer, String> basicRollTable = new HashedMap<>();
-	HashedMap<Integer, String> primeRollTable = new HashedMap<>();
+	HashMap<Integer, String> basicRollTable = new HashMap<>();
+	HashMap<Integer, String> primeRollTable = new HashMap<>();
 	
 	Color color;
 	

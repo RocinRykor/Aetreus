@@ -8,7 +8,6 @@ import com.rocinrykor.aetreusbot.baxter.BaxterController;
 import com.rocinrykor.aetreusbot.baxter.Meter;
 import com.rocinrykor.aetreusbot.command.CommandParser.CommandContainer;
 
-import gnu.trove.impl.PrimeFinder;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
