@@ -15,7 +15,7 @@ public class DiscordUtil {
 		int colorMax = 255;
 		double colorCurrent = ((double)countHit / dicePool) * 255;
 		
-		int color = (int) (colorMax - colorCurrent);
+		int color = Math.min((int) (colorMax - colorCurrent), 255);
 		
 		return color;
 	}

@@ -9,6 +9,7 @@ import com.rocinrykor.aetreusbot.command.CommandParser.CommandContainer;
 import com.rocinrykor.aetreusbot.discord.DiscordUtil;
 
 import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
 public class Shadowrun extends Command {
@@ -51,19 +52,20 @@ public class Shadowrun extends Command {
 		return false;
 	}
 	
-	String title, header, message;
+	// Message related variables
+	String title, message;
 	
 	//All rules that will be handled by settings
 	boolean ruleGreaterThanHalf = true;
 	boolean ruleAlwaysVerbose = false;
 	boolean ruleAutomaticGlitchPenalty = true;
 	
-	
 	//Flags for rolling
-	boolean flagVerbose, flagInitiative, flagExtended, flagRerollDice, flagExplodingDice, flagPrimeRunner, flagThresholdTest;
+	Object[][] flagTable;
+	boolean flagVerbose, flagInitiative, flagExtended, flagEdgePushTheLimit, flagPrimeRunner, flagThresholdTest, flagGremlins;
 	
 	//Modifiers for various flags
-	int modifierInitiative, modifierExtended, modifierRerollDice, modifierThreshold;
+	int modifierInitiative, modifierExtended, modifierEdgeRating, modifierThreshold, modifierGremlins;
 	
 	//Booleans for error checking
 	boolean passModifierCheck;
@@ -71,20 +73,43 @@ public class Shadowrun extends Command {
 	//Glitch Checks
 	boolean isGlitch, isCritGlitch;
 	
+	// Previous Roll Table
+	HashMap<User, RollContainer> previousRollTable;
+	
+	// Roll Tables
 	HashMap<Integer, String> basicRollTable = new HashMap<>();
 	HashMap<Integer, String> primeRollTable = new HashMap<>();
 	
-	Color color;
-	
+	// Roll Tracking
 	ArrayList<Integer> rollResults = new ArrayList<>();
 	int countOne = 0;
 	int countMiss = 0;
 	int countHit = 0;
 	
+	Color color;
+	
 	public Shadowrun() {
 		InitializeRollTables();
+		InitializeFlagTables();
+		InitializePreviousRollsTable();
 	}
 	
+	private void InitializePreviousRollsTable() {
+		previousRollTable = new HashMap<>();
+	}
+
+	private void InitializeFlagTables() {
+		flagTable = new Object[][] {
+			{"Verbose", "v", "Show individual dice rolls", false},
+			{"Initiative", "i", "Combat initiative", false, 0},
+			{"Extended", "x", "Multiple dice rolls over an extended period", false, 0},
+			{"Threshold", "t", "Automatic test against the threshold", false, 0},
+			{"Prime", "p", "Prime Runner Quality (4s are hits)", false},
+			{"Push", "l", "Spend Edge to add edge rating to roll", false, 0},
+			{"Gremlins", "g", "Gremlins Quality, reduces dice pool for glitch calculation", false, 0}
+		};
+	}
+
 	private void InitializeRollTables() {
 		basicRollTable.put(1, "One");
 		basicRollTable.put(2, "Miss");
@@ -102,6 +127,15 @@ public class Shadowrun extends Command {
 	}
 
 	@Override
+	public void sendMessage(String message, MessageReceivedEvent event) {
+		BotController.sendMessage(message, event);
+	}
+	
+	public void sendMessage(EmbedBuilder builder, MessageReceivedEvent event) {
+		BotController.sendMessage(builder, event);
+	}
+
+	@Override
 	public void execute(String primaryArg, String[] secondaryArg, String trimmedNote, MessageReceivedEvent event,
 			CommandContainer cmd) {
 		
@@ -112,6 +146,12 @@ public class Shadowrun extends Command {
 			return;
 		} else if (primaryArg.equalsIgnoreCase("settings")) {
 			ManageSettings(event);
+			return;
+		} else if (primaryArg.equalsIgnoreCase("reroll")) {
+			SecondChance(event);
+			return;
+		} else if (primaryArg.equalsIgnoreCase("limit")) {
+			PushTheLimit(secondaryArg, event);
 			return;
 		}
 		
@@ -126,20 +166,6 @@ public class Shadowrun extends Command {
 					+ "Please use \"&sr help\" for more info";
 			sendMessage(message, event);
 		}
-		
-	}
-	
-	private void ManageSettings(MessageReceivedEvent event) {
-	}
-
-	private void SetAllFlagsFalse() {
-		flagExplodingDice = false;
-		flagExtended = false;
-		flagInitiative = false;
-		flagPrimeRunner = false;
-		flagRerollDice = false;
-		flagThresholdTest = false;
-		flagVerbose = false;
 	}
 
 	private void BeginRoller(String primaryArg, MessageReceivedEvent event) {
@@ -148,20 +174,26 @@ public class Shadowrun extends Command {
 		EmbedBuilder builder = new EmbedBuilder();
 		
 		if (passModifierCheck) {
-			int dicePool = Integer.parseInt(primaryArg);
+			
+			int dicePool = 0;
+			
+			if(CheckDigit(primaryArg)) {
+				dicePool = Integer.parseInt(primaryArg);
+			} else {
+				message = "Looks like there is no dice pool specified, please try again.";
+				sendMessage(message, event);
+				return;
+			}
 			
 			if (flagInitiative) {
-				title = "Initiative Roll:";
-				header = "Initiative Modifer: " + modifierInitiative;
+				title = "InitiativeRoll | Initiative Modifer: " + modifierInitiative;
 				InitiativeRoller(dicePool);
 			} else if (flagExtended) {
-				title = "Extended Roll:";
-				header = "Extended Test Dice Pool: " + dicePool + " vs Threshold of " + modifierExtended;
-				ExtendedRoller(dicePool);
+				title = "Extended Roll | Extended Test Dice Pool: " + dicePool + " vs Threshold of " + modifierExtended;
+				ExtendedRoller(dicePool, event);
 			} else {
-				title = "Success Roll:";
-				header = "Dice Pool: " + dicePool;
-				BasicRoll(dicePool, false);
+				title = "Success Roll | Dice Pool: " + dicePool;
+				BasicRoll(dicePool, false, event);
 			}
 			
 		} else {
@@ -173,79 +205,12 @@ public class Shadowrun extends Command {
 		}
 		
 		builder.setColor(color);
-		builder.setTitle(title);
-		builder.addField(header, DiscordUtil.MessageToCode(message), true);
+		builder.addField(title, DiscordUtil.MessageToCode(message), true);
 		
 		sendMessage(builder, event);
 	}
 
-	private void ExtendedRoller(int dicePool) {
-		int remainingDice = dicePool;
-		int totalHits = 0;
-		int attempts = 0;
-		
-		boolean glitchStopped = false;
-		
-		while (remainingDice > 0 && totalHits < modifierExtended) {
-			BasicRoll(remainingDice, true);
-			
-			totalHits += countHit;
-			remainingDice -= 1;
-			attempts += 1;
-			
-			if (isGlitch || isCritGlitch) {
-				if (isCritGlitch) {
-					remainingDice = 0;
-					message += "Critical Glitch Detected! Automatic Loss! \n";
-					glitchStopped = true;
-				} else {
-					int dieValue = RollDice();
-					message += "Glitch Detected! Automatic Penalty, Losing " + dieValue + " Hits! \n";
-					totalHits -= dieValue;
-					
-					if (totalHits <= 0) {
-						remainingDice = 0;
-						message += "Glitch Penalty brought Total Hits to 0, Automatic Loss! \n";
-						glitchStopped = true;
-					}
-				}
-			}
-		}
-		
-		if (glitchStopped) {
-			message += "Result: Failure!";
-			color = Color.RED;
-			
-		} else {
-			message += "\nTotal Hits: " + totalHits + "\n";
-			
-			if (totalHits >= modifierExtended) {
-				message += "Result: Success! You passed the threshold of " + modifierExtended + " in " + attempts + " attempts!";
-				color = Color.GREEN;
-			} else {
-				message += "Result: Failure! You failed to pass the threshold of " + modifierExtended + "!";
-				color = Color.RED;
-			}
-		}
-		
-	}
-
-	private void InitiativeRoller(int dicePool) {
-		rollResults.clear();
-		int valueTotal = 0;
-		
-		for (int i = 0; i < dicePool; i++) {
-			int dieValue = RollDice();
-			valueTotal += dieValue;
-			rollResults.add(i, dieValue);
-		}
-		
-		VerboseMode(rollResults);
-		
-		message += "Your total initiative is: " + (valueTotal + modifierInitiative);
-	}
-
-	private void BasicRoll(int dicePool, boolean inline) {
+	private void BasicRoll(int dicePool, boolean inline, MessageReceivedEvent event) {
 		rollResults.clear();
 		
 		isGlitch = false;
@@ -299,36 +264,12 @@ public class Shadowrun extends Command {
 			ThresholdTest();	
 		}
 		
-	}
-	
-	private void VerboseMode(ArrayList<Integer> rollResults) {
-		message += "[";
-		
-		for (int i = 0; i < rollResults.size(); i++) {
-			if (i==0) {
-				message += rollResults.get(i);
-			} else {
-				message += ", " + rollResults.get(i);
-			}
-		}
-		
-		message += "] \n";
+		StoreResults(dicePool, event);
 	}
 
-	private void GlitchCheck(int dicePool) {
-		float glitchBreakPoint = ((float) dicePool / 2);
-
-		if ((ruleGreaterThanHalf && countOne > glitchBreakPoint) || (!ruleGreaterThanHalf && countOne >= glitchBreakPoint))  {
-			if (countHit == 0) {
-				message += "Critical Glitch! \n";
-				isCritGlitch = true;
-				color = Color.RED;
-			} else {
-				message += "Glitch! \n";
-				isGlitch = true;
-				color = Color.ORANGE;
-			}
-		} 
+	private Integer RollDice() {
+		int dieValue = (int) ((Math.random() * 6) + 1);
+		return dieValue;
 	}
 
 	private void ThresholdTest() {
@@ -348,49 +289,148 @@ public class Shadowrun extends Command {
 		message += "Automatic Test vs Threshold of " + modifierThreshold + ": " + resultThreshold + "\n";
 	}
 
-	private int RollDice() {
-		int dieValue = (int) ((Math.random() * 6) + 1);
-		return dieValue;
+	private void GlitchCheck(int dicePool) {
+		
+		float glitchBreakPoint = ((float) dicePool / 2);
+		
+		if (flagGremlins) {
+			message += "Gremlins! Glitch threshold reduced by: " + modifierGremlins + "\n\n";
+			glitchBreakPoint = ((float) dicePool / 2) - modifierGremlins;
+		}
+
+		if ((ruleGreaterThanHalf && countOne > glitchBreakPoint) || (!ruleGreaterThanHalf && countOne >= glitchBreakPoint))  {
+			
+			if (countHit == 0) {
+				message += "Critical Glitch! \n";
+				isCritGlitch = true;
+				color = Color.RED;
+			} else {
+				message += "Glitch! \n";
+				isGlitch = true;
+				color = Color.ORANGE;
+			}
+		} 
 	}
 
-	private boolean CheckDigit(String input) {
-
-		try {
-			Integer.parseInt(input);
-			return true;
-		} catch (Exception e) {
-			return false;
+	private void VerboseMode(ArrayList<Integer> rollResults) {
+		message += "[";
+		
+		for (int i = 0; i < rollResults.size(); i++) {
+			if (i==0) {
+				message += rollResults.get(i);
+			} else {
+				message += ", " + rollResults.get(i);
+			}
 		}
 		
+		message += "] \n";
+	}
+
+	private void ExtendedRoller(int dicePool, MessageReceivedEvent event) {
+		int remainingDice = dicePool;
+		int totalHits = 0;
+		int attempts = 0;
+		
+		boolean glitchStopped = false;
+		
+		while (remainingDice > 0 && totalHits < modifierExtended) {
+			BasicRoll(remainingDice, true, event);
+			
+			totalHits += countHit;
+			remainingDice -= 1;
+			attempts += 1;
+			
+			if (isGlitch || isCritGlitch) {
+				if (isCritGlitch) {
+					remainingDice = 0;
+					message += "Critical Glitch Detected! Automatic Loss! \n";
+					glitchStopped = true;
+				} else {
+					int dieValue = RollDice();
+					message += "Glitch Detected! Automatic Penalty, Losing " + dieValue + " Hits! \n";
+					totalHits -= dieValue;
+					
+					if (totalHits <= 0) {
+						remainingDice = 0;
+						message += "Glitch Penalty brought Total Hits to 0, Automatic Loss! \n";
+						glitchStopped = true;
+					}
+				}
+			}
+		}
+		
+		if (glitchStopped) {
+			message += "Result: Failure!";
+			color = Color.RED;
+			
+		} else {
+			message += "\nTotal Hits: " + totalHits + "\n";
+			
+			if (totalHits >= modifierExtended) {
+				message += "Result: Success! You passed the threshold of " + modifierExtended + " in " + attempts + " attempts!";
+				color = Color.GREEN;
+			} else {
+				message += "Result: Failure! You failed to pass the threshold of " + modifierExtended + "!";
+				color = Color.RED;
+			}
+		}
+	}
+
+	private void InitiativeRoller(int dicePool) {
+		rollResults.clear();
+		int valueTotal = 0;
+		
+		for (int i = 0; i < dicePool; i++) {
+			int dieValue = RollDice();
+			valueTotal += dieValue;
+			rollResults.add(i, dieValue);
+		}
+		
+		VerboseMode(rollResults);
+		
+		message += "Your total initiative is: " + (valueTotal + modifierInitiative);
 	}
 
 	private void CheckFlags(String[] secondaryArg) {
-		// TODO Auto-generated method stub
-		
 		passModifierCheck = true;
 		
 		if (secondaryArg != null) {
 			for (int i = 0; i < secondaryArg.length; i++) {
 				
-				if (secondaryArg[i].startsWith("-v") || secondaryArg[i].startsWith("-V")) {
-					flagVerbose = true;
-				} else if (secondaryArg[i].startsWith("-i") || secondaryArg[i].startsWith("-I")) {
-					flagInitiative = true;
-					modifierInitiative = IsolateDigit(secondaryArg, i);
-				} else if (secondaryArg[i].startsWith("-x") || secondaryArg[i].startsWith("-X")) {
-					flagExtended = true;
-					modifierExtended = IsolateDigit(secondaryArg, i);
-				} else if (secondaryArg[i].startsWith("-p") || secondaryArg[i].startsWith("-P")) {
-					flagPrimeRunner = true;
-				} else if (secondaryArg[i].startsWith("-t") || secondaryArg[i].startsWith("-T")) {
-					flagThresholdTest = true;
-					modifierThreshold= IsolateDigit(secondaryArg, i);
+				for (int j = 0; j < flagTable.length; j++) {
+					if (secondaryArg[i].equalsIgnoreCase(flagTable[j][0].toString()) || secondaryArg[i].equalsIgnoreCase(flagTable[j][1].toString())) {
+						flagTable[j][3] = true;
+						if (flagTable[j].length > 4) {
+							flagTable[j][4] = IsolateDigit(secondaryArg, i);
+						}
+					}
 				}
+				
 			}
 		}
+		
+		flagVerbose	= (boolean) flagTable[0][3];
+		
+		flagInitiative = (boolean) flagTable[1][3];
+		modifierInitiative = (int) flagTable[1][4];
+		
+		flagExtended = (boolean) flagTable[2][3];
+		modifierExtended = (int) flagTable[2][4];
+		
+		flagThresholdTest = (boolean) flagTable[3][3];
+		modifierThreshold = (int) flagTable[3][4];
+		
+		flagPrimeRunner = (boolean) flagTable[4][3];
+		
+		flagEdgePushTheLimit = (boolean) flagTable[5][3];
+		modifierEdgeRating = (int) flagTable[5][4];
+		
+		flagGremlins = (boolean) flagTable[6][3];
+		modifierGremlins = (int) flagTable[6][4];
+		
 	}
 
-	private int IsolateDigit(String[] secondaryArg, int i) {
+	private Object IsolateDigit(String[] secondaryArg, int i) {
 		String trimmedString = secondaryArg[i].replaceAll("[\\D]", "");
 		
 		try {
@@ -410,19 +450,129 @@ public class Shadowrun extends Command {
 				return 0;
 			}
 		}
-		
-		
-	}
-	
-	
-
-	@Override
-	public void sendMessage(String message, MessageReceivedEvent event) {
-		BotController.sendMessage(message, event);
-	}
-	
-	public void sendMessage(EmbedBuilder builder, MessageReceivedEvent event) {
-		BotController.sendMessage(builder, event);
 	}
 
+	private boolean CheckDigit(String input) {
+		try {
+			Integer.parseInt(input);
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	private void SetAllFlagsFalse() {
+		for (int i = 0; i < flagTable.length; i++) {
+			flagTable[i][3] = false;
+		}
+	}
+
+	private void PushTheLimit(String[] secondaryArg, MessageReceivedEvent event) {
+	}
+
+	private void SecondChance(MessageReceivedEvent event) {
+		EmbedBuilder builder = new EmbedBuilder();
+		
+		title = "Previous Roll for " + event.getAuthor().getName() + ": ";
+		
+		User user = event.getAuthor();
+		if (!previousRollTable.containsKey(user)) {
+			message = "Sorry, looks like you dont have a previous roll for Second Chance to apply.";
+			sendMessage(message, event);
+			return;
+		}
+		
+		RollContainer previous = previousRollTable.get(user);
+		
+		message = "Hits: " + previous.countHit + "\n"
+				+ "Misses: " + previous.countMiss + "\n"
+				+ "Ones: " + previous.countOne + "\n\n";
+		
+		VerboseMode(previous.rollResults);
+		
+		if (previous.isGlitch) {
+			message += "Glitch! \n";
+		} else if (previous.isCritGlitch) {
+			message += "Critical Glitch! \n";
+		}
+		
+		int dicePool = previous.countMiss + previous.countOne;
+		
+		builder.addBlankField(true);
+		builder.addField(title, DiscordUtil.MessageToCode(message), true);
+		
+		title = "New Roll Results| Dice Pool: " + dicePool;
+		
+		message = "";
+		
+		rollResults.clear();
+		
+		countOne = 0;
+		countMiss = 0;
+		countHit = previous.countHit;
+		
+		String parseRoll;
+		
+		for (int i = 0; i < dicePool; i++) {
+			rollResults.add(i, RollDice());
+			
+			if (flagPrimeRunner) {
+				parseRoll = primeRollTable.get(rollResults.get(i));
+			} else {
+				parseRoll = basicRollTable.get(rollResults.get(i));
+			}
+			
+			if (parseRoll.equals("One")) {
+				countOne += 1;
+			} else if (parseRoll.equals("Miss")) {
+				countMiss += 1;
+			} else if (parseRoll.equals("Hit")) {
+				countHit += 1;
+			}
+		}
+		
+		message += "Hits: " + countHit + "\n"
+				+ "Misses: " + countMiss + "\n"
+				+ "Ones: " + countOne + "\n\n";
+		
+		VerboseMode(rollResults);
+		
+		GlitchCheck(dicePool);
+		
+		builder.addField(title, DiscordUtil.MessageToCode(message), true);
+		
+		sendMessage(builder, event);
+	}
+
+	private void ManageSettings(MessageReceivedEvent event) {
+	}
+	
+	private void StoreResults(int dicePool, MessageReceivedEvent event) {
+		User user = event.getAuthor();
+		
+		RollContainer currentRoll = new RollContainer(dicePool, countOne, countMiss, countHit, rollResults, isGlitch, isCritGlitch, flagPrimeRunner);
+		
+		if(previousRollTable.containsKey(user)) {
+			previousRollTable.replace(user, currentRoll);
+		} else {
+			previousRollTable.put(user, currentRoll);
+		}
+	}
+	
+	public static class RollContainer {
+		int dicePool, countOne, countMiss, countHit;
+		ArrayList<Integer> rollResults;
+		boolean isGlitch, isCritGlitch, flagPrimeRunner;
+		
+		public RollContainer(int dicePool, int countOne, int countMiss, int countHit, ArrayList<Integer> rollResults, boolean isGlitch, boolean isCritGlitch, boolean flagPrimeRunner) {
+			this.dicePool = dicePool;
+			this.countOne = countOne;
+			this.countMiss = countMiss;
+			this.countHit = countHit;
+			this.rollResults = rollResults;
+			this.isGlitch = isGlitch;
+			this.isCritGlitch = isCritGlitch;
+			this.flagPrimeRunner = flagPrimeRunner;
+		}
+	}
 }

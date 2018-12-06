@@ -24,6 +24,7 @@ public abstract class Command {
 		commands.add(new Baxter());
 		commands.add(new Flood());
 		commands.add(new Talk());
+		commands.add(new Testing());
 	}
 
 	public boolean compare(String main) {
