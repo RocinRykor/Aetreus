@@ -1,6 +1,17 @@
 package com.rocinrykor.aetreusbot;
 
+import java.awt.AWTException;
+import java.awt.Image;
+import java.awt.MenuItem;
+import java.awt.PopupMenu;
+import java.awt.SystemTray;
+import java.awt.Toolkit;
+import java.awt.TrayIcon;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.security.auth.login.LoginException;
+import javax.swing.JOptionPane;
 
 import com.rocinrykor.aetreusbot.baxter.Meter;
 import com.rocinrykor.aetreusbot.command.Command;
@@ -44,7 +55,7 @@ public class BotController {
 		Meter.Init();
 	}
 	
-	public JDA getJDA() {
+	public static JDA getJDA() {
 		return jda;
 	}
 	
@@ -71,6 +82,26 @@ public class BotController {
 		
 	}
 	
+	public static void StartUpdateTimer() {
+		int sleepTime = 900;
+		
+		DailyMessage.Init();
+		
+		new Thread() {
+			public void run() {
+				while (true) {
+					try {
+						Thread.sleep(sleepTime * 1000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					
+					DailyMessage.Update();
+				}
+			}
+		}.start();
+	}
+
 	public static void SetPresence(String presence) {
 		jda.getPresence().setGame(Game.playing(presence));
 	}
@@ -101,7 +132,45 @@ public class BotController {
 	}
 	
 	public static void main(String[] args) {
+		StartSystemTray();
 		BotController botController = new BotController();
+	}
+
+	private static void StartSystemTray() {
+		if (!SystemTray.isSupported()) {
+		      System.out.println("SystemTray is not supported");
+		      return;
+		    }
+
+		    SystemTray tray = SystemTray.getSystemTray();
+		    Toolkit toolkit = Toolkit.getDefaultToolkit();
+		    Image image = toolkit.getImage("C:\\Users\\Rocin Rykor\\git\\Aetreus\\AetreusBot\\Ampersand.png");
+
+		    PopupMenu menu = new PopupMenu();
+
+		    MenuItem messageItem = new MenuItem("Show Message");
+		    messageItem.addActionListener(new ActionListener() {
+		      public void actionPerformed(ActionEvent e) {
+		        JOptionPane.showMessageDialog(null, "Hello!");
+		      }
+		    });
+		    menu.add(messageItem);
+
+		    MenuItem closeItem = new MenuItem("Exit");
+		    closeItem.addActionListener(new ActionListener() {
+		      public void actionPerformed(ActionEvent e) {
+		        System.exit(0);
+		      }
+		    });
+		    menu.add(closeItem);
+		    TrayIcon icon = new TrayIcon(image, "Discord Bot - Aetreus", menu);
+		    icon.setImageAutoSize(true);
+
+		    try {
+				tray.add(icon);
+			} catch (AWTException e1) {
+				e1.printStackTrace();
+			}
 	}
 
 	public static void InitVars() {
