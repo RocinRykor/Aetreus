@@ -45,7 +45,7 @@ public class BotController {
 	public BotController() {
 		StartBot();
 		
-		Meter.Init();
+		//Meter.Init();
 	}
 	
 	public static JDA getJDA() {
