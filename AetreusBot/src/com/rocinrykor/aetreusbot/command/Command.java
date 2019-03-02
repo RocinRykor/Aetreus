@@ -1,5 +1,7 @@
 package com.rocinrykor.aetreusbot.command;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 
 import com.rocinrykor.aetreusbot.command.CommandParser.CommandContainer;
@@ -25,6 +27,7 @@ public abstract class Command {
 		commands.add(new Flood());
 		commands.add(new Talk());
 		commands.add(new Testing());
+		commands.add(new Nyan());
 	}
 
 	public boolean compare(String main) {
@@ -67,7 +70,6 @@ public abstract class Command {
 	
 	public abstract boolean deleteCallMessage();
 
-	public abstract void execute(String primaryArg, String[] secondaryArg, String trimmedNote, MessageReceivedEvent event, CommandContainer cmd);
-	
-	public abstract void sendMessage(String message, MessageReceivedEvent event);
+	public void execute(String primaryArg, String[] secondaryArg, String trimmedNote, MessageReceivedEvent event, CommandContainer cmd) {
+	}	public abstract void sendMessage(String message, MessageReceivedEvent event);
 }

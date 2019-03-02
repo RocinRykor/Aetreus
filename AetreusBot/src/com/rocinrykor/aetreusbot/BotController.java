@@ -120,14 +120,12 @@ public class BotController {
 	}
 	
 	public static void main(String[] args) {
-		//StartSystemTray();
 		//Window.StartAppWindow(); //Testing New Window Function
-		
 		System.out.println("Start");
 		ConfigController.Init();
 		
 		BotController botController = new BotController();
-		
+		StartSystemTray();
 	}
 
 	private static void StartSystemTray() {
@@ -138,8 +136,8 @@ public class BotController {
 
 		    SystemTray tray = SystemTray.getSystemTray();
 		    Toolkit toolkit = Toolkit.getDefaultToolkit();
-		    //Image image = toolkit.getImage("Ampersand.png"); //Default Icon
-		    Image image = toolkit.getImage("WIP-Icon.png"); //Icon For testing
+		    Image image = toolkit.getImage("Ampersand.png"); //Default Icon
+		    //Image image = toolkit.getImage("WIP-Icon.png"); //Icon For testing
 
 		    PopupMenu menu = new PopupMenu();
 

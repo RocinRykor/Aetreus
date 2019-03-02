@@ -62,7 +62,7 @@ public class Shadowrun extends Command {
 	
 	//Flags for rolling
 	Object[][] flagTable;
-	boolean flagVerbose, flagInitiative, flagExtended, flagEdgePushTheLimit, flagPrimeRunner, flagThresholdTest, flagGremlins;
+	boolean flagVerbose, flagInitiative, flagExtended, flagEdgePushTheLimit, flagPrimeRunner, flagThresholdTest, flagGremlins, flagVersus;
 	
 	//Modifiers for various flags
 	int modifierInitiative, modifierExtended, modifierEdgeRating, modifierThreshold, modifierGremlins;
@@ -106,7 +106,8 @@ public class Shadowrun extends Command {
 			{"Threshold", "t", "Automatic test against the threshold", false, 0},
 			{"Prime", "p", "Prime Runner Quality (4s are hits)", false},
 			{"Push", "l", "Spend Edge to add edge rating to roll", false, 0},
-			{"Gremlins", "g", "Gremlins Quality, reduces dice pool for glitch calculation", false, 0}
+			{"Gremlins", "g", "Gremlins Quality, reduces dice pool for glitch calculation", false, 0},
+			{"Versus", "vs", "Check agasint a second set of rolls, calculate net hits, false"}
 		};
 	}
 
@@ -427,6 +428,8 @@ public class Shadowrun extends Command {
 		
 		flagGremlins = (boolean) flagTable[6][3];
 		modifierGremlins = (int) flagTable[6][4];
+		
+		flagVersus = (boolean) flagTable[7][3];
 		
 	}
 

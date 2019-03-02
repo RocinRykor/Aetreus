@@ -1,5 +1,11 @@
 package com.rocinrykor.aetreusbot.command;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.Calendar;
 
 import com.rocinrykor.aetreusbot.BotController;
@@ -42,28 +48,10 @@ public class Testing extends Command {
 
 	@Override
 	public boolean deleteCallMessage() {
-		return false;
-	}
-
-	@Override
-	public void execute(String primaryArg, String[] secondaryArg, String trimmedNote, MessageReceivedEvent event,
-			CommandContainer cmd) {
-		
-		Message message = event.getChannel().sendMessage("This message will self-destruct in 5 seconds.").complete();
-		
-		try {
-			Thread.sleep(5000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		
-		message.delete().queue();
-		
-		System.out.println(message.getCreationTime());
+		return true;
 	}
 
 	@Override
 	public void sendMessage(String message, MessageReceivedEvent event) {
 	}
-
 }
