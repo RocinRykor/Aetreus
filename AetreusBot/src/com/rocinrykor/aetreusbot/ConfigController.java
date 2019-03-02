@@ -70,8 +70,6 @@ public class ConfigController {
 		//Checks if the actual config files exists, creates if necessary.
 		file = new File(configFile);
 		
-		System.out.println("Init Starting");
-		
 		if (!file.exists()) {
 			System.out.println("Config File Not Found!");
 			RunFirstTimeSetup();

@@ -14,7 +14,7 @@ public class Flood extends Command {
 
 	@Override
 	public String getDescription() {
-		return "Floods the chat channel with a umber of messages - Admin Only";
+		return "Floods the chat channel with a number of messages - Admin Only";
 	}
 
 	@Override

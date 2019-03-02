@@ -63,7 +63,7 @@ public class DailyMessage {
 		
 		simpleDateFormat = new SimpleDateFormat(pattern);
 		
-		System.out.println(jda.getTextChannels().toString());
+		//System.out.println(jda.getTextChannels().toString());
 	
 		channel = jda.getTextChannelsByName("general", true).get(0);
 		boolean foundMessage = false;
@@ -102,6 +102,7 @@ public class DailyMessage {
 				e.printStackTrace();
 			}
 		}
+		
 	}
 
 	private static void NewDailyMessage() throws IOException {
