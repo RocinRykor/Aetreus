@@ -3,6 +3,7 @@ package com.rocinrykor.aetreusbot.discord;
 import java.util.ArrayList;
 
 import com.rocinrykor.aetreusbot.BotController;
+import com.rocinrykor.aetreusbot.ConfigController;
 import com.rocinrykor.aetreusbot.command.Command;
 import com.rocinrykor.aetreusbot.command.CommandParser;
 import com.rocinrykor.aetreusbot.command.CommandParser.CommandContainer;
@@ -48,6 +49,8 @@ public class BotListener extends ListenerAdapter{
 		
 		BotController.InitVars();
 		System.out.println("Bot Ready!");
+		
+		BotController.StartUpdateTimer();
 	}
 
 	@Override
@@ -58,7 +61,7 @@ public class BotListener extends ListenerAdapter{
 		String rawInput = event.getMessage().getContentRaw();
 		boolean isBot = event.getAuthor().isBot();
 
-		if (rawInput.startsWith(BotInfo.getBOT_PREFIX()) && !isBot) {
+		if (rawInput.startsWith(ConfigController.getBOT_PREFIX()) && !isBot) {
 			
 			CommandContainer cmd = (CommandParser.parse(rawInput, event)); //Sends the message to be parsed
 			

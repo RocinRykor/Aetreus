@@ -1,7 +1,6 @@
 package com.rocinrykor.aetreusbot.command;
 
-import com.rocinrykor.aetreusbot.discord.BotInfo;
-
+import com.rocinrykor.aetreusbot.ConfigController;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
@@ -11,7 +10,7 @@ public class CommandParser {
 	public static CommandContainer parse(String rawInput, MessageReceivedEvent event) {
 
 		String raw = rawInput; //Take the raw input
-		String beheadedString = raw.replaceFirst(BotInfo.getBOT_PREFIX() , ""); //Remove the Ampersand (Bot signal key)
+		String beheadedString = raw.replaceFirst(ConfigController.getBOT_PREFIX() , ""); //Remove the Ampersand (Bot signal key)
 		String trimmedString = null; //This will be the beheaded string minus any note that is attached
 		String noteArg = null; //This will be the removed note from the beheaded string
 		

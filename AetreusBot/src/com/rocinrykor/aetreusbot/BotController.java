@@ -15,7 +15,6 @@ import javax.swing.JOptionPane;
 
 import com.rocinrykor.aetreusbot.baxter.Meter;
 import com.rocinrykor.aetreusbot.command.Command;
-import com.rocinrykor.aetreusbot.discord.BotInfo;
 import com.rocinrykor.aetreusbot.discord.BotListener;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 
@@ -37,19 +36,13 @@ public class BotController {
  * */
 	static AudioPlayerManager playerManager;
 	
-	BotInfo info;
-	
 	private static JDA jda;
 	private static Guild guild;
 	private static Role adminRole;
 	
 	static boolean aetreusOnline;
 	
-	static String presenceDefault = "Type &Help to begin";
-	
 	public BotController() {
-		info = new BotInfo();
-		
 		StartBot();
 		
 		Meter.Init();
@@ -61,18 +54,13 @@ public class BotController {
 	
 	private static void StartBot() {
 		
-		if (BotInfo.getBOT_TOKEN().equalsIgnoreCase("DEFUALT_TOKEN_PLEASE_CHANGE")) {
-			System.out.println("ERROR: A VALID TOKEN HAS NOT BEEN DEFINED \n"
-					+ "PLEASE EDIT THE CONFIG FILE AND RESTART THE BOT");
-			System.exit(0);
-		}
-		
 		try {
-			jda = new JDABuilder(AccountType.BOT).setToken(BotInfo.getBOT_TOKEN()).build();
+			jda = new JDABuilder(AccountType.BOT).setToken(ConfigController.getBOT_TOKEN()).build();
 			jda.addEventListener(new BotListener());
 			
 			Command.init();
-			SetPresence(presenceDefault);
+			
+			SetPresence(ConfigController.getBOT_MESSAGE());
 			aetreusOnline = true;
 			
 		} catch (LoginException | IllegalArgumentException e) {
@@ -107,7 +95,7 @@ public class BotController {
 	}
 	
 	public static void ResetPresence() {
-		SetPresence(presenceDefault);
+		SetPresence(ConfigController.getBOT_MESSAGE());
 	}
 
 	public static Guild getGuild() {
@@ -132,8 +120,14 @@ public class BotController {
 	}
 	
 	public static void main(String[] args) {
-		StartSystemTray();
+		//StartSystemTray();
+		//Window.StartAppWindow(); //Testing New Window Function
+		
+		System.out.println("Start");
+		ConfigController.Init();
+		
 		BotController botController = new BotController();
+		
 	}
 
 	private static void StartSystemTray() {
@@ -144,7 +138,8 @@ public class BotController {
 
 		    SystemTray tray = SystemTray.getSystemTray();
 		    Toolkit toolkit = Toolkit.getDefaultToolkit();
-		    Image image = toolkit.getImage("C:\\Users\\Rocin Rykor\\git\\Aetreus\\AetreusBot\\Ampersand.png");
+		    //Image image = toolkit.getImage("Ampersand.png"); //Default Icon
+		    Image image = toolkit.getImage("WIP-Icon.png"); //Icon For testing
 
 		    PopupMenu menu = new PopupMenu();
 

@@ -1,10 +1,13 @@
 package com.rocinrykor.aetreusbot.command;
 
+import javax.swing.plaf.basic.BasicComboBoxUI.ComboBoxLayoutManager;
+
 import com.rocinrykor.aetreusbot.BotController;
 import com.rocinrykor.aetreusbot.command.CommandParser.CommandContainer;
 import com.rocinrykor.aetreusbot.music.MusicManager;
 
 import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.entities.VoiceChannel;
@@ -63,15 +66,50 @@ public class Audio extends Command {
 			return;
 		} else if (primaryArg.equalsIgnoreCase("join")) {
 			JoinChannel(cmd.guild, cmd.user, event);
+			manager.loadTrack(event.getTextChannel(), "C:\\Users\\Rocin Rykor\\Documents\\Aetreus Bot\\Audio Tracks\\I_AM_HERE.mp3");
 		} else if (primaryArg.equalsIgnoreCase("leave")) {
 			LeaveChannel(cmd.guild);
 		} else if (primaryArg.equalsIgnoreCase("play")) {
 			LoadTrack(cmd.guild, cmd.user, trimmedNote, event);
 		} else if (primaryArg.equalsIgnoreCase("skip")) {
 			SkipTrack(cmd.guild, event);
+		} else if (primaryArg.equalsIgnoreCase("volume")) {
+			ChangeVolume(cmd.guild, secondaryArg, event);
 		} else {
 			sendMessage("I don't understand your command.", event);
 		}
+	}
+
+	private void ChangeVolume(Guild guild, String[] secondaryArg, MessageReceivedEvent event) {
+		int volume = 50;
+		if (secondaryArg != null) {
+			try {
+				volume = Integer.parseInt(secondaryArg[0]);
+			} catch (Exception e) {
+				String message = "Volume amount not specified. \n"
+						+ "Current volume: " + manager.getPlayer(guild).getAudioPlayer().getVolume();
+				
+				sendMessage(message, event);
+				return;
+			}
+		} else {
+			String message = "Volume amount not specified. \n"
+					+ "Current volume: " + manager.getPlayer(guild).getAudioPlayer().getVolume();
+			
+			sendMessage(message, event);
+			return;
+		}
+		
+		volume = VolumeClamping(volume);
+		
+		manager.getPlayer(guild).getAudioPlayer().setVolume(volume);
+	}
+
+	private int VolumeClamping(int volume) {
+		int passOne = Math.max(0, volume);
+		int passTwo = Math.min(100, passOne);
+	
+		return passTwo;
 	}
 
 	private void LoadTrack(Guild guild, User user, String trimmedNote, MessageReceivedEvent event) {
@@ -125,7 +163,6 @@ public class Audio extends Command {
 			guild.getAudioManager().openAudioConnection(voiceChannel);
 			
 			TextChannel textChannel = event.getTextChannel();
-			manager.loadTrack(textChannel, "C:\\Users\\Rocin Rykor\\Documents\\Aetreus Bot\\Audio Tracks\\I_AM_HERE.mp3");
 		}
 	}
 

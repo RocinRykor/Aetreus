@@ -1,7 +1,5 @@
 package com.rocinrykor.aetreusbot.baxter;
 
-import com.rocinrykor.aetreusbot.discord.BotInfo;
-
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
@@ -27,15 +25,9 @@ public class BaxterController extends Thread {
 		if (isBaxterOnline()) {
 			return;
 		}
-		
-		if (BotInfo.getBOT_TOKEN().equalsIgnoreCase("DEFUALT_TOKEN_PLEASE_CHANGE")) {
-			System.out.println("ERROR: A VALID TOKEN HAS NOT BEEN DEFINED \n"
-					+ "PLEASE EDIT THE CONFIG FILE AND RESTART THE BOT");
-			return;
-		}
-		
+				
 		try {
-			baxterJDA = new JDABuilder(AccountType.BOT).setToken(BotInfo.getBAXTER_TOKEN()).build();
+			//baxterJDA = new JDABuilder(AccountType.BOT).setToken(BotInfo.getBAXTER_TOKEN()).build();
 		} catch (Exception e) {
 			System.out.println("BAXTER JDA ERROR");
 			return;
