@@ -3,6 +3,8 @@ package com.rocinrykor.aetreusbot.command;
 import com.rocinrykor.aetreusbot.BotController;
 import com.rocinrykor.aetreusbot.command.CommandParser.CommandContainer;
 
+import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
 public class Flood extends Command {
@@ -21,6 +23,11 @@ public class Flood extends Command {
 	public String getAlias() {
 		return "F";
 	}
+	
+	@Override
+	public String getHomeChannel() {
+		return "bottesting";
+	}
 
 	@Override
 	public String helpMessage() {
@@ -36,6 +43,11 @@ public class Flood extends Command {
 	public boolean isChannelRestricted() {
 		return true;
 	}
+	
+	@Override
+	public boolean isAdultResricted() {
+		return false;
+	}
 
 	@Override
 	public boolean deleteCallMessage() {
@@ -44,9 +56,9 @@ public class Flood extends Command {
 
 	@Override
 	public void execute(String primaryArg, String[] secondaryArg, String trimmedNote, MessageReceivedEvent event,
-			CommandContainer cmd) {
+			CommandContainer cmd, MessageChannel channel) {
 		if (primaryArg.equalsIgnoreCase("help")) {
-			sendMessage(helpMessage(), event);
+			sendMessage(helpMessage(), channel);
 			return;
 		}
 		
@@ -55,7 +67,7 @@ public class Flood extends Command {
 		new Thread() {
 			public void run() {
 				for (int i = 0; i < messageAmount; i++) {
-					sendMessage("Message #: " + i, event);
+					sendMessage("Message #: " + i, channel);
 					try {
 						Thread.sleep(3 * 1000);
 					} catch (Exception e) {
@@ -83,9 +95,12 @@ public class Flood extends Command {
 		
 	}
 
-	@Override
-	public void sendMessage(String message, MessageReceivedEvent event) {
-		BotController.sendMessage(message, event);
+	public void sendMessage(EmbedBuilder builder, MessageChannel channel) {
+		BotController.sendMessage(builder, channel);
+	}
+
+	public void sendMessage(String message, MessageChannel channel) {
+		BotController.sendMessage(message, channel);
 	}
 
 }

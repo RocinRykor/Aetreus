@@ -10,6 +10,7 @@ import com.rocinrykor.aetreusbot.questions.Question;
 import com.rocinrykor.aetreusbot.questions.Question.QuestionContainer;
 
 import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
@@ -46,6 +47,11 @@ public class Talk extends Command {
 	public String getAlias() {
 		return "T";
 	}
+	
+	@Override
+	public String getHomeChannel() {
+		return "bottesting";
+	}
 
 	@Override
 	public String helpMessage() {
@@ -61,6 +67,11 @@ public class Talk extends Command {
 	public boolean isChannelRestricted() {
 		return true;
 	}
+	
+	@Override
+	public boolean isAdultResricted() {
+		return false;
+	}
 
 	@Override
 	public boolean deleteCallMessage() {
@@ -69,14 +80,14 @@ public class Talk extends Command {
 
 	@Override
 	public void execute(String primaryArg, String[] secondaryArg, String trimmedNote, MessageReceivedEvent event,
-			CommandContainer cmd) {
+			CommandContainer cmd, MessageChannel channel) {
 
 		if (primaryArg.equalsIgnoreCase("help")) {
-			sendMessage(helpMessage(), event);
+			sendMessage(helpMessage(), channel);
 			return;
 		}
 		User user = event.getAuthor();
-		ArrayList<Object> userAnswers = AnswerHandler.parseAnswer(user, questions, trimmedNote, "Talk", event);
+		ArrayList<Object> userAnswers = AnswerHandler.parseAnswer(user, questions, trimmedNote, "Talk", event, channel);
 		
 		if (userAnswers != null) {
 			ReportAnswers(userAnswers, event);
@@ -100,9 +111,12 @@ public class Talk extends Command {
 		event.getChannel().sendMessage(builder.build()).queue();
 	}
 
-	@Override
-	public void sendMessage(String message, MessageReceivedEvent event) {
-		BotController.sendMessage(message, event);
+	public void sendMessage(EmbedBuilder builder, MessageChannel channel) {
+		BotController.sendMessage(builder, channel);
+	}
+
+	public void sendMessage(String message, MessageChannel channel) {
+		BotController.sendMessage(message, channel);
 	}
 
 }

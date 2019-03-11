@@ -6,6 +6,7 @@ import com.rocinrykor.aetreusbot.BotController;
 import com.rocinrykor.aetreusbot.command.CommandParser.CommandContainer;
 
 import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
 public class Ping extends Command {
@@ -18,6 +19,11 @@ public class Ping extends Command {
 	@Override
 	public String getAlias() {
 		return "p";
+	}
+	
+	@Override
+	public String getHomeChannel() {
+		return "bottesting";
 	}
 
 	@Override
@@ -42,29 +48,32 @@ public class Ping extends Command {
 	}
 	
 	@Override
+	public boolean isAdultResricted() {
+		return false;
+	}
+	
+	@Override
 	public boolean deleteCallMessage() {
 		return false;
 	}
 	
 	@Override
-	public void execute(String primaryArg, String[] secondaryArg, String trimmedNote, MessageReceivedEvent event, CommandContainer cmd) {
+	public void execute(String primaryArg, String[] secondaryArg, String trimmedNote, MessageReceivedEvent event, CommandContainer cmd, MessageChannel channel) {
 		String message = "PONG!";
 		
-		EmbedBuilder builder = new EmbedBuilder();
+		if (primaryArg.equalsIgnoreCase("help")) {
+			message = helpMessage();
+		}
 		
-		builder.setColor(Color.BLUE);
-		
-		builder.addField("Test", "``` " + message + " ```", true);		
-		sendMessage(builder, event);
+		sendMessage(message, channel);
 	}
 
-	private void sendMessage(EmbedBuilder builder, MessageReceivedEvent event) {
-		BotController.sendMessage(builder, event);
+	public void sendMessage(EmbedBuilder builder, MessageChannel channel) {
+		BotController.sendMessage(builder, channel);
 	}
 
-	@Override
-	public void sendMessage(String message, MessageReceivedEvent event) {
-		BotController.sendMessage("PONG!", event);
+	public void sendMessage(String message, MessageChannel channel) {
+		BotController.sendMessage(message, channel);
 	}
 
 }

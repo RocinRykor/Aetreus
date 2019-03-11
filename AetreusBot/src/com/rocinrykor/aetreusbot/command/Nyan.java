@@ -9,6 +9,8 @@ import java.net.URLConnection;
 import com.rocinrykor.aetreusbot.BotController;
 import com.rocinrykor.aetreusbot.command.CommandParser.CommandContainer;
 
+import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
 public class Nyan extends Command{
@@ -27,6 +29,11 @@ public class Nyan extends Command{
 	public String getAlias() {
 		return "Nyan";
 	}
+	
+	@Override
+	public String getHomeChannel() {
+		return "nsfw";
+	}
 
 	@Override
 	public String helpMessage() {
@@ -42,6 +49,11 @@ public class Nyan extends Command{
 	public boolean isChannelRestricted() {
 		return true;
 	}
+	
+	@Override
+	public boolean isAdultResricted() {
+		return true;
+	}
 
 	@Override
 	public boolean deleteCallMessage() {
@@ -50,17 +62,17 @@ public class Nyan extends Command{
 	
 	@Override
 	public void execute(String primaryArg, String[] secondaryArg, String trimmedNote, MessageReceivedEvent event,
-			CommandContainer cmd) {
+			CommandContainer cmd, MessageChannel channel) {
 		boolean lewd = false;
 		
 		if (primaryArg.equalsIgnoreCase("lewd")) {
 			lewd = true;
 		}
 		
-		NewCatgirlPicture(lewd, event);
+		NewCatgirlPicture(lewd, event, channel);
 	}
 
-	private void NewCatgirlPicture(boolean lewd, MessageReceivedEvent event) {
+	private void NewCatgirlPicture(boolean lewd, MessageReceivedEvent event, MessageChannel channel) {
 		URL url = null;
 		String savedLine = null;
 		
@@ -123,11 +135,14 @@ public class Nyan extends Command{
         
         System.out.println(message);
         
-        sendMessage(message, event);
+        sendMessage(message, channel);
 	}
 
-	@Override
-	public void sendMessage(String message, MessageReceivedEvent event) {
-		BotController.sendMessage(message, event);
+	public void sendMessage(EmbedBuilder builder, MessageChannel channel) {
+		BotController.sendMessage(builder, channel);
+	}
+
+	public void sendMessage(String message, MessageChannel channel) {
+		BotController.sendMessage(message, channel);
 	}
 }

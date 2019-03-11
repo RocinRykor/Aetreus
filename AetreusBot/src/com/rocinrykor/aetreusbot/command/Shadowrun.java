@@ -9,6 +9,7 @@ import com.rocinrykor.aetreusbot.command.CommandParser.CommandContainer;
 import com.rocinrykor.aetreusbot.discord.DiscordUtil;
 
 import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
@@ -22,6 +23,11 @@ public class Shadowrun extends Command {
 	@Override
 	public String getAlias() {
 		return "SR";
+	}
+	
+	@Override
+	public String getHomeChannel() {
+		return "rolling";
 	}
 
 	@Override
@@ -45,6 +51,11 @@ public class Shadowrun extends Command {
 	@Override
 	public boolean isChannelRestricted() {
 		return true;
+	}
+	
+	@Override
+	public boolean isAdultResricted() {
+		return false;
 	}
 
 	@Override
@@ -107,7 +118,7 @@ public class Shadowrun extends Command {
 			{"Prime", "p", "Prime Runner Quality (4s are hits)", false},
 			{"Push", "l", "Spend Edge to add edge rating to roll", false, 0},
 			{"Gremlins", "g", "Gremlins Quality, reduces dice pool for glitch calculation", false, 0},
-			{"Versus", "vs", "Check agasint a second set of rolls, calculate net hits, false"}
+			{"Versus", "vs", "Check agasint a second set of rolls, calculate net hits", false}
 		};
 	}
 
@@ -128,28 +139,19 @@ public class Shadowrun extends Command {
 	}
 
 	@Override
-	public void sendMessage(String message, MessageReceivedEvent event) {
-		BotController.sendMessage(message, event);
-	}
-	
-	public void sendMessage(EmbedBuilder builder, MessageReceivedEvent event) {
-		BotController.sendMessage(builder, event);
-	}
-
-	@Override
 	public void execute(String primaryArg, String[] secondaryArg, String trimmedNote, MessageReceivedEvent event,
-			CommandContainer cmd) {
+			CommandContainer cmd, MessageChannel channel) {
 		
 		color = Color.GRAY;
 		
 		if (primaryArg.equalsIgnoreCase("help")) {
-			sendMessage(helpMessage(), event);
+			sendMessage(helpMessage(), channel);
 			return;
 		} else if (primaryArg.equalsIgnoreCase("settings")) {
 			ManageSettings(event);
 			return;
 		} else if (primaryArg.equalsIgnoreCase("reroll")) {
-			SecondChance(event);
+			SecondChance(event, channel);
 			return;
 		} else if (primaryArg.equalsIgnoreCase("limit")) {
 			PushTheLimit(secondaryArg, event);
@@ -161,15 +163,15 @@ public class Shadowrun extends Command {
 		CheckFlags(secondaryArg);
 		
 		if (CheckDigit(primaryArg)) {
-			BeginRoller(primaryArg, event);
+			BeginRoller(primaryArg, event, channel);
 		} else {
 			message = "ERROR: Unable to roll, dice pool not defined \n"
 					+ "Please use \"&sr help\" for more info";
-			sendMessage(message, event);
+			sendMessage(message, channel);
 		}
 	}
 
-	private void BeginRoller(String primaryArg, MessageReceivedEvent event) {
+	private void BeginRoller(String primaryArg, MessageReceivedEvent event, MessageChannel channel) {
 		message = "";
 		
 		EmbedBuilder builder = new EmbedBuilder();
@@ -182,7 +184,7 @@ public class Shadowrun extends Command {
 				dicePool = Integer.parseInt(primaryArg);
 			} else {
 				message = "Looks like there is no dice pool specified, please try again.";
-				sendMessage(message, event);
+				sendMessage(message, channel);
 				return;
 			}
 			
@@ -201,14 +203,14 @@ public class Shadowrun extends Command {
 			//fail
 			message = "Oops, looks like there is an error with one of the flags, please check them and try again \n"
 					+ "Please use \"&sr help\" for more info";
-			sendMessage(message, event);
+			sendMessage(message, channel);
 			return;
 		}
 		
 		builder.setColor(color);
 		builder.addField(title, DiscordUtil.MessageToCode(message), true);
 		
-		sendMessage(builder, event);
+		sendMessage(builder, channel);
 	}
 
 	private void BasicRoll(int dicePool, boolean inline, MessageReceivedEvent event) {
@@ -473,7 +475,7 @@ public class Shadowrun extends Command {
 	private void PushTheLimit(String[] secondaryArg, MessageReceivedEvent event) {
 	}
 
-	private void SecondChance(MessageReceivedEvent event) {
+	private void SecondChance(MessageReceivedEvent event, MessageChannel channel) {
 		EmbedBuilder builder = new EmbedBuilder();
 		
 		title = "Previous Roll for " + event.getAuthor().getName() + ": ";
@@ -481,7 +483,7 @@ public class Shadowrun extends Command {
 		User user = event.getAuthor();
 		if (!previousRollTable.containsKey(user)) {
 			message = "Sorry, looks like you dont have a previous roll for Second Chance to apply.";
-			sendMessage(message, event);
+			sendMessage(message, channel);
 			return;
 		}
 		
@@ -544,7 +546,7 @@ public class Shadowrun extends Command {
 		
 		builder.addField(title, DiscordUtil.MessageToCode(message), true);
 		
-		sendMessage(builder, event);
+		sendMessage(builder, channel);
 	}
 
 	private void ManageSettings(MessageReceivedEvent event) {
@@ -577,5 +579,13 @@ public class Shadowrun extends Command {
 			this.isCritGlitch = isCritGlitch;
 			this.flagPrimeRunner = flagPrimeRunner;
 		}
+	}
+	
+	public void sendMessage(EmbedBuilder builder, MessageChannel channel) {
+		BotController.sendMessage(builder, channel);
+	}
+
+	public void sendMessage(String message, MessageChannel channel) {
+		BotController.sendMessage(message, channel);
 	}
 }

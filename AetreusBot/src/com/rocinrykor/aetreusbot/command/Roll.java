@@ -11,6 +11,8 @@ import com.rocinrykor.aetreusbot.command.CommandParser.CommandContainer;
 import com.rocinrykor.aetreusbot.utils.ArgCountChecker;
 import com.rocinrykor.aetreusbot.utils.RollTracker;
 
+import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
 public class Roll extends Command {
@@ -30,6 +32,11 @@ public class Roll extends Command {
 	@Override
 	public String getAlias() {
 		return "r";
+	}
+	
+	@Override
+	public String getHomeChannel() {
+		return "rolling";
 	}
 
 	@Override
@@ -60,6 +67,11 @@ public class Roll extends Command {
 	public boolean isChannelRestricted() {
 		return true;
 	}
+	
+	@Override
+	public boolean isAdultResricted() {
+		return false;
+	}
 
 	@Override
 	public boolean deleteCallMessage() {
@@ -68,7 +80,7 @@ public class Roll extends Command {
 
 	@Override
 	public void execute(String primaryArg, String[] secondaryArg, String trimmedNote, MessageReceivedEvent event,
-			CommandContainer cmd) {
+			CommandContainer cmd, MessageChannel channel) {
 		
 		int totalValue = 0;
 		int dieValue;
@@ -84,10 +96,10 @@ public class Roll extends Command {
 		String userID = event.getAuthor().getId();
 		
 		if (primaryArg.equalsIgnoreCase("help")) {
-			sendMessage(helpMessage(), event);
+			sendMessage(helpMessage(), channel);
 			return;
 		} else if (primaryArg.equalsIgnoreCase("report")) {
-			ReportRolls(event);
+			ReportRolls(event, channel);
 			return;
 		} 
 		
@@ -154,15 +166,15 @@ public class Roll extends Command {
 				+ "Final Result: " + (moddedValue + totalValue);
 		}
 		
-		sendMessage(finalMessage, event);
+		sendMessage(finalMessage, channel);
 	}
 	
-	private void ReportRolls(MessageReceivedEvent event) {
+	private void ReportRolls(MessageReceivedEvent event, MessageChannel channel) {
 		String userID = event.getAuthor().getId();
 		
 		String message = RollTracker.ReportStats(userID, event);
 		
-		sendMessage(message, event);
+		sendMessage(message, channel);
 	}
 
 	private int ProcessModifier(String input) {
@@ -195,9 +207,12 @@ public class Roll extends Command {
 		return dieValue;
 	}
 
-	@Override
-	public void sendMessage(String message, MessageReceivedEvent event) {
-		BotController.sendMessage(message, event);
+	public void sendMessage(EmbedBuilder builder, MessageChannel channel) {
+		BotController.sendMessage(builder, channel);
+	}
+
+	public void sendMessage(String message, MessageChannel channel) {
+		BotController.sendMessage(message, channel);
 	}
 
 }

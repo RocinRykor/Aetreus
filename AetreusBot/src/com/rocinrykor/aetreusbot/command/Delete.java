@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import com.rocinrykor.aetreusbot.BotController;
 import com.rocinrykor.aetreusbot.command.CommandParser.CommandContainer;
 
+import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.MessageHistory;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
@@ -29,6 +31,11 @@ public class Delete extends Command {
 	public String getAlias() {
 		return "Del";
 	}
+	
+	@Override
+	public String getHomeChannel() {
+		return "bottesting";
+	}
 
 	@Override
 	public String helpMessage() {
@@ -46,6 +53,11 @@ public class Delete extends Command {
 	public boolean isChannelRestricted() {
 		return false;
 	}
+	
+	@Override
+	public boolean isAdultResricted() {
+		return false;
+	}
 
 	@Override
 	public boolean deleteCallMessage() {
@@ -56,9 +68,9 @@ public class Delete extends Command {
 
 	@Override
 	public void execute(String primaryArg, String[] secondaryArg, String trimmedNote, MessageReceivedEvent event,
-			CommandContainer cmd) {
+			CommandContainer cmd, MessageChannel channel) {
 		if (primaryArg.equalsIgnoreCase("help")) {
-			sendMessage(helpMessage(), event);
+			sendMessage(helpMessage(), channel);
 			return;
 		}
 
@@ -133,9 +145,12 @@ public class Delete extends Command {
 		 	
 	}
 
-	@Override
-	public void sendMessage(String message, MessageReceivedEvent event) {
-		BotController.sendMessage(message, event);
+	public void sendMessage(EmbedBuilder builder, MessageChannel channel) {
+		BotController.sendMessage(builder, channel);
+	}
+
+	public void sendMessage(String message, MessageChannel channel) {
+		BotController.sendMessage(message, channel);
 	}
 
 }

@@ -8,9 +8,10 @@ import net.dv8tion.jda.core.entities.User;
 
 public class UserInfo {
 
-	public static boolean isAdmin(User user) {
-		Guild guild = BotController.getGuild();
-		Role adminRole = BotController.getAdminRole();
-		return user.getId().equals(guild.getOwner().getUser().getId()) || (adminRole != null && guild.getMember(user).getRoles().contains(adminRole));
+	static Guild guild = BotController.getGuild();
+	
+	public static boolean hasRole(User user, Role role) {
+		return user.getId().equals(guild.getOwner().getUser().getId()) || (role != null && guild.getMember(user).getRoles().contains(role));
 	}
+
 }

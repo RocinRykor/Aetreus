@@ -6,6 +6,7 @@ import java.util.HashMap;
 import com.rocinrykor.aetreusbot.BotController;
 import com.rocinrykor.aetreusbot.questions.Question.QuestionContainer;
 
+import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
@@ -19,7 +20,7 @@ public class AnswerHandler {
 	static String message;
 	static int userKey;
 	
-	public static ArrayList parseAnswer(User user, ArrayList<QuestionContainer> questions, String answer, String source, MessageReceivedEvent event) {
+	public static ArrayList parseAnswer(User user, ArrayList<QuestionContainer> questions, String answer, String source, MessageReceivedEvent event, MessageChannel channel) {
 		message = "";
 		
 		String userReference = user.getId() + " - " + source;		
@@ -75,7 +76,7 @@ public class AnswerHandler {
 		
 		
 		userIDTable.replace(userReference, userKey);
-		BotController.sendMessage(message, event);
+		BotController.sendMessage(message, channel);
 		
 		return null;
 	}

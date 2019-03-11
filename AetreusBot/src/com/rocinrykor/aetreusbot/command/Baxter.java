@@ -9,6 +9,7 @@ import com.rocinrykor.aetreusbot.baxter.Meter;
 import com.rocinrykor.aetreusbot.command.CommandParser.CommandContainer;
 
 import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
 public class Baxter extends Command {
@@ -26,6 +27,11 @@ public class Baxter extends Command {
 	@Override
 	public String getAlias() {
 		return "Bax";
+	}
+	
+	@Override
+	public String getHomeChannel() {
+		return "bottesting";
 	}
 
 	@Override
@@ -59,9 +65,9 @@ public class Baxter extends Command {
 
 	@Override
 	public void execute(String primaryArg, String[] secondaryArg, String trimmedNote, MessageReceivedEvent event,
-			CommandContainer cmd) {
+			CommandContainer cmd, MessageChannel channel) {
 		if (primaryArg.equalsIgnoreCase("help")) {
-			sendMessage(helpMessage(), event);
+			sendMessage(helpMessage(), channel);
 			return;
 		} else if (primaryArg.equalsIgnoreCase("start")) {
 			BaxterController.StartBaxter();
@@ -126,9 +132,12 @@ public class Baxter extends Command {
 		}
 	}
 
-	@Override
-	public void sendMessage(String message, MessageReceivedEvent event) {
-		BotController.sendMessage(message, event);
+	public void sendMessage(EmbedBuilder builder, MessageChannel channel) {
+		BotController.sendMessage(builder, channel);
+	}
+
+	public void sendMessage(String message, MessageChannel channel) {
+		BotController.sendMessage(message, channel);
 	}
 
 	public static void InitCommands() {
@@ -142,6 +151,11 @@ public class Baxter extends Command {
 		baxterCommands.put("nap", "Sleep");
 		baxterCommands.put("play", "Playfulness");
 		baxterCommands.put("toys", "Playfulness");
+	}
+
+	@Override
+	public boolean isAdultResricted() {
+		return false;
 	}
 
 }

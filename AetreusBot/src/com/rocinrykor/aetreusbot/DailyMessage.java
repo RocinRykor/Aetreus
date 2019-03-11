@@ -73,7 +73,7 @@ public class DailyMessage {
 			startingMessage = channel.getMessageById(lastMessageID).complete();
 		} catch (Exception e) {
 			startingMessage = channel.sendMessage("Starting!").complete();
-			startingMessage.delete();
+			startingMessage.delete().queue();
 		}
 		
 		String compare = "daily";

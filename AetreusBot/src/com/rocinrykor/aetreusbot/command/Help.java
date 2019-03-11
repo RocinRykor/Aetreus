@@ -5,6 +5,7 @@ import com.rocinrykor.aetreusbot.BotController;
 import com.rocinrykor.aetreusbot.command.CommandParser.CommandContainer;
 
 import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
 public class Help extends Command{
@@ -29,7 +30,12 @@ public class Help extends Command{
 	@Override
 	public String helpMessage() {
 		// TODO Auto-generated method stub
-		return null;
+		return "Yes, that is a prime example of using this command as an argument!";
+	}
+	
+	@Override
+	public String getHomeChannel() {
+		return "general";
 	}
 
 	@Override
@@ -43,6 +49,11 @@ public class Help extends Command{
 		// TODO Auto-generated method stub
 		return false;
 	}
+	
+	@Override
+	public boolean isAdultResricted() {
+		return false;
+	}
 
 	@Override
 	public boolean deleteCallMessage() {
@@ -52,7 +63,7 @@ public class Help extends Command{
 
 	@Override
 	public void execute(String primaryArg, String[] secondaryArg, String trimmedNote, MessageReceivedEvent event,
-			CommandContainer cmd) {
+			CommandContainer cmd, MessageChannel channel) {
 		EmbedBuilder builder = new EmbedBuilder();
 		
 		builder.setTitle("List of Commands");
@@ -66,9 +77,12 @@ public class Help extends Command{
 		
 	}
 
-	@Override
-	public void sendMessage(String message, MessageReceivedEvent event) {
-		BotController.sendMessage(message, event);
+	public void sendMessage(EmbedBuilder builder, MessageChannel channel) {
+		BotController.sendMessage(builder, channel);
+	}
+
+	public void sendMessage(String message, MessageChannel channel) {
+		BotController.sendMessage(message, channel);
 	}
 	
 }

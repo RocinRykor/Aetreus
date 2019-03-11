@@ -42,6 +42,8 @@ public class ConfigController {
 	static String configFile;
 	
 	public static void Init() {
+		System.out.println("Starting Config Initilization");
+		
 		boolean modeTesting = false;
 		String directory;
 		
@@ -98,14 +100,23 @@ public class ConfigController {
 				BOT_PREFIX = prop.getProperty("BOT_PREFIX");
 				BOT_NAME = prop.getProperty("BOT_NAME");
 				BOT_MESSAGE = prop.getProperty("BOT_MESSAGE");
+			
+				System.out.println("Config Loaded");
+				
+				//Once everything is loaded start the bot
+				BotController.StartBot();
 	}
 
 	private static void RunFirstTimeSetup() {
+		System.out.println("Creating config file");
 		OpenConfigWindow();
 	}
 
+	
+	
 	/**
 	 * @wbp.parser.entryPoint
+	 * This window will be used to supply the config file with the needed information
 	 */
 	private static void OpenConfigWindow() {
 		JFrame frmFirstTimeSetup = new JFrame("First Time Setup");

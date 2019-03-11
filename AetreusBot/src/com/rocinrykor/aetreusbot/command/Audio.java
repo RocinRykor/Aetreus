@@ -6,8 +6,10 @@ import com.rocinrykor.aetreusbot.BotController;
 import com.rocinrykor.aetreusbot.command.CommandParser.CommandContainer;
 import com.rocinrykor.aetreusbot.music.MusicManager;
 
+import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.entities.VoiceChannel;
@@ -29,6 +31,11 @@ public class Audio extends Command {
 	public String getAlias() {
 		return "A";
 	}
+	
+	@Override
+	public String getHomeChannel() {
+		return "bottesting";
+	}
 
 	@Override
 	public String helpMessage() {
@@ -42,7 +49,7 @@ public class Audio extends Command {
 
 	@Override
 	public boolean isAdminOnly() {
-		return false;
+		return true;
 	}
 
 	@Override
@@ -59,28 +66,28 @@ public class Audio extends Command {
 
 	@Override
 	public void execute(String primaryArg, String[] secondaryArg, String trimmedNote, MessageReceivedEvent event,
-			CommandContainer cmd) {
+			CommandContainer cmd, MessageChannel channel) {
 		
 		if (primaryArg.equalsIgnoreCase("help")) {
-			sendMessage(helpMessage(), event);
+			sendMessage(helpMessage(), channel);
 			return;
 		} else if (primaryArg.equalsIgnoreCase("join")) {
-			JoinChannel(cmd.guild, cmd.user, event);
+			JoinChannel(cmd.guild, cmd.user, event, channel);
 			manager.loadTrack(event.getTextChannel(), "C:\\Users\\Rocin Rykor\\Documents\\Aetreus Bot\\Audio Tracks\\I_AM_HERE.mp3");
 		} else if (primaryArg.equalsIgnoreCase("leave")) {
 			LeaveChannel(cmd.guild);
 		} else if (primaryArg.equalsIgnoreCase("play")) {
-			LoadTrack(cmd.guild, cmd.user, trimmedNote, event);
+			LoadTrack(cmd.guild, cmd.user, trimmedNote, event, channel);
 		} else if (primaryArg.equalsIgnoreCase("skip")) {
 			SkipTrack(cmd.guild, event);
 		} else if (primaryArg.equalsIgnoreCase("volume")) {
-			ChangeVolume(cmd.guild, secondaryArg, event);
+			ChangeVolume(cmd.guild, secondaryArg, event, channel);
 		} else {
-			sendMessage("I don't understand your command.", event);
+			sendMessage("I don't understand your command.", channel);
 		}
 	}
 
-	private void ChangeVolume(Guild guild, String[] secondaryArg, MessageReceivedEvent event) {
+	private void ChangeVolume(Guild guild, String[] secondaryArg, MessageReceivedEvent event, MessageChannel channel) {
 		int volume = 50;
 		if (secondaryArg != null) {
 			try {
@@ -89,14 +96,14 @@ public class Audio extends Command {
 				String message = "Volume amount not specified. \n"
 						+ "Current volume: " + manager.getPlayer(guild).getAudioPlayer().getVolume();
 				
-				sendMessage(message, event);
+				sendMessage(message, channel);
 				return;
 			}
 		} else {
 			String message = "Volume amount not specified. \n"
 					+ "Current volume: " + manager.getPlayer(guild).getAudioPlayer().getVolume();
 			
-			sendMessage(message, event);
+			sendMessage(message, channel);
 			return;
 		}
 		
@@ -112,7 +119,7 @@ public class Audio extends Command {
 		return passTwo;
 	}
 
-	private void LoadTrack(Guild guild, User user, String trimmedNote, MessageReceivedEvent event) {
+	private void LoadTrack(Guild guild, User user, String trimmedNote, MessageReceivedEvent event, MessageChannel channel) {
 		
 		String source = trimmedNote;
 		
@@ -120,7 +127,7 @@ public class Audio extends Command {
 		
 		if(guild == null) return;
 		
-		JoinChannel(guild, user, event);
+		JoinChannel(guild, user, event, channel);
 		
 		if (source != null) {
 			manager.loadTrack(textChannel, source);
@@ -153,12 +160,12 @@ public class Audio extends Command {
 		}
 	}
 
-	private void JoinChannel(Guild guild, User user, MessageReceivedEvent event) {
+	private void JoinChannel(Guild guild, User user, MessageReceivedEvent event, MessageChannel channel) {
 		
 		if(!guild.getAudioManager().isConnected() && !guild.getAudioManager().isAttemptingToConnect()){
 			VoiceChannel voiceChannel = guild.getMember(user).getVoiceState().getChannel();
 			if(voiceChannel == null){
-				BotController.sendMessage("You must be connect to a voice channel.", event);;
+				BotController.sendMessage("You must be connect to a voice channel.", channel);;
 			}
 			guild.getAudioManager().openAudioConnection(voiceChannel);
 			
@@ -166,9 +173,17 @@ public class Audio extends Command {
 		}
 	}
 
-	@Override
-	public void sendMessage(String message, MessageReceivedEvent event) {
-		BotController.sendMessage(message, event);
+	public void sendMessage(EmbedBuilder builder, MessageChannel channel) {
+		BotController.sendMessage(builder, channel);
 	}
 
+	public void sendMessage(String message, MessageChannel channel) {
+		BotController.sendMessage(message, channel);
+	}
+
+	@Override
+	public boolean isAdultResricted() {
+		return false;
+	}
+	
 }

@@ -24,6 +24,7 @@ import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
 import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
@@ -34,33 +35,47 @@ public class BotController {
  * On program start, starts Aetreus
  * Used to call new messages and change bot "playing" status
  * */
+	
 	static AudioPlayerManager playerManager;
 	
 	private static JDA jda;
 	private static Guild guild;
 	private static Role adminRole;
+	private static Role nsfwRole;
 	
 	static boolean aetreusOnline;
 	
-	public BotController() {
-		StartBot();
+	
+	public static void main(String[] args) {
 		
-		//Meter.Init();
+		System.out.println("Start");
+		
+		//Loads config file, then runs StartBot()
+		ConfigController.Init();
+		
+		StartSystemTray();
+		
 	}
 	
 	public static JDA getJDA() {
 		return jda;
 	}
 	
-	private static void StartBot() {
+	static void StartBot() {
+		System.out.println("Starting Bot");
 		
 		try {
-			jda = new JDABuilder(AccountType.BOT).setToken(ConfigController.getBOT_TOKEN()).build();
+			jda = new JDABuilder(AccountType.BOT)
+					.setToken(ConfigController
+							.getBOT_TOKEN())
+					.build();
+			
 			jda.addEventListener(new BotListener());
 			
 			Command.init();
 			
-			SetPresence(ConfigController.getBOT_MESSAGE());
+			ResetPresence();
+			
 			aetreusOnline = true;
 			
 		} catch (LoginException | IllegalArgumentException e) {
@@ -71,6 +86,8 @@ public class BotController {
 	}
 	
 	public static void StartUpdateTimer() {
+		//Started by the message listener so that daily message function can be started properly
+		
 		int sleepTime = 900;
 		
 		DailyMessage.Init();
@@ -106,27 +123,24 @@ public class BotController {
 		return adminRole;
 	}
 	
+	public static Role getNSFWRole() {
+		return nsfwRole;
+	}
+	
 	private static void ShutdownBot() {
 		jda.shutdown();
 		System.exit(0);
 	}
 	
-	public static void sendMessage(String message, MessageReceivedEvent event) {
-		event.getChannel().sendMessage(message).queue();
+	public static void sendMessage(String message, MessageChannel channel) {
+		channel.sendMessage(message).queue();
 	}
 	
-	public static void sendMessage(EmbedBuilder builder, MessageReceivedEvent event) {
-		event.getChannel().sendMessage(builder.build()).queue();
+	public static void sendMessage(EmbedBuilder builder, MessageChannel channel) {
+		channel.sendMessage(builder.build()).queue();
 	}
 	
-	public static void main(String[] args) {
-		//Window.StartAppWindow(); //Testing New Window Function
-		System.out.println("Start");
-		ConfigController.Init();
-		
-		BotController botController = new BotController();
-		StartSystemTray();
-	}
+	
 
 	private static void StartSystemTray() {
 		if (!SystemTray.isSupported()) {
@@ -136,7 +150,7 @@ public class BotController {
 
 		    SystemTray tray = SystemTray.getSystemTray();
 		    Toolkit toolkit = Toolkit.getDefaultToolkit();
-		    Image image = toolkit.getImage("Ampersand.png"); //Default Icon
+		    Image image = toolkit.getImage("C:\\Users\\Rocin Rykor\\git\\Aetreus\\AetreusBot\\Ampersand.png"); //Default Icon
 		    //Image image = toolkit.getImage("WIP-Icon.png"); //Icon For testing
 
 		    PopupMenu menu = new PopupMenu();
@@ -152,7 +166,7 @@ public class BotController {
 		    MenuItem closeItem = new MenuItem("Exit");
 		    closeItem.addActionListener(new ActionListener() {
 		      public void actionPerformed(ActionEvent e) {
-		        System.exit(0);
+		        ShutdownBot();
 		      }
 		    });
 		    menu.add(closeItem);
@@ -169,5 +183,6 @@ public class BotController {
 	public static void InitVars() {
 		guild = (jda.getGuilds().get(0));
 		adminRole = jda.getRolesByName("Admins", true).get(0);
+		nsfwRole = jda.getRolesByName("Adult", true).get(0);
 	}
 }
