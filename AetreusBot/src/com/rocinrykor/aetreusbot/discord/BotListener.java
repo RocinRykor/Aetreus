@@ -80,53 +80,12 @@ public class BotListener extends ListenerAdapter{
 		
 		String rawInput = event.getMessage().getContentRaw();
 		boolean isBot = event.getAuthor().isBot();
+		String hasPrefix = CheckForPrefix(rawInput);
 		
-		/*
-		 * Old Code - Rewriting to change order of operations, allow for command forwarding.
-		 * 
-		 * if (rawInput.startsWith(ConfigController.getBOT_PREFIX()) && !isBot) {
-			
-			CommandContainer cmd = (CommandParser.parse(rawInput, event)); //Sends the message to be parsed
-			
-			boolean commandFound = false;
-			
-			for(Command command : Command.commands) {
-				if (command.compare(cmd.mainCommand)) {
-					commandFound = true;
-					
-					if (command.checkDeleteCallMessage()) {
-						DeleteCallMessage(event);
-					}
-					
-					if(command.checkChannelRestriction()) {
-						if (!isValidChannel(event)) {
-							DeleteCallMessage(event);
-							event.getAuthor().openPrivateChannel().complete().sendMessage(errorRestricted).queue();
-							return;
-						} 
-					}
-
-					if(command.hasPermission(cmd.user)) {
-						command.execute(cmd.primaryArg, cmd.secondaryArg, cmd.trimmedNote, cmd.event, cmd);
-					} else {
-						event.getChannel().sendMessage(cmd.user.getAsMention() + ", you are not allowed to use this command.").queue();
-					}
-					
-					break;
-				}
-			}
-			
-			if (commandFound) {
-				return;
-			}
-			
-			event.getChannel().sendMessage("Unknown Command").queue();
-		}
-		 * 
-		 * */
 		
-		if (rawInput.startsWith(ConfigController.getBOT_PREFIX()) && !isBot) {
-			CommandContainer cmd = (CommandParser.parse(rawInput, event)); //Sends the message to be parsed
+		
+		if (hasPrefix != null && !isBot) {
+			CommandContainer cmd = (CommandParser.parse(rawInput, hasPrefix, event)); //Sends the message to be parsed
 			
 			/*
 			 * Search the list of valid commands for a match.
@@ -203,6 +162,18 @@ public class BotListener extends ListenerAdapter{
 	}
 
 	
+	private String CheckForPrefix(String rawInput) {
+		
+		if (rawInput.startsWith(ConfigController.getBOT_PREFIX())) {
+			return ConfigController.getBOT_PREFIX();
+		} else if (rawInput.startsWith(ConfigController.getBOT_SECONDARY_PREFIX())) {
+			return ConfigController.getBOT_SECONDARY_PREFIX();
+		} else {
+			return null;
+		}
+
+	}
+
 	private boolean ChannelMatches(String currentChannel, ArrayList<String> ChannelsList) {
 		for (String channelName : ChannelsList) {
 			if(channelName.equalsIgnoreCase(currentChannel)) {

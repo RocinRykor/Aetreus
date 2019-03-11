@@ -21,7 +21,7 @@ import java.awt.event.ActionEvent;
 public class ConfigController {
 	private static JPasswordField txtFieldToken;
 	private static JTextField txtFieldPrefix;
-	private static JTextField txtFieldName;
+	private static JTextField txtFieldSecondaryPrefix;
 	private static JTextField txtFieldMessage;
 	/*
 	 * This is going to be the section that checks for a valid config file, generates one if needed, and loads on every subsequent startup
@@ -32,7 +32,7 @@ public class ConfigController {
 	
 	private static String BOT_TOKEN = ""; //Token for loading the bot.
 	private static String BOT_PREFIX = ""; //Prefix character for chat messages.
-	private static String BOT_NAME = ""; //Name for the bot
+	private static String BOT_SECONDARY_PREFIX = ""; //Name for the bot
 	private static String BOT_MESSAGE = ""; //Message for the bot, displays next to "Currently Playing:"
 	
 	static File file;
@@ -98,7 +98,7 @@ public class ConfigController {
 				
 				BOT_TOKEN = prop.getProperty("BOT_TOKEN");
 				BOT_PREFIX = prop.getProperty("BOT_PREFIX");
-				BOT_NAME = prop.getProperty("BOT_NAME");
+				BOT_SECONDARY_PREFIX = prop.getProperty("BOT_NAME");
 				BOT_MESSAGE = prop.getProperty("BOT_MESSAGE");
 			
 				System.out.println("Config Loaded");
@@ -170,23 +170,23 @@ public class ConfigController {
 		lblPrefixInfo.setBounds(10, 214, 268, 20);
 		frmFirstTimeSetup.getContentPane().add(lblPrefixInfo);
 		
-		JLabel lblName = new JLabel("BOT NAME:");
-		lblName.setFont(new Font("Segoe UI", Font.PLAIN, 11));
-		lblName.setBounds(10, 245, 100, 20);
-		frmFirstTimeSetup.getContentPane().add(lblName);
+		JLabel lblSecondaryPrefix = new JLabel("BOT 2ND PREFIX:");
+		lblSecondaryPrefix.setFont(new Font("Segoe UI", Font.PLAIN, 11));
+		lblSecondaryPrefix.setBounds(10, 245, 100, 20);
+		frmFirstTimeSetup.getContentPane().add(lblSecondaryPrefix);
 		
-		txtFieldName = new JTextField();
-		txtFieldName.setText("Aetreus");
-		txtFieldName.setFont(new Font("Segoe UI", Font.PLAIN, 11));
-		txtFieldName.setColumns(10);
-		txtFieldName.setBounds(114, 245, 164, 20);
-		frmFirstTimeSetup.getContentPane().add(txtFieldName);
+		txtFieldSecondaryPrefix = new JTextField();
+		txtFieldSecondaryPrefix.setText("!");
+		txtFieldSecondaryPrefix.setFont(new Font("Segoe UI", Font.PLAIN, 11));
+		txtFieldSecondaryPrefix.setColumns(10);
+		txtFieldSecondaryPrefix.setBounds(114, 245, 164, 20);
+		frmFirstTimeSetup.getContentPane().add(txtFieldSecondaryPrefix);
 		
-		JLabel lblNameInfo = new JLabel("Hold Cursor HERE for more info.");
-		lblNameInfo.setToolTipText("This is the name that the the bot will apear in the server as.\r\n\r\nDefault is \"Aetreus\"");
-		lblNameInfo.setFont(new Font("Segoe UI", Font.PLAIN, 11));
-		lblNameInfo.setBounds(10, 268, 268, 20);
-		frmFirstTimeSetup.getContentPane().add(lblNameInfo);
+		JLabel lblSecondaryPrefixInfo = new JLabel("Hold Cursor HERE for more info.");
+		lblSecondaryPrefixInfo.setToolTipText("This is the secondary prefix that the bot will use. Can be used for messages instead of the normal prefix.");
+		lblSecondaryPrefixInfo.setFont(new Font("Segoe UI", Font.PLAIN, 11));
+		lblSecondaryPrefixInfo.setBounds(10, 268, 268, 20);
+		frmFirstTimeSetup.getContentPane().add(lblSecondaryPrefixInfo);
 		
 		JLabel lblMessage = new JLabel("BOT MESSAGE:");
 		lblMessage.setFont(new Font("Segoe UI", Font.PLAIN, 11));
@@ -222,19 +222,19 @@ public class ConfigController {
 	}
 
 	protected static boolean GrabConfigInfo() {
-		String tempBotToken, tempBotPrefix, tempBotName, tempBotMessage;
+		String tempBotToken, tempBotPrefix, tempBotSecondaryPrefix, tempBotMessage;
 		tempBotToken = getTxtFieldToken().getText();
 		tempBotPrefix = getTxtFieldPrefix().getText();
-		tempBotName = getTxtFieldName().getText();
+		tempBotSecondaryPrefix = getTxtFieldSecondaryPrefix().getText();
 		tempBotMessage = getTxtFieldMessage().getText();
 		
 		System.out.println(tempBotToken);
 		System.out.println(tempBotPrefix);
-		System.out.println(tempBotName);
+		System.out.println(tempBotSecondaryPrefix);
 		System.out.println(tempBotMessage);
 		
-		if (PassEmptyCheck(tempBotToken, tempBotPrefix, tempBotName, tempBotMessage)) {
-			CreateConfigFile(tempBotToken, tempBotPrefix, tempBotName, tempBotMessage);
+		if (PassEmptyCheck(tempBotToken, tempBotPrefix, tempBotSecondaryPrefix, tempBotMessage)) {
+			CreateConfigFile(tempBotToken, tempBotPrefix, tempBotSecondaryPrefix, tempBotMessage);
 			return true;
 		} else {
 			return false;
@@ -276,8 +276,8 @@ public class ConfigController {
 		
 	}
 
-	public static JTextField getTxtFieldName() {
-		return txtFieldName;
+	public static JTextField getTxtFieldSecondaryPrefix() {
+		return txtFieldSecondaryPrefix;
 	}
 	public static JTextField getTxtFieldPrefix() {
 		return txtFieldPrefix;
@@ -297,8 +297,8 @@ public class ConfigController {
 		return BOT_PREFIX; 
 	}
 	
-	public static String getBOT_NAME() {
-		return BOT_NAME; 
+	public static String getBOT_SECONDARY_PREFIX() {
+		return BOT_SECONDARY_PREFIX; 
 	}
 	
 	public static String getBOT_MESSAGE() {
