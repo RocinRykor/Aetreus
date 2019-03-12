@@ -77,7 +77,7 @@ public class Baxter extends Command {
 			return;
 		} else if (primaryArg.equalsIgnoreCase("status")) {
 			ReportStatus(event);
-		} else if (baxterCommands.containsKey(primaryArg.toLowerCase())); {
+		} else if (baxterCommands.containsKey(primaryArg.toLowerCase())) {
 			Interaction(primaryArg, event);
 		}
 	}

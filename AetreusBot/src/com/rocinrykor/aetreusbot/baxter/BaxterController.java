@@ -25,6 +25,7 @@ public class BaxterController extends Thread {
 		}
 				
 		try {
+			System.out.println("Sorry this part is not currently working.");
 			//baxterJDA = new JDABuilder(AccountType.BOT).setToken(BotInfo.getBAXTER_TOKEN()).build();
 		} catch (Exception e) {
 			System.out.println("BAXTER JDA ERROR");

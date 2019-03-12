@@ -162,7 +162,7 @@ public class Audio extends Command {
 		if(!guild.getAudioManager().isConnected() && !guild.getAudioManager().isAttemptingToConnect()){
 			VoiceChannel voiceChannel = guild.getMember(user).getVoiceState().getChannel();
 			if(voiceChannel == null){
-				BotController.sendMessage("You must be connect to a voice channel.", channel);;
+				BotController.sendMessage("You must be connect to a voice channel.", channel);
 			}
 			guild.getAudioManager().openAudioConnection(voiceChannel);
 		}

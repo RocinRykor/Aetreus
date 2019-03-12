@@ -103,14 +103,14 @@ public class BotListener extends ListenerAdapter{
 					
 					if(!command.isAdult(cmd.user)) {
 						event.getAuthor().openPrivateChannel().complete()
-							.sendMessage(errorNSFW).queue();;
+							.sendMessage(errorNSFW).queue();
 						DeleteCallMessage(event);
 						return;
 					}
 					
 					if(!command.hasPermission(cmd.user)) {
 						event.getAuthor().openPrivateChannel().complete()
-							.sendMessage(errorPermissions).queue();;
+							.sendMessage(errorPermissions).queue();
 						DeleteCallMessage(event);
 						return;
 					}
