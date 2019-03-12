@@ -2,12 +2,12 @@ package com.rocinrykor.aetreusbot.baxter;
 
 public class Hygiene extends Meter {
 
-	private static String name = "Hygiene";
-	private static int meterLevel;
-	private static int decayRate = 5;
-	private static int regenRate = 0;
-	private static int regenAmount = 0;
-	private static boolean isRegenerating= false;
+	private String name = "Hygiene";
+	private int meterLevel;
+	private int decayRate = 5;
+	private int regenRate = 0;
+	private int regenAmount = 0;
+	private boolean isRegenerating= false;
 	
 	@Override
 	public String getName() {

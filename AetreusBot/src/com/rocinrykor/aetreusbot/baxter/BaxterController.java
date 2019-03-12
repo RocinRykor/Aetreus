@@ -1,8 +1,6 @@
 package com.rocinrykor.aetreusbot.baxter;
 
-import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.JDABuilder;
 import net.dv8tion.jda.core.entities.Game;
 
 public class BaxterController extends Thread {

@@ -1,33 +1,20 @@
 package com.rocinrykor.aetreusbot.gui;
 
-import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.JTabbedPane;
 import javax.swing.JPopupMenu;
 import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.security.GeneralSecurityException;
-import java.awt.Button;
 import java.awt.TextField;
-import java.awt.Choice;
 import java.awt.GridLayout;
-import javax.swing.JTextPane;
 import java.awt.TextArea;
-import javax.swing.SwingConstants;
-import java.awt.Label;
 
 public class Window {
 	private static TextArea consoleArea;
@@ -112,6 +99,7 @@ public class Window {
 	}
 
 
+	@SuppressWarnings("unused")
 	private static void addPopup(Component component, final JPopupMenu popup) {
 		component.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent e) {

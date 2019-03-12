@@ -2,12 +2,12 @@ package com.rocinrykor.aetreusbot.baxter;
 
 public class Sleep extends Meter {
 
-	private static String name = "Sleep";
-	private static int meterLevel;
-	private static int decayRate = 15;
-	private static int regenRate = 0;
-	private static int regenAmount = 0;
-	private static boolean isRegenerating= false;
+	private String name = "Sleep";
+	private int meterLevel;
+	private int decayRate = 15;
+	private int regenRate = 0;
+	private int regenAmount = 0;
+	private boolean isRegenerating= false;
 	
 	@Override
 	public String getName() {

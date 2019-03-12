@@ -2,12 +2,12 @@ package com.rocinrykor.aetreusbot.baxter;
 
 public class Playfulness extends Meter {
 
-	private static String name = "Playfulness";
-	private static int meterLevel;
-	private static int decayRate = 10;
-	private static int regenRate = 0;
-	private static int regenAmount = 0;
-	private static boolean isRegenerating= false;
+	private String name = "Playfulness";
+	private int meterLevel;
+	private int decayRate = 10;
+	private int regenRate = 0;
+	private int regenAmount = 0;
+	private boolean isRegenerating= false;
 	
 	@Override
 	public String getName() {
