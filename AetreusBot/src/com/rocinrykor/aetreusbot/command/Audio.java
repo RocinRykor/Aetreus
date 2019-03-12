@@ -1,14 +1,11 @@
 package com.rocinrykor.aetreusbot.command;
 
-import javax.swing.plaf.basic.BasicComboBoxUI.ComboBoxLayoutManager;
-
 import com.rocinrykor.aetreusbot.BotController;
 import com.rocinrykor.aetreusbot.command.CommandParser.CommandContainer;
 import com.rocinrykor.aetreusbot.music.MusicManager;
 
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
@@ -168,8 +165,6 @@ public class Audio extends Command {
 				BotController.sendMessage("You must be connect to a voice channel.", channel);;
 			}
 			guild.getAudioManager().openAudioConnection(voiceChannel);
-			
-			TextChannel textChannel = event.getTextChannel();
 		}
 	}
 

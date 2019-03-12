@@ -1,6 +1,5 @@
 package com.rocinrykor.aetreusbot.command;
 
-import java.awt.Color;
 import java.util.List;
 
 import com.rocinrykor.aetreusbot.BotController;

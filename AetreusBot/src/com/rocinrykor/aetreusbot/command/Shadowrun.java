@@ -226,7 +226,7 @@ public class Shadowrun extends Command {
 			{"Prime", "p", "Prime Runner Quality (4s are hits)", false},
 			{"Push", "l", "Spend Edge to add edge rating to roll", false, 0},
 			{"Gremlins", "g", "Gremlins Quality, reduces dice pool for glitch calculation", false, 0},
-			{"Versus", "vs", "Check agasint a second set of rolls, calculate net hits", false} //Not Implemented yet
+			{"Versus", "vs", "Check against a second set of rolls, calculate net hits", false} //Not Implemented yet
 		};
 	}
 

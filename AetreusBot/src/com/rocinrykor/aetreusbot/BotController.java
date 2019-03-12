@@ -13,7 +13,6 @@ import java.awt.event.ActionListener;
 import javax.security.auth.login.LoginException;
 import javax.swing.JOptionPane;
 
-import com.rocinrykor.aetreusbot.baxter.Meter;
 import com.rocinrykor.aetreusbot.command.Command;
 import com.rocinrykor.aetreusbot.discord.BotListener;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
@@ -26,7 +25,7 @@ import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.Role;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+
 
 public class BotController {
 	

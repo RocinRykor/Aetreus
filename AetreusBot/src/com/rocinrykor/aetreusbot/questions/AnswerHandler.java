@@ -20,7 +20,7 @@ public class AnswerHandler {
 	static String message;
 	static int userKey;
 	
-	public static ArrayList parseAnswer(User user, ArrayList<QuestionContainer> questions, String answer, String source, MessageReceivedEvent event, MessageChannel channel) {
+	public static ArrayList<Object> parseAnswer(User user, ArrayList<QuestionContainer> questions, String answer, String source, MessageReceivedEvent event, MessageChannel channel) {
 		message = "";
 		
 		String userReference = user.getId() + " - " + source;		
@@ -81,7 +81,7 @@ public class AnswerHandler {
 		return null;
 	}
 
-	private static ArrayList Finalize(String userReference, ArrayList<QuestionContainer> questions) {
+	private static ArrayList<Object> Finalize(String userReference, ArrayList<QuestionContainer> questions) {
 		System.out.println("Finished");
 		collectedAnswers = new ArrayList<>();
 		System.out.println(answerTable.size());

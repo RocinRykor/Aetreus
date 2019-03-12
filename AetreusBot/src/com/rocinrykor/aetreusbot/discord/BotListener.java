@@ -11,9 +11,7 @@ import com.rocinrykor.aetreusbot.command.Shadowrun;
 
 import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.events.ReadyEvent;
-import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.core.events.user.update.GenericUserPresenceEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
 public class BotListener extends ListenerAdapter{
@@ -97,6 +95,7 @@ public class BotListener extends ListenerAdapter{
 			 * Execute the command, with proper forwarding if needed
 			 * */
 			
+			@SuppressWarnings("unused")
 			boolean commandFound = false;
 			for(Command command : Command.commands) {
 				if (command.compare(cmd.mainCommand)) {
@@ -186,6 +185,7 @@ public class BotListener extends ListenerAdapter{
 	}
 
 
+	@SuppressWarnings("unused")
 	private boolean isRestrictedChannel(MessageReceivedEvent event) {
 		String currentChannel = event.getChannel().getName();
 		

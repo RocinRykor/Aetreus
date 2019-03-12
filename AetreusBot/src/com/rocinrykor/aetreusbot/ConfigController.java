@@ -222,8 +222,9 @@ public class ConfigController {
 	}
 
 	protected static boolean GrabConfigInfo() {
-		String tempBotToken, tempBotPrefix, tempBotSecondaryPrefix, tempBotMessage;
-		tempBotToken = getTxtFieldToken().getText();
+		char[] tempBotToken;
+		String tempBotPrefix, tempBotSecondaryPrefix, tempBotMessage;
+		tempBotToken = getTxtFieldToken().getPassword();
 		tempBotPrefix = getTxtFieldPrefix().getText();
 		tempBotSecondaryPrefix = getTxtFieldSecondaryPrefix().getText();
 		tempBotMessage = getTxtFieldMessage().getText();
@@ -240,7 +241,7 @@ public class ConfigController {
 			return false;
 		}
 	}
-	private static void CreateConfigFile(String tempBotToken, String tempBotPrefix, String tempBotName, String tempBotMessage) {
+	private static void CreateConfigFile(char[] tempBotToken, String tempBotPrefix, String tempBotName, String tempBotMessage) {
 		try {
 			file.createNewFile();
 		} catch (IOException e) {
@@ -248,7 +249,7 @@ public class ConfigController {
 		}
 		
 		//If file was created, sets the properties
-		prop.setProperty("BOT_TOKEN", tempBotToken);
+		prop.setProperty("BOT_TOKEN", tempBotToken.toString());
 		prop.setProperty("BOT_PREFIX", tempBotPrefix);
 		prop.setProperty("BOT_NAME", tempBotName);
 		prop.setProperty("BOT_MESSAGE", tempBotMessage);
@@ -267,8 +268,8 @@ public class ConfigController {
 		LoadConfigFile();
 	}
 
-	private static boolean PassEmptyCheck(String token, String prefix, String name, String message) {
-		if (token.length() == 0 || prefix.length() == 0 || name.length() == 0 || message.length() == 0) {
+	private static boolean PassEmptyCheck(char[] tempBotToken, String prefix, String name, String message) {
+		if (tempBotToken.toString().length() == 0 || prefix.length() == 0 || name.length() == 0 || message.length() == 0) {
 			return false;
 		} else {
 			return true;
