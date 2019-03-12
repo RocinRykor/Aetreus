@@ -1,14 +1,23 @@
 package com.rocinrykor.aetreusbot.command;
 
 import java.awt.Color;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Properties;
 
 import com.rocinrykor.aetreusbot.BotController;
 import com.rocinrykor.aetreusbot.command.CommandParser.CommandContainer;
 import com.rocinrykor.aetreusbot.discord.DiscordUtil;
 
 import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
@@ -71,6 +80,9 @@ public class Shadowrun extends Command {
 	boolean ruleAlwaysVerbose = false;
 	boolean ruleAutomaticGlitchPenalty = true;
 	
+	boolean userAlwaysVerbose = false;
+	boolean userAlwaysPrime = false;
+	
 	//Flags for rolling
 	Object[][] flagTable;
 	boolean flagVerbose, flagInitiative, flagExtended, flagEdgePushTheLimit, flagPrimeRunner, flagThresholdTest, flagGremlins, flagVersus;
@@ -97,6 +109,11 @@ public class Shadowrun extends Command {
 	int countMiss = 0;
 	int countHit = 0;
 	
+	//User Settings
+	static List<Member> memberList = null;
+	static HashMap<String, Boolean> userSettingsTable = new HashMap<>();
+	
+	
 	Color color;
 	
 	public Shadowrun() {
@@ -105,6 +122,97 @@ public class Shadowrun extends Command {
 		InitializePreviousRollsTable();
 	}
 	
+	//This is a function that I need to init after the bot is loaded so this function will be called after the onReady event
+	public static void ShadowrunPost() {
+		InitUserSettings();
+	}
+	
+	private static void InitUserSettings() {
+		File file;
+		Properties prop;
+		FileReader reader;
+		
+		String configFile;
+		
+		Guild guild = BotController.getGuild();
+		
+		memberList = guild.getMembersWithRoles(guild.getRolesByName("Tabletop RPG", true));
+		
+		//Initializes the file location of the config file set to C://User/USERNAME/Documents/Aetreus Bot/BotInfo.cfg"
+		String fileName = "Shadowrun User Settings.cfg";
+		String configDir = System.getProperty("user.home") + File.separator + "Documents" + File.separator + "Aetreus Bot";
+		configFile = configDir + File.separator + fileName;
+		
+		//Initializes Properties and FileReader
+		prop = new Properties();
+		reader = null;
+		
+		//Checks if directories of config file exist and create them if necessary.
+		File dir = new File(configDir);
+		if (!dir.exists()) {
+			dir.mkdirs();
+		}
+		
+		//Checks if the actual config files exists, creates if necessary.
+		file = new File(configFile);
+		
+		if (!file.exists()) {
+			try {
+				file.createNewFile();
+				PopulateNewConfig(configFile, prop, reader);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		try {
+			reader = new FileReader(configFile);
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		try {
+			prop.load(reader);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		for (Member member : memberList) {
+			String userID = member.getUser().getId();
+			
+			userSettingsTable.put(userID + "-AlwaysVerbose", Boolean.valueOf(prop.getProperty(userID + "-AlwaysVerbose")));
+			userSettingsTable.put(userID + "-AlwaysPrime", Boolean.valueOf(prop.getProperty(userID + "-AlwaysPrime")));
+		}
+		
+	}
+
+	private static void PopulateNewConfig(String configFile, Properties prop, FileReader reader) {
+		//If file was created, sets the properties
+		for (Member member : memberList) {
+			String userID = member.getUser().getId();
+			
+			prop.setProperty(userID + "-AlwaysVerbose", "false");
+			prop.setProperty(userID + "-AlwaysPrime", "false");
+			
+		}
+		
+		//Writes properties to the newly created file
+		try {
+			prop.store(new FileOutputStream(configFile), null);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		System.out.println("User Settings Loaded");
+	}
+
+
 	private void InitializePreviousRollsTable() {
 		previousRollTable = new HashMap<>();
 	}
@@ -118,7 +226,7 @@ public class Shadowrun extends Command {
 			{"Prime", "p", "Prime Runner Quality (4s are hits)", false},
 			{"Push", "l", "Spend Edge to add edge rating to roll", false, 0},
 			{"Gremlins", "g", "Gremlins Quality, reduces dice pool for glitch calculation", false, 0},
-			{"Versus", "vs", "Check agasint a second set of rolls, calculate net hits", false}
+			{"Versus", "vs", "Check agasint a second set of rolls, calculate net hits", false} //Not Implemented yet
 		};
 	}
 
@@ -148,7 +256,7 @@ public class Shadowrun extends Command {
 			sendMessage(helpMessage(), channel);
 			return;
 		} else if (primaryArg.equalsIgnoreCase("settings")) {
-			ManageSettings(event);
+			ManageSettings(secondaryArg, event);
 			return;
 		} else if (primaryArg.equalsIgnoreCase("reroll")) {
 			SecondChance(event, channel);
@@ -161,6 +269,8 @@ public class Shadowrun extends Command {
 		SetAllFlagsFalse();
 		
 		CheckFlags(secondaryArg);
+		LoadUserSettings(event);
+		OverwriteFlags();
 		
 		if (CheckDigit(primaryArg)) {
 			BeginRoller(primaryArg, event, channel);
@@ -169,6 +279,26 @@ public class Shadowrun extends Command {
 					+ "Please use \"&sr help\" for more info";
 			sendMessage(message, channel);
 		}
+	}
+
+	private void OverwriteFlags() {
+		if (userAlwaysPrime) {
+			flagPrimeRunner = true;
+		}
+		
+		if(userAlwaysVerbose) {
+			flagVerbose = true;
+		}
+	}
+
+	private void LoadUserSettings(MessageReceivedEvent event) {
+		String userID = event.getAuthor().getId();
+		
+		String keyVerbose = userID + "-AlwaysVerbose";
+		String keyPrime = userID + "-AlwaysPrime";
+		
+		userAlwaysVerbose = userSettingsTable.get(keyVerbose);
+		userAlwaysPrime = userSettingsTable.get(keyPrime);
 	}
 
 	private void BeginRoller(String primaryArg, MessageReceivedEvent event, MessageChannel channel) {
@@ -470,6 +600,9 @@ public class Shadowrun extends Command {
 		for (int i = 0; i < flagTable.length; i++) {
 			flagTable[i][3] = false;
 		}
+		
+		userAlwaysPrime = false;
+		userAlwaysVerbose = false;
 	}
 
 	private void PushTheLimit(String[] secondaryArg, MessageReceivedEvent event) {
@@ -549,9 +682,27 @@ public class Shadowrun extends Command {
 		sendMessage(builder, channel);
 	}
 
-	private void ManageSettings(MessageReceivedEvent event) {
+	private void ManageSettings(String[] secondaryArg, MessageReceivedEvent event) {
+		CheckFlags(secondaryArg);
+		String userID = event.getAuthor().getId();
+		
+		if (flagVerbose) {
+			InvertSetting(userID, "-AlwaysVerbose");
+		}
+		
+		if (flagPrimeRunner) {
+			InvertSetting(userID, "-AlwaysPrime");
+		}
+		
 	}
 	
+	private void InvertSetting(String userID, String string) {
+		String key = userID + string;
+		boolean temp = userSettingsTable.get(key);
+		
+		userSettingsTable.replace(key, !temp);
+	}
+
 	private void StoreResults(int dicePool, MessageReceivedEvent event) {
 		User user = event.getAuthor();
 		

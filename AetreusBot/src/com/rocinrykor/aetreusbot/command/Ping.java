@@ -1,11 +1,14 @@
 package com.rocinrykor.aetreusbot.command;
 
 import java.awt.Color;
+import java.util.List;
 
 import com.rocinrykor.aetreusbot.BotController;
 import com.rocinrykor.aetreusbot.command.CommandParser.CommandContainer;
 
 import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
@@ -65,7 +68,17 @@ public class Ping extends Command {
 			message = helpMessage();
 		}
 		
+		TestFunction();
+		
 		sendMessage(message, channel);
+	}
+
+	private void TestFunction() {
+		Guild guild = BotController.getGuild();
+		
+		List<Member> members = guild.getMembersWithRoles(guild.getRolesByName("Tabletop RPG", true));
+		
+		System.out.println(members);
 	}
 
 	public void sendMessage(EmbedBuilder builder, MessageChannel channel) {

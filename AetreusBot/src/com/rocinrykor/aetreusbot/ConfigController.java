@@ -83,28 +83,28 @@ public class ConfigController {
 
 	private static void LoadConfigFile() {
 		//Loads the valid file
-				try {
-					reader = new FileReader(configFile);
-				} catch (FileNotFoundException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-				try {
-					prop.load(reader);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				
-				BOT_TOKEN = prop.getProperty("BOT_TOKEN");
-				BOT_PREFIX = prop.getProperty("BOT_PREFIX");
-				BOT_SECONDARY_PREFIX = prop.getProperty("BOT_NAME");
-				BOT_MESSAGE = prop.getProperty("BOT_MESSAGE");
-			
-				System.out.println("Config Loaded");
-				
-				//Once everything is loaded start the bot
-				BotController.StartBot();
+		try {
+			reader = new FileReader(configFile);
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		try {
+			prop.load(reader);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		BOT_TOKEN = prop.getProperty("BOT_TOKEN");
+		BOT_PREFIX = prop.getProperty("BOT_PREFIX");
+		BOT_SECONDARY_PREFIX = prop.getProperty("BOT_NAME");
+		BOT_MESSAGE = prop.getProperty("BOT_MESSAGE");
+	
+		System.out.println("Config Loaded");
+		
+		//Once everything is loaded start the bot
+		BotController.StartBot();
 	}
 
 	private static void RunFirstTimeSetup() {
