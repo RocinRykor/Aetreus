@@ -113,6 +113,9 @@ public class Shadowrun extends Command {
 	static List<Member> memberList = null;
 	static HashMap<String, Boolean> userSettingsTable = new HashMap<>();
 	
+	static Properties _prop;
+	static String _configFile;
+	
 	
 	Color color;
 	
@@ -185,6 +188,9 @@ public class Shadowrun extends Command {
 			userSettingsTable.put(userID + "-AlwaysPrime", Boolean.valueOf(prop.getProperty(userID + "-AlwaysPrime")));
 		}
 		
+		_prop = prop;
+		_configFile = configFile;
+		
 	}
 
 	private static void PopulateNewConfig(String configFile, Properties prop, FileReader reader) {
@@ -256,7 +262,7 @@ public class Shadowrun extends Command {
 			sendMessage(helpMessage(), channel);
 			return;
 		} else if (primaryArg.equalsIgnoreCase("settings")) {
-			ManageSettings(secondaryArg, event);
+			ManageSettings(secondaryArg, event, channel);
 			return;
 		} else if (primaryArg.equalsIgnoreCase("reroll")) {
 			SecondChance(event, channel);
@@ -682,20 +688,48 @@ public class Shadowrun extends Command {
 		sendMessage(builder, channel);
 	}
 
-	private void ManageSettings(String[] secondaryArg, MessageReceivedEvent event) {
+	private void ManageSettings(String[] secondaryArg, MessageReceivedEvent event, MessageChannel channel) {
 		CheckFlags(secondaryArg);
 		String userID = event.getAuthor().getId();
 		
+		String outputSettings = "Settings: \n";
+		
 		if (flagVerbose) {
 			InvertSetting(userID, "-AlwaysVerbose");
+			SaveChange(userID, "-AlwaysVerbose", GetSettings(userID, "-AlwaysVerbose"));
 		}
 		
 		if (flagPrimeRunner) {
 			InvertSetting(userID, "-AlwaysPrime");
+			SaveChange(userID, "-AlwaysPrime", GetSettings(userID, "-AlwaysPrime"));
 		}
+		
+		outputSettings += "Always Verbose: " + GetSettings(userID, "-AlwaysVerbose") + "\n"
+				+ "Always Prime: " + GetSettings(userID, "-AlwaysPrime");
+		
+		sendMessage(outputSettings, channel);
 		
 	}
 	
+	private String GetSettings(String userID, String string) {
+		return userSettingsTable.get(userID + string).toString();
+	}
+
+	private void SaveChange(String userID, String flag, String output) {
+		_prop.setProperty(userID + flag, output);
+		
+	//Writes properties to the newly created file
+	try {
+		_prop.store(new FileOutputStream(_configFile), null);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 	private void InvertSetting(String userID, String string) {
 		String key = userID + string;
 		boolean temp = userSettingsTable.get(key);
