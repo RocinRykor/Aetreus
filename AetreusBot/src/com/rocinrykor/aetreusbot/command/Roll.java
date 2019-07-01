@@ -8,12 +8,12 @@ import javax.script.ScriptException;
 
 import com.rocinrykor.aetreusbot.BotController;
 import com.rocinrykor.aetreusbot.command.CommandParser.CommandContainer;
-import com.rocinrykor.aetreusbot.utils.ArgCountChecker;
 import com.rocinrykor.aetreusbot.utils.RollTracker;
 
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import studio.rrprojects.aetreusbot.utils.ArgCountChecker;
 
 public class Roll extends Command {
 

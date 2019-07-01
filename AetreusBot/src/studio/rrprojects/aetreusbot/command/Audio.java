@@ -1,27 +1,24 @@
-package com.rocinrykor.aetreusbot.command;
-
-import com.rocinrykor.aetreusbot.BotController;
-import com.rocinrykor.aetreusbot.command.CommandParser.CommandContainer;
-import com.rocinrykor.aetreusbot.music.MusicManager;
+package studio.rrprojects.aetreusbot.command;
 
 import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.entities.Channel;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.entities.VoiceChannel;
+import net.dv8tion.jda.core.events.Event;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import studio.rrprojects.aetreusbot.command.CommandParser.CommandContainer;
+import studio.rrprojects.aetreusbot.discord.BotListener;
+import studio.rrprojects.aetreusbot.music.MusicManager;
+import studio.rrprojects.aetreusbot.utils.NewMessage;
 
 public class Audio extends Command {
 
 	@Override
 	public String getName() {
 		return "Audio";
-	}
-
-	@Override
-	public String getDescription() {
-		return "Plays sounds in the voice channel of the user";
 	}
 
 	@Override
@@ -32,16 +29,6 @@ public class Audio extends Command {
 	@Override
 	public String getHomeChannel() {
 		return "bottesting";
-	}
-
-	@Override
-	public String helpMessage() {
-		return "Ever want to play a sound to the entire voice channel? \n"
-				+ "Perhaps something to announce to everyone that you have arrived \n"
-				+ "Maybe, you wish to sing a song, or delcare the longevity of various musical genres. \n"
-				+ "Well then, never fear, because I am here! \n\n"
-				+ "To designate a song to play type in the the following command \"&audio play\" and then put a link to the track withen quotation marks. \n"
-				+ "Example &audio play \"https://www.youtube.com/watch?v=ttKn1eGKTew\"";
 	}
 
 	@Override
@@ -62,29 +49,36 @@ public class Audio extends Command {
 	private final MusicManager manager = new MusicManager();
 
 	@Override
-	public void execute(String primaryArg, String[] secondaryArg, String trimmedNote, MessageReceivedEvent event,
-			CommandContainer cmd, MessageChannel channel) {
-		
+	public void executeMain(CommandContainer cmd) {
+		String primaryArg = cmd.MAIN_ARG;
+		Channel channel = cmd.CHANNEL;
+		Guild guild = channel.getGuild();
+		MessageReceivedEvent event = BotListener._event;
+
 		if (primaryArg.equalsIgnoreCase("help")) {
-			sendMessage(helpMessage(), channel);
+			SendMessage(getHelpDescription(), channel);
 			return;
 		} else if (primaryArg.equalsIgnoreCase("join")) {
-			JoinChannel(cmd.guild, cmd.user, event, channel);
-			manager.loadTrack(event.getTextChannel(), "C:\\Users\\Rocin Rykor\\Documents\\Aetreus Bot\\Audio Tracks\\I_AM_HERE.mp3");
+			JoinChannel(cmd);
+			manager.loadTrack(guild.getTextChannelsByName(getHomeChannel(), true).get(0), "C:\\Users\\Rocin Rykor\\Documents\\Aetreus Bot\\Audio Tracks\\I_AM_HERE.mp3");
 		} else if (primaryArg.equalsIgnoreCase("leave")) {
-			LeaveChannel(cmd.guild);
+			LeaveChannel(cmd);
 		} else if (primaryArg.equalsIgnoreCase("play")) {
-			LoadTrack(cmd.guild, cmd.user, trimmedNote, event, channel);
+			LoadTrack(cmd);
 		} else if (primaryArg.equalsIgnoreCase("skip")) {
-			SkipTrack(cmd.guild, event);
+			SkipTrack(cmd);
 		} else if (primaryArg.equalsIgnoreCase("volume")) {
-			ChangeVolume(cmd.guild, secondaryArg, event, channel);
+			ChangeVolume(cmd);
 		} else {
-			sendMessage("I don't understand your command.", channel);
+			SendMessage("I don't understand your command.", channel);
 		}
 	}
 
-	private void ChangeVolume(Guild guild, String[] secondaryArg, MessageReceivedEvent event, MessageChannel channel) {
+	private void ChangeVolume(CommandContainer cmd) {
+		String[] secondaryArg = cmd.SECONDARY_ARG;
+		Channel channel = cmd.CHANNEL;
+		Guild guild = channel.getGuild();
+		
 		int volume = 50;
 		if (secondaryArg != null) {
 			try {
@@ -93,14 +87,14 @@ public class Audio extends Command {
 				String message = "Volume amount not specified. \n"
 						+ "Current volume: " + manager.getPlayer(guild).getAudioPlayer().getVolume();
 				
-				sendMessage(message, channel);
+				SendMessage(message, channel);
 				return;
 			}
 		} else {
 			String message = "Volume amount not specified. \n"
 					+ "Current volume: " + manager.getPlayer(guild).getAudioPlayer().getVolume();
 			
-			sendMessage(message, channel);
+			SendMessage(message, channel);
 			return;
 		}
 		
@@ -116,15 +110,17 @@ public class Audio extends Command {
 		return passTwo;
 	}
 
-	private void LoadTrack(Guild guild, User user, String trimmedNote, MessageReceivedEvent event, MessageChannel channel) {
-		
-		String source = trimmedNote;
-		
-		TextChannel textChannel = event.getTextChannel();
+	private void LoadTrack(CommandContainer cmd) {
+		String[] secondaryArg = cmd.SECONDARY_ARG;
+		Channel channel = cmd.CHANNEL;
+		Guild guild = channel.getGuild();
+		User user = cmd.AUTHOR;
+		String source = cmd.TRIMMED_NOTE;
+		TextChannel textChannel = (TextChannel) cmd.CHANNEL;
 		
 		if(guild == null) return;
 		
-		JoinChannel(guild, user, event, channel);
+		JoinChannel(cmd);
 		
 		if (source != null) {
 			manager.loadTrack(textChannel, source);
@@ -135,11 +131,16 @@ public class Audio extends Command {
 		}
 	}
 
-	private void SkipTrack(Guild guild, MessageReceivedEvent event) {
+	private void SkipTrack(CommandContainer cmd) {
+		String[] secondaryArg = cmd.SECONDARY_ARG;
+		Channel channel = cmd.CHANNEL;
+		Guild guild = channel.getGuild();
+		User user = cmd.AUTHOR;
+		TextChannel textChannel = (TextChannel) cmd.CHANNEL;
+		
 		/**/
 		String source = "C:\\Users\\Rocin Rykor\\Documents\\Aetreus Bot\\ForceStop.wav";
 		System.out.println("Attempting to skip track.");
-		TextChannel textChannel = event.getTextChannel();
 		manager.loadTrack(textChannel, source);
 		
 		try {
@@ -151,34 +152,38 @@ public class Audio extends Command {
 		manager.getPlayer(guild).skipTrack();
 	}
 
-	private void LeaveChannel(Guild guild) {
+	private void LeaveChannel(CommandContainer cmd) {
+		Guild guild = cmd.CHANNEL.getGuild();
 		if (guild.getAudioManager().isConnected()) {
 			guild.getAudioManager().closeAudioConnection();
 		}
 	}
 
-	private void JoinChannel(Guild guild, User user, MessageReceivedEvent event, MessageChannel channel) {
+	private void JoinChannel(CommandContainer cmd) {
+		Guild guild = cmd.CHANNEL.getGuild();
+		User user = cmd.AUTHOR;	
 		
 		if(!guild.getAudioManager().isConnected() && !guild.getAudioManager().isAttemptingToConnect()){
 			VoiceChannel voiceChannel = guild.getMember(user).getVoiceState().getChannel();
 			if(voiceChannel == null){
-				BotController.sendMessage("You must be connect to a voice channel.", channel);
+				SendMessage("You must be connect to a voice channel.", cmd.DESTINATION);
 			}
 			guild.getAudioManager().openAudioConnection(voiceChannel);
 		}
 	}
 
-	public void sendMessage(EmbedBuilder builder, MessageChannel channel) {
-		BotController.sendMessage(builder, channel);
-	}
-
-	public void sendMessage(String message, MessageChannel channel) {
-		BotController.sendMessage(message, channel);
+	private void SendMessage(String message, Channel DESTINATION) {
+		NewMessage.send(message, DESTINATION);
 	}
 
 	@Override
-	public boolean isAdultResricted() {
-		return false;
+	public String getHelpDescription() {
+		return "Ever want to play a sound to the entire voice channel? \n"
+				+ "Perhaps something to announce to everyone that you have arrived \n"
+				+ "Maybe, you wish to sing a song, or delcare the longevity of various musical genres. \n"
+				+ "Well then, never fear, because I am here! \n\n"
+				+ "To designate a song to play type in the the following command \"&audio play\" and then put a link to the track withen quotation marks. \n"
+				+ "Example &audio play \"https://www.youtube.com/watch?v=ttKn1eGKTew\"";
 	}
 	
 }

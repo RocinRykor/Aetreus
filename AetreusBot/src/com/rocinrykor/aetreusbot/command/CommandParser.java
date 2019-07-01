@@ -16,7 +16,7 @@ public class CommandParser {
 		String[] arg; //All arguments before being categorized
 		String mainCommand = null; //Main action the bot will take such as rolling or managing items and equipment -Required-
 		String primaryArg = null; //This is the main argument that will tell the bot what to do with the main action -Required-
-		String secondaryArg[] = null; //Any additional optional arguments, if using can have 1 or more of these -Not Always Required-
+		String[] secondaryArg = null; //Any additional optional arguments, if using can have 1 or more of these -Not Always Required-
 		String trimmedNote = null; //Note string minus quotation marks, will be passed as its own arg for description purposes -Not Required-
 		
 		if (beheadedString.contains("\"")) { //Check if beheaded string has a note and if so extract it.

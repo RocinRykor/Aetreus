@@ -10,6 +10,7 @@ import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import studio.rrprojects.aetreusbot.command.Audio;
 
 public abstract class Command {
 
@@ -23,7 +24,6 @@ public abstract class Command {
 		commands.add(new Roll());
 		commands.add(new Shadowrun());
 		commands.add(new Delete());
-		commands.add(new Audio());
 		commands.add(new Flood());
 		commands.add(new Talk());
 		commands.add(new Nyan());

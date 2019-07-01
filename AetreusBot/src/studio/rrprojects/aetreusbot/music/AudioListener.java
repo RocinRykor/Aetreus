@@ -1,4 +1,4 @@
-package com.rocinrykor.aetreusbot.music;
+package studio.rrprojects.aetreusbot.music;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -29,7 +29,7 @@ public class AudioListener extends AudioEventAdapter {
 	public void nextTrack(){
 		 if(tracks.isEmpty()){
 			if(player.getGuild().getAudioManager().getConnectedChannel() != null)
-				BotController.ResetPresence();
+				//BotController.ResetPresence();
 			return;
 		}
 		

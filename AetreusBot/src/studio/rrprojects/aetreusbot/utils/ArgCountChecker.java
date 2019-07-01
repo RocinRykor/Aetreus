@@ -1,4 +1,4 @@
-package com.rocinrykor.aetreusbot.utils;
+package studio.rrprojects.aetreusbot.utils;
 
 public class ArgCountChecker {
 

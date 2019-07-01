@@ -44,8 +44,8 @@ public class BotController {
 	
 	static boolean aetreusOnline;
 	
-	
-	public static void main(String[] args) {
+	/*
+	 * public static void main(String[] args) {
 		
 		System.out.println("Start");
 		
@@ -55,6 +55,7 @@ public class BotController {
 		StartSystemTray();
 		
 	}
+	 * */
 	
 	public static JDA getJDA() {
 		return jda;

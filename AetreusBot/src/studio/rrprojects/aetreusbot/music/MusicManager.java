@@ -1,4 +1,4 @@
-package com.rocinrykor.aetreusbot.music;
+package studio.rrprojects.aetreusbot.music;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -39,7 +39,7 @@ public class MusicManager {
 			
 			@Override
 			public void trackLoaded(AudioTrack track) {
-				BotController.SetPresence(track.getInfo().title);
+				//BotController.SetPresence(track.getInfo().title);
 				player.playTrack(track);
 			}
 			
