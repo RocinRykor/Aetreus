@@ -3,7 +3,7 @@ package studio.rrprojects.aetreusbot.shadowrun;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import studio.rrprojects.aetreusbot.command.Shadowrun.RollContainer;
+import studio.rrprojects.aetreusbot.shadowrun.Shadowrun.RollContainer;
 
 public class BasicRoll {
 
@@ -13,10 +13,6 @@ public class BasicRoll {
 	
 	// Roll Tracking
 	static ArrayList<Integer> rollResults = new ArrayList<>();
-	
-	public BasicRoll() {
-		InitializeRollTables();
-	}
 	
 	public static void InitializeRollTables() {
 		basicRollTable.put(1, "One");
@@ -36,28 +32,31 @@ public class BasicRoll {
 	
 	public static RollContainer Roll(RollContainer rollContainer) {
 		int dicePool = rollContainer.dicePool;
+		int countOne = rollContainer.countOne;
+		int countMiss = rollContainer.countMiss;
+		int countHit = rollContainer.countHit;
+		int explodingPool = rollContainer.explodingPool;
 		
-		boolean isGlitch = false;
-		boolean isCritGlitch = false;
+		boolean flagPrimeRunner = rollContainer.flagPrimeRunner;
 		
-		int countOne = 0;
-		int countMiss = 0;
-		int countHit = 0;
+		rollResults.clear();
 		
 		String parseRoll;
 		
 		for (int i = 0; i < dicePool; i++) {
 			rollResults.add(i, RollDice());
 			
-			/*
-			 * if (flagPrimeRunner) {
-				parseRoll = primeRollTable.get(rollResults.get(i));
-			} else {
-				parseRoll = basicRollTable.get(rollResults.get(i));
-			}
-			 * */
+			int currentRoll = rollResults.get(i);
 			
-			parseRoll = basicRollTable.get(rollResults.get(i));
+			if (currentRoll == 6) {
+				explodingPool += 1;
+			}
+			
+			if (flagPrimeRunner) {
+				parseRoll = primeRollTable.get(currentRoll);
+			} else {
+				parseRoll = basicRollTable.get(currentRoll);
+			}
 			
 			if (parseRoll.equals("One")) {
 				countOne += 1;
@@ -66,20 +65,59 @@ public class BasicRoll {
 			} else if (parseRoll.equals("Hit")) {
 				countHit += 1;
 			}
+			
 		}
 		
 		rollContainer.countOne = countOne;
 		rollContainer.countMiss = countMiss;
 		rollContainer.countHit = countHit;
+		rollContainer.explodingPool = explodingPool;
 		
 		rollContainer.rollResults = rollResults;
 		
 		return rollContainer;
 	}
 	
+	
+	
 	private static Integer RollDice() {
 		int dieValue = (int) ((Math.random() * 6) + 1);
 		return dieValue;
+	}
+
+	public static RollContainer ExplodingSixesRoller(RollContainer rollContainer) {
+		int dicePool = rollContainer.explodingPool;
+		System.out.println("Exploding Dice:" + dicePool);
+		boolean flagPrimeRunner = rollContainer.flagPrimeRunner;
+		int countHit = 0;
+		
+		String parseRoll;
+		
+		for (int i = 0; i < dicePool; i++) {
+			rollResults.add(i, RollDice());
+			
+			int currentRoll = rollResults.get(i);
+			System.out.println(currentRoll);
+			
+			if (currentRoll == 6) {
+				dicePool += 1;
+			}
+			
+			if (flagPrimeRunner) {
+				parseRoll = primeRollTable.get(currentRoll);
+			} else {
+				parseRoll = basicRollTable.get(currentRoll);
+			}
+			
+			if (parseRoll.equals("Hit")) {
+				countHit += 1;
+			}
+		}
+		
+		rollContainer.countHit += countHit;
+		rollContainer.rollResults = rollResults;
+		
+		return rollContainer;
 	}
 
 }

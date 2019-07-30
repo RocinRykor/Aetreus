@@ -1,31 +1,18 @@
-package studio.rrprojects.aetreusbot.command;
+package studio.rrprojects.aetreusbot.shadowrun;
 
-import java.awt.Color;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Properties;
 
-import com.rocinrykor.aetreusbot.command.Shadowrun.RollContainer;
+import com.rocinrykor.aetreusbot.command.Roll;
 
-import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Channel;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.User;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
-import studio.rrprojects.aetreusbot.Controller;
+import studio.rrprojects.aetreusbot.command.Command;
 import studio.rrprojects.aetreusbot.command.CommandParser.CommandContainer;
-import studio.rrprojects.aetreusbot.shadowrun.BasicRoll;
 import studio.rrprojects.aetreusbot.utils.NewMessage;
 
 public class Shadowrun extends Command{
+	HashMap<User, RollContainer> previousRollTable = new HashMap<>();
 
 	@Override
 	public String getName() {
@@ -67,6 +54,7 @@ public class Shadowrun extends Command{
 	
 	public Shadowrun() {
 		BasicRoll.InitializeRollTables();
+		FlagHandler.InitFlags();
 	}
 	
 	public void executeMain(CommandContainer cmd) {
@@ -74,6 +62,9 @@ public class Shadowrun extends Command{
 		
 		if (mainArg.equalsIgnoreCase("help")) {
 			executeHelpFunction(cmd);
+			return;
+		} else if (mainArg.equalsIgnoreCase("reroll")){
+			executeRerollFunction(cmd);
 			return;
 		}
 		
@@ -85,24 +76,84 @@ public class Shadowrun extends Command{
 		
 		RollContainer rollContainer = CreateBlankRollContainer();
 		
+		rollContainer = FlagHandler.ProcessFlags(rollContainer, cmd.SECONDARY_ARG);
+		
+		if (FlagHandler.CheckFlag("Prime")) {
+			rollContainer.flagPrimeRunner = true;
+		}
+		
 		rollContainer.dicePool = Integer.parseInt(mainArg);
 		
-		rollContainer = BasicRoll.Roll(rollContainer);
+		//Check for flags that require different rolling functions
+		if (FlagHandler.CheckFlag("Initiative")) {
+			String message = InitiativeRoller.Roll(rollContainer, cmd);
+			SendMessage(message, cmd.DESTINATION);
+			return;
+		} else if (FlagHandler.CheckFlag("Extended")) {
+			rollContainer = ExtendedRoller.Roll(rollContainer, cmd);
+		} else {
+			rollContainer = BasicRoll.Roll(rollContainer);
+			if (FlagHandler.CheckFlag("Edge")) {
+				rollContainer = BasicRoll.ExplodingSixesRoller(rollContainer);
+			}
+		}
 		
-		String message = String.format("Roll for %s: \n"
-				+ "Ones: %s \n"
-				+ "Misses: %s \n"
-				+ "Hits: %s", cmd.AUTHOR.getName(), rollContainer.countOne, rollContainer.countMiss, rollContainer.countHit);
+		StoreResults(rollContainer, cmd);
+		
+		String message = BuildMessage(rollContainer, cmd);
 		
 		SendMessage(message, cmd.DESTINATION);
 	}
 		
+	private void executeRerollFunction(CommandContainer cmd) {
+		if (!previousRollTable.containsKey(cmd.AUTHOR)){
+			String message = "Sorry, but you don't seem to have a revious roll for me to reroll";
+			SendMessage(message, cmd.DESTINATION);
+			return;
+		} 
+		
+		RollContainer rollContainer = previousRollTable.get(cmd.AUTHOR);
+		int tempDicePool = rollContainer.dicePool;
+		rollContainer.dicePool = rollContainer.countMiss + rollContainer.countOne;
+		System.out.println("Dice Pool: " + rollContainer.dicePool);
+		rollContainer.countOne = 0;
+		rollContainer.countMiss = 0;
+		
+		rollContainer = BasicRoll.Roll(rollContainer);
+		
+		rollContainer.dicePool = tempDicePool;
+		
+		String message = BuildMessage(rollContainer, cmd);
+		SendMessage(message, cmd.DESTINATION);
+	}
+
+	private String BuildMessage(RollContainer rollContainer, CommandContainer cmd) {
+		String message = String.format("Roll for %s: \n"
+				+ "Hits: %s \n"
+				+ "Misses: %s \n"
+				+ "Ones: %s \n", cmd.AUTHOR.getName(), rollContainer.countHit, rollContainer.countMiss, rollContainer.countOne);
+		
+		if (FlagHandler.CheckFlag("Verbose")) {
+			message += rollContainer.rollResults.toString();
+		}
+		
+		return message;
+	}
+
 	private boolean CheckForValidDigit(String input) {
 		try {
 			Integer.parseInt(input);
 			return true;
 		} catch (Exception e) {
 			return false;
+		}
+	}
+	
+	private void StoreResults(RollContainer rollContainer, CommandContainer cmd) {
+		if (previousRollTable.containsKey(cmd.AUTHOR)) {
+			previousRollTable.replace(cmd.AUTHOR, rollContainer);
+		} else {
+			previousRollTable.put(cmd.AUTHOR, rollContainer);
 		}
 	}
 
@@ -114,7 +165,7 @@ public class Shadowrun extends Command{
 		/*
 		 * This will be used to store all the information about the rolls as the bot progresses along each step of the rolling function
 		 * */
-		return new RollContainer(0, 0, 0, 0, null, false, false, false);
+		return new RollContainer(0, 0, 0, 0, 0, null, false, false, false);
 	}
 
 	private void SendMessage(String message, User user) {
@@ -130,14 +181,16 @@ public class Shadowrun extends Command{
 		public int countOne;
 		public int countMiss;
 		public int countHit;
+		public int explodingPool;
 		public ArrayList<Integer> rollResults;
 		public boolean isGlitch, isCritGlitch, flagPrimeRunner;
 		
-		public RollContainer(int dicePool, int countOne, int countMiss, int countHit, ArrayList<Integer> rollResults, boolean isGlitch, boolean isCritGlitch, boolean flagPrimeRunner) {
+		public RollContainer(int dicePool, int countOne, int countMiss, int countHit, int explodingPool, ArrayList<Integer> rollResults, boolean isGlitch, boolean isCritGlitch, boolean flagPrimeRunner) {
 			this.dicePool = dicePool;
 			this.countOne = countOne;
 			this.countMiss = countMiss;
 			this.countHit = countHit;
+			this.explodingPool = explodingPool;
 			this.rollResults = rollResults;
 			this.isGlitch = isGlitch;
 			this.isCritGlitch = isCritGlitch;

@@ -6,8 +6,8 @@ import com.rocinrykor.aetreusbot.BotController;
 import com.rocinrykor.aetreusbot.ConfigController;
 import com.rocinrykor.aetreusbot.command.Command;
 import com.rocinrykor.aetreusbot.command.CommandParser;
-import com.rocinrykor.aetreusbot.command.CommandParser.CommandContainer;
 import com.rocinrykor.aetreusbot.command.Shadowrun;
+import com.rocinrykor.aetreusbot.command.CommandParser.CommandContainer;
 
 import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.events.ReadyEvent;

@@ -108,6 +108,7 @@ public class Shadowrun extends Command {
 	int countOne = 0;
 	int countMiss = 0;
 	int countHit = 0;
+	int explodingPool = 0;
 	
 	//User Settings
 	static List<Member> memberList = null;
@@ -358,6 +359,7 @@ public class Shadowrun extends Command {
 		countOne = 0;
 		countMiss = 0;
 		countHit = 0;
+		explodingPool = 0;
 		
 		String parseRoll;
 		
@@ -740,7 +742,7 @@ public class Shadowrun extends Command {
 	private void StoreResults(int dicePool, MessageReceivedEvent event) {
 		User user = event.getAuthor();
 		
-		RollContainer currentRoll = new RollContainer(dicePool, countOne, countMiss, countHit, rollResults, isGlitch, isCritGlitch, flagPrimeRunner);
+		RollContainer currentRoll = new RollContainer(dicePool, countOne, countMiss, countHit, explodingPool, rollResults, isGlitch, isCritGlitch, flagPrimeRunner);
 		
 		if(previousRollTable.containsKey(user)) {
 			previousRollTable.replace(user, currentRoll);
@@ -750,15 +752,16 @@ public class Shadowrun extends Command {
 	}
 	
 	public static class RollContainer {
-		int dicePool, countOne, countMiss, countHit;
+		int dicePool, countOne, countMiss, countHit, explodingPool;
 		ArrayList<Integer> rollResults;
 		boolean isGlitch, isCritGlitch, flagPrimeRunner;
 		
-		public RollContainer(int dicePool, int countOne, int countMiss, int countHit, ArrayList<Integer> rollResults, boolean isGlitch, boolean isCritGlitch, boolean flagPrimeRunner) {
+		public RollContainer(int dicePool, int countOne, int countMiss, int countHit, int explodingPool, ArrayList<Integer> rollResults, boolean isGlitch, boolean isCritGlitch, boolean flagPrimeRunner) {
 			this.dicePool = dicePool;
 			this.countOne = countOne;
 			this.countMiss = countMiss;
 			this.countHit = countHit;
+			this.explodingPool = explodingPool;
 			this.rollResults = rollResults;
 			this.isGlitch = isGlitch;
 			this.isCritGlitch = isCritGlitch;

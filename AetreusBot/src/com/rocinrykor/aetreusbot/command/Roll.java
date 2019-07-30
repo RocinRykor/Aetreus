@@ -20,6 +20,8 @@ public class Roll extends Command {
 	HashMap<String, String> argMap = new HashMap<>();
 	public String argValue;
 	boolean isModded = false;
+	boolean isAdvantage = false;
+	boolean isDisadvantage = false;
 	
 	ScriptEngineManager manager = new ScriptEngineManager();
 	ScriptEngine engine = manager.getEngineByName("js");
@@ -90,6 +92,9 @@ public class Roll extends Command {
 		
 		int moddedValue = 0;
 		isModded = false;
+		
+		isAdvantage = false;
+		isDisadvantage = false;
 		
 
 		String finalMessage = "";
