@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import studio.rrprojects.aetreusbot.command.CommandParser.CommandContainer;
 import studio.rrprojects.aetreusbot.dungeonsanddragons.DungeonsAndDragons;
+import studio.rrprojects.aetreusbot.shadowrun.Shadowrun;
 
 public abstract class Command {
 
@@ -16,6 +17,7 @@ public abstract class Command {
 		commands.add(new Message());
 		commands.add(new Roll());
 		commands.add(new Audio());
+		commands.add(new Lab());
 		
 		//Shadowrun
 		commands.add(new Shadowrun());
