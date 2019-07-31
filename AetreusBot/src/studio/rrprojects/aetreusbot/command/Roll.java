@@ -1,5 +1,6 @@
 package studio.rrprojects.aetreusbot.command;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import javax.script.ScriptEngine;
@@ -74,57 +75,143 @@ public class Roll extends Command {
 		if (mainArg.equalsIgnoreCase("help")) {
 			SendMessage(getHelpDescription(), cmd.DESTINATION);
 			return;
-		} else if (mainArg.equalsIgnoreCase("report")) {
-			//ReportRolls(event, channel);
-			return;
 		} 
 
 		rollContainer = defaultRoll(rollContainer);
 		
+		/*
+		 * Step 1: Check mainArg for a number, else check for stat or skill and import from character sheet as needed
+		 * Step 1a: Roll mainDicePool
+		 * Step 2: Check secondaryArgs for Advantage or Disadvantage and calculate as needed
+		 * Step 3: Check secondaryArgs for additional roll modifiers, execute as needed
+		 * Step 4: Check secondaryArgsd for flat modifiers, calculate total as needed
+		 * Step 5: Build final results
+		 * 
+		 * */
+		
 		if (!mainArg.equalsIgnoreCase("")) {
-			/*
-			 * Begin by looking at mainArg, does it start with a number or a letter
-			 * 
-			 * If number attempt to determine if number by itself or in standard format (1d6)
-			 * roll as needed
-			 * 
-			 * if letter, being character sheet import, roll as needed
-			 * */
+			//Steam 1: Check mainArg for a number, else check for stat or skill and import from character sheet as needed
 			
-			if (Character.isDigit(mainArg.charAt(0))) {
-				rollContainer = breakApart(mainArg, rollContainer);
-			}
-			
+			if (StartsWithDigit(mainArg)) {
+				rollContainer = mainDicePoolBreakdown(mainArg, rollContainer);
+			} else if (StartsWithLetter(mainArg)) {
+				/*
+				 * Import from character sheet
+				 * */
+				SendMessage("I'm sorry, but that function of the command is not yet in effect, please try again later.", cmd.DESTINATION);
+				return;
+			} 
 		}
 		
-		rollContainer = StartRoller(rollContainer);
+		//Step 1a: Roll mainDicePool
+		rollContainer.mainRollResults = StartRoller(rollContainer.mainDicePool, rollContainer.mainDiceSides);
 		
-		rollContainer = updateModValue(cmd.SECONDARY_ARG, rollContainer);
+		//Step 2: Check secondaryArgs for Advantage or Disadvantage and calculate as needed
+		rollContainer = AdvantageHandler(rollContainer, secondaryArg);
 		
-		String rollResults = BuildResults(rollContainer);
+		//Step 3: Check secondaryArgs for additional roll modifiers and flat modifiers
+		rollContainer = ModChecker(rollContainer, secondaryArg);
 		
-		SendMessage(rollResults, cmd.DESTINATION);
+		//Step 4: Resolve any roll modifiers
+		rollContainer = ResolveRollModifiers(rollContainer);
+			
+		//Step 5: Build Results
+		finalMessage = BuildResults(rollContainer, cmd);
+		
+		
+		SendMessage(finalMessage, cmd.DESTINATION);
+
 	}
 	
-	private RollContainer updateModValue(String[] secondaryArgs, RollContainer rollContainer) {
-		int modValue = rollContainer.modValue;
-		
-		if (secondaryArgs != null) {
-			if (ArgCountChecker.argChecker(secondaryArgs.length, 1)) {
-				for (int i = 0; i < secondaryArgs.length; i++) {
-					if (CheckModifiers(secondaryArgs[i])) {
-						modValue += ProcessModifier(secondaryArgs, i);
-					}
-				}
-			}	
+	private RollContainer ResolveRollModifiers(RollContainer rollContainer) {
+		if (rollContainer.modDicePool != null) {
+			for (int i = 0; i < rollContainer.modDicePool.size(); i++) {
+				int dicePool = rollContainer.modDicePool.get(i);
+				int dieSides = rollContainer.modDiceSide.get(i);
+				rollContainer.modRollResults.addAll(StartRoller(dicePool, dieSides));
+			}
 		}
-		
-		rollContainer.modValue = modValue;
 		
 		return rollContainer;
 	}
 
-	public int ProcessModifier(String[] secondaryArgs, int index) {
+	private RollContainer ModChecker(RollContainer rollContainer, String[] secondaryArgs) {
+		if (secondaryArgs != null) {
+			if (ArgCountChecker.argChecker(secondaryArgs.length, 1)) {
+				for (int i = 0; i < secondaryArgs.length; i++) {
+					if (CheckModifiers(secondaryArgs[i])) {
+						rollContainer = ProcessModifier(secondaryArgs, i, rollContainer);
+					}
+				}
+			}
+		}
+		
+		return rollContainer;
+	}
+
+	private RollContainer AdvantageHandler(RollContainer rollContainer, String[] secondaryArg) {
+		int advantageValue = CheckForAdvantage(secondaryArg);
+		
+		if (advantageValue != 0) {
+			rollContainer = RollForAdvantage(rollContainer, advantageValue);
+		}
+		
+		return rollContainer;
+	}
+
+	private RollContainer RollForAdvantage(RollContainer rollContainer, int advantageValue) {
+		ArrayList<Integer> initialRoll = rollContainer.mainRollResults;
+		ArrayList<Integer> newRoll = StartRoller(rollContainer.mainDicePool, rollContainer.mainDiceSides);
+		
+		System.out.println(initialRoll.toString() + " | " + newRoll.toString());
+		
+		ArrayList<Integer> finalList = new ArrayList<>();
+		
+		for (int i = 0; i < initialRoll.size(); i++) {
+			int oldValue = initialRoll.get(i);
+			int newValue = newRoll.get(i);
+			int result = Compare(oldValue, newValue, advantageValue);
+			finalList.add(result);
+		}
+		
+		rollContainer.mainRollResults = finalList;
+		
+		return rollContainer;
+	}
+
+	private int Compare(int oldValue, int newValue, int advantageValue) {
+		if (advantageValue < 0) {
+			return Math.min(oldValue, newValue);		
+		} else {
+			return Math.max(oldValue, newValue);
+		}
+	}
+
+	private int CheckForAdvantage(String[] input) {
+		int tmpValue = 0;
+		
+		if (input != null) {
+			for (int i = 0; i < input.length; i++) {
+				if (input[i].contains("dis")) {
+					tmpValue -= 1;
+				} else if (input[i].contains("adv")) {
+					tmpValue += 1;
+				}
+			}
+		}
+		
+		return tmpValue;
+	}
+
+	private boolean StartsWithLetter(String input) {
+		return Character.isAlphabetic(input.charAt(0));
+	}
+
+	private boolean StartsWithDigit(String input) {
+		return Character.isDigit(input.charAt(0));
+	}
+
+	public RollContainer ProcessModifier(String[] secondaryArgs, int index, RollContainer rollContainer) {
 		String temp = secondaryArgs[index];
 		
 		if (secondaryArgs[index].length() == 1) {
@@ -133,18 +220,42 @@ public class Roll extends Command {
 			}
 		}
 		
-		String calcString = "0" + temp;
 		
-		int result;
+		if(temp.contains("d")) {
+			//Split the modifier back up
+			String tmpPrefix = temp.substring(0, 1);
+			String tmpSuffix = temp.substring(1);
+
+			String[] splitArray = new String[2];
+			
+			String tmp = tmpSuffix.replace("d", " ");
+			System.out.println(tmp);
+			splitArray = tmp.split(" ");
+			
+			System.out.println(splitArray[0]);
+			
+			int modDicePool = Integer.parseInt(splitArray[0]);
+			int modDiceSides = Integer.parseInt(splitArray[1]);
+			
+			rollContainer.modDicePool.add(modDicePool);
+			rollContainer.modDiceSide.add(modDiceSides);
+			
+			return rollContainer;
+		} 
+		
+		String calcString = "0" + temp;
+
+		int result = 0;
 		
 		try {
 			result = (int) engine.eval(calcString);
-			return result;
 		} catch (ScriptException e) {
 			e.printStackTrace();
 		}
 		
-		return 0;
+		rollContainer.modValue += result;
+		
+		return rollContainer;
 	}
 
 	private boolean CheckModifiers(String input) {
@@ -156,31 +267,29 @@ public class Roll extends Command {
 	}
 
 	private RollContainer defaultRoll(RollContainer rollContainer) {
-		rollContainer.dicePool = 1;
-		rollContainer.dieSides = 20;
+		rollContainer.mainDicePool = 1;
+		rollContainer.mainDiceSides = 20;
 		
 		return rollContainer;
 	}
 
-	private RollContainer breakApart(String mainArg, RollContainer rollContainer) {
+	private RollContainer mainDicePoolBreakdown(String input, RollContainer rollContainer) {
 		String[] strArray;
 		
-		if (mainArg.contains("d")) {
-			String temp = mainArg.replace("d", " ");
+		if (input.contains("d")) {
+			String temp = input.replace("d", " ");
 			strArray = temp.split(" ");
-			rollContainer.dicePool = (Integer)Integer.parseInt(strArray[0]);
-			rollContainer.dieSides = (Integer)Integer.parseInt(strArray[1]);
+			rollContainer.mainDicePool = (Integer)Integer.parseInt(strArray[0]);
+			rollContainer.mainDiceSides = (Integer)Integer.parseInt(strArray[1]);
 		} else {
-			rollContainer.dicePool = 1;
-			rollContainer.dieSides = (Integer)Integer.parseInt(mainArg);
+			rollContainer.mainDicePool = 1;
+			rollContainer.mainDiceSides = (Integer)Integer.parseInt(input);
 		}
 		
 		return rollContainer;
 	}
 
-	public RollContainer StartRoller(RollContainer rollContainer) {
-		int dicePool = rollContainer.dicePool;
-		int dieSides = rollContainer.dieSides;
+	public ArrayList<Integer> StartRoller(int dicePool, int dieSides) {
 		
 		ArrayList<Integer> rollResults = new ArrayList<>();
 		
@@ -188,36 +297,38 @@ public class Roll extends Command {
 			rollResults.add(RollDice(dieSides));
 		}
 		
-		rollContainer.rollResults = rollResults;
-		
-		return rollContainer;
+		return rollResults;
 	}
 
-	public String BuildResults(RollContainer rollContainer) {
-		int dicePool = rollContainer.dicePool;
-		int dieSides = rollContainer.dieSides;
+	public String BuildResults(RollContainer rollContainer, CommandContainer cmd) {
+		int mainDiceResult = 0;
+		int modDiceResult = 0;
+		int modValue = rollContainer.modValue;
 		
-		int totalValue = 0;
-		
-		for (int i = 0; i < rollContainer.rollResults.size(); i++) {
-			totalValue += rollContainer.rollResults.get(i);
+		for (int i = 0; i < rollContainer.mainRollResults.size(); i++) {
+			mainDiceResult += rollContainer.mainRollResults.get(i);
 		}
 		
-		String verboseMode = rollContainer.rollResults.toString();
-		
-		
-		String result = "Rolling " + dicePool + ", " + dieSides + "-sided Dice \n"
-				+ "Total Value: "  + totalValue + "\n";
-		
-		if (rollContainer.modValue != 0) {
-			int modValue = rollContainer.modValue;
-			result += "\nModifier: " + modValue + "\n"
-					+ "Total Value: " + (modValue + totalValue) + "\n";
+		if (rollContainer.modRollResults != null) {
+			for (int i = 0; i < rollContainer.modRollResults.size(); i++) {
+				modDiceResult += rollContainer.modRollResults.get(i);
+			}
 		}
 		
-		result += "\n" + verboseMode;
+		int finalResult = mainDiceResult + modDiceResult + modValue;
+		String message = "```css\n"
+				+ "Roll by: " + cmd.AUTHOR.getName() + " \n"
+				+ "Rolling "+rollContainer.mainDicePool+", "+rollContainer.mainDiceSides+"-sided Dice \n\n"
+				+ "Final Results : " + finalResult + " \n\n"
+				+ "==BREAKDOWN==\n"
+				+ "Main Rolls: " + rollContainer.mainRollResults.toString() + "\n"
+				+ "Total Main Roll Value: " + mainDiceResult + "\n\n"
+				+ "Mod Rolls: " + rollContainer.modRollResults.toString() + "\n"
+				+ "Total Mod Roll Value: " + modDiceResult + "\n\n"
+				+ "Flat Mod Value: " + modValue + "\n"
+				+ "```";
 		
-		return result;
+		return message; //FIX
 	}
 
 	private void SendMessage(String message, Channel DESTINATION) {
@@ -233,20 +344,30 @@ public class Roll extends Command {
 		/*
 		 * This will be used to store all the information about the rolls as the bot progresses along each step of the rolling function
 		 * */
-		return new RollContainer(0, 0, 0, null);
+		return new RollContainer(0, 0, null, null, null, null, 0);
 	}
 
 	public static class RollContainer {
-		public int dicePool;
-		public int dieSides;
-		public int modValue;
-		public ArrayList<Integer> rollResults;
+		public int mainDicePool;
+		public int mainDiceSides;
+		public ArrayList<Integer> mainRollResults;
 		
-		public RollContainer(int dicePool, int dieSides, int modValue, ArrayList<Integer> rollResults) {
-			this.dicePool = dicePool;
-			this.dieSides = dieSides;
+		public ArrayList<Integer> modDicePool;
+		public ArrayList<Integer> modDiceSide;
+		public ArrayList<Integer> modRollResults;
+		
+		public int modValue;
+		
+		public RollContainer(int mainDicePool, int mainDiceSides, ArrayList<Integer> mainRollResults, ArrayList<Integer> modDicePool, ArrayList<Integer> modDiceSide, ArrayList<Integer> modRollResults, int modValue) {
+			this.mainDicePool = mainDicePool;
+			this.mainDiceSides = mainDiceSides;
+			this.mainRollResults = new ArrayList<>();
+			
+			this.modDicePool = new ArrayList<>();
+			this.modDiceSide = new ArrayList<>();
+			this.modRollResults = new ArrayList<>();
+			
 			this.modValue = modValue;
-			this.rollResults = rollResults;
 		}
 	}
 
