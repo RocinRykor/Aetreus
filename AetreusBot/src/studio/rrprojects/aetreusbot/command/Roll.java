@@ -30,7 +30,8 @@ public class Roll extends Command {
 
 	@Override
 	public String getHelpDescription() {
-		return "Have you ever found yourself with the need to roll a die or even multiple dice, and yet your dice are not in reach or anywhere to be found? Well, by commanding me to do so I will roll dice on your behalf from a special bag given to me by my master. Within this bag are countless dice of all shapes and sizes, meaning, I can roll any number of dice that you want each with as many sides that you want.\r\n" + 
+		return "Rolls a specified number of dice and calculates any given modifier";
+				/* "Have you ever found yourself with the need to roll a die or even multiple dice, and yet your dice are not in reach or anywhere to be found? Well, by commanding me to do so I will roll dice on your behalf from a special bag given to me by my master. Within this bag are countless dice of all shapes and sizes, meaning, I can roll any number of dice that you want each with as many sides that you want.\r\n" + 
 				"\r\n" + 
 				"By default, I will roll a single 20-sided die.\r\n" + 
 				"If you wish me to roll a certain number of die or a certain size, please specify the amount using the following notation after the roll command: “(X)d(Y)”\r\n" + 
@@ -40,6 +41,7 @@ public class Roll extends Command {
 				"Please note, that while I am loyal to my master I assure you that all my rolls are completely fair for everyone.\r\n" + 
 				"In fact, if you would like to see a list of your rolls, then just type \"&roll report\" at any time. \r\n"
 				+ "";
+				*/
 	}
 
 	@Override
@@ -54,6 +56,11 @@ public class Roll extends Command {
 
 	@Override
 	public boolean isAdminOnly() {
+		return false;
+	}
+	
+	@Override
+	public boolean isAdultRestricted() {
 		return false;
 	}
 
@@ -73,7 +80,7 @@ public class Roll extends Command {
 		String[] secondaryArg = cmd.SECONDARY_ARG; 
 		
 		if (mainArg.equalsIgnoreCase("help")) {
-			SendMessage(getHelpDescription(), cmd.DESTINATION);
+			SendMessage(getHelpDescription(), cmd.DESTINATION, cmd.AUTHOR);
 			return;
 		} 
 
@@ -98,7 +105,7 @@ public class Roll extends Command {
 				/*
 				 * Import from character sheet
 				 * */
-				SendMessage("I'm sorry, but that function of the command is not yet in effect, please try again later.", cmd.DESTINATION);
+				SendMessage("I'm sorry, but that function of the command is not yet in effect, please try again later.", cmd.DESTINATION, cmd.AUTHOR);
 				return;
 			} 
 		}
@@ -119,7 +126,7 @@ public class Roll extends Command {
 		finalMessage = BuildResults(rollContainer, cmd);
 		
 		
-		SendMessage(finalMessage, cmd.DESTINATION);
+		SendMessage(finalMessage, cmd.DESTINATION, cmd.AUTHOR);
 
 	}
 	
@@ -331,8 +338,8 @@ public class Roll extends Command {
 		return message; //FIX
 	}
 
-	private void SendMessage(String message, Channel DESTINATION) {
-		NewMessage.send(message, DESTINATION);
+	private void SendMessage(String message, Channel DESTINATION, User user) {
+		NewMessage.send(message, DESTINATION, user);
 	}
 	
 	private int RollDice(int sides) {

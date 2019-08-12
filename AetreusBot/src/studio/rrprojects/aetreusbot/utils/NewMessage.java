@@ -8,16 +8,33 @@ public class NewMessage {
 
 	public static void send(String message, String destination) {
 		message = checkEmpty(message);
-		send(message, GetInfo.getChannel(destination));
+		send(message, GetInfo.getChannel(destination), null);
+	}
+	
+	public static void send(String message, Channel DESTINATION) {
+		send(message, DESTINATION, null);
 	}
 
-	public static void send(String message, Channel DESTINATION) {
+
+	public static void send(String message, Channel DESTINATION, User user) {
 		message = checkEmpty(message);
+		
+		if (DESTINATION == null) {
+			send(message, user);
+			return;
+		}
+		
 		DESTINATION.getJDA().getTextChannelById(DESTINATION.getId()).sendMessage(message).complete();
 	}
 
 	public static void send(String message, User user) {
 		message = checkEmpty(message);
+		
+		if (user.isFake()) {
+			InputCollection.UpdateArray(message);
+			return;
+		}
+		
 		try {
 			user.openPrivateChannel().complete().sendMessage(message).complete();
 		} catch (Exception e) {

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import net.dv8tion.jda.core.entities.Channel;
+import net.dv8tion.jda.core.entities.User;
 import studio.rrprojects.aetreusbot.command.CommandParser.CommandContainer;
 import studio.rrprojects.aetreusbot.utils.NewMessage;
 
@@ -21,7 +22,7 @@ public class Lab extends Command {
 
 	@Override
 	public String getHelpDescription() {
-		return "Tool for Path of Exile: Get a list of chests to open at the end of a lab run";
+		return "Tool for Path of Exile: Get a list of chests to open at the end of a Labyrinth run.";
 	}
 
 	@Override
@@ -38,6 +39,11 @@ public class Lab extends Command {
 	public boolean isAdminOnly() {
 		return false;
 	}
+	
+	@Override
+	public boolean isAdultRestricted() {
+		return false;
+	}
 
 	@Override
 	public boolean deleteCallMessage() {
@@ -49,12 +55,12 @@ public class Lab extends Command {
 		try {
 			keyPool = Integer.parseInt(cmd.MAIN_ARG);
 		} catch (Exception e) {
-			SendMessage("ERROR: You need to specify a number of chests to open, please enter a number between 1-10", cmd.DESTINATION);
+			SendMessage("ERROR: You need to specify a number of chests to open, please enter a number between 1-10", cmd.DESTINATION, cmd.AUTHOR);
 			return;
 		}
 		
 		if (keyPool < 1 || keyPool > 10) {
-			SendMessage("ERROR: OUT-OF-BOUNDS, please enter a number between 1-10", cmd.DESTINATION);
+			SendMessage("ERROR: OUT-OF-BOUNDS, please enter a number between 1-10", cmd.DESTINATION, cmd.AUTHOR);
 			return;
 		}
 		
@@ -70,11 +76,11 @@ public class Lab extends Command {
 		
 		 Collections.sort(listResults);
 		
-		SendMessage("Open the following chests: \n" + listResults.toString(), cmd.DESTINATION);
+		SendMessage("Open the following chests: \n" + listResults.toString(), cmd.DESTINATION, cmd.AUTHOR);
 	}
 	
-	private void SendMessage(String message, Channel DESTINATION) {
-		NewMessage.send(message, DESTINATION);
+	private void SendMessage(String message, Channel DESTINATION, User user) {
+		NewMessage.send(message, DESTINATION, user);
 	}
 	
 }

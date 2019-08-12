@@ -1,13 +1,10 @@
 package studio.rrprojects.aetreusbot.command;
 
-import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Channel;
 import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.entities.VoiceChannel;
-import net.dv8tion.jda.core.events.Event;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import studio.rrprojects.aetreusbot.command.CommandParser.CommandContainer;
 import studio.rrprojects.aetreusbot.discord.BotListener;
@@ -40,6 +37,11 @@ public class Audio extends Command {
 	public boolean isChannelRestricted() {
 		return false;
 	}
+	
+	@Override
+	public boolean isAdultRestricted() {
+		return false;
+	}
 
 	@Override
 	public boolean deleteCallMessage() {
@@ -56,7 +58,7 @@ public class Audio extends Command {
 		MessageReceivedEvent event = BotListener._event;
 
 		if (primaryArg.equalsIgnoreCase("help")) {
-			SendMessage(getHelpDescription(), channel);
+			SendMessage(getHelpDescription(), channel, cmd.AUTHOR);
 			return;
 		} else if (primaryArg.equalsIgnoreCase("join")) {
 			JoinChannel(cmd);
@@ -70,7 +72,7 @@ public class Audio extends Command {
 		} else if (primaryArg.equalsIgnoreCase("volume")) {
 			ChangeVolume(cmd);
 		} else {
-			SendMessage("I don't understand your command.", channel);
+			SendMessage("I don't understand your command.", channel, cmd.AUTHOR);
 		}
 	}
 
@@ -87,14 +89,14 @@ public class Audio extends Command {
 				String message = "Volume amount not specified. \n"
 						+ "Current volume: " + manager.getPlayer(guild).getAudioPlayer().getVolume();
 				
-				SendMessage(message, channel);
+				SendMessage(message, channel, cmd.AUTHOR);
 				return;
 			}
 		} else {
 			String message = "Volume amount not specified. \n"
 					+ "Current volume: " + manager.getPlayer(guild).getAudioPlayer().getVolume();
 			
-			SendMessage(message, channel);
+			SendMessage(message, channel, cmd.AUTHOR);
 			return;
 		}
 		
@@ -166,24 +168,27 @@ public class Audio extends Command {
 		if(!guild.getAudioManager().isConnected() && !guild.getAudioManager().isAttemptingToConnect()){
 			VoiceChannel voiceChannel = guild.getMember(user).getVoiceState().getChannel();
 			if(voiceChannel == null){
-				SendMessage("You must be connect to a voice channel.", cmd.DESTINATION);
+				SendMessage("You must be connect to a voice channel.", cmd.DESTINATION, cmd.AUTHOR);
 			}
 			guild.getAudioManager().openAudioConnection(voiceChannel);
 		}
 	}
 
-	private void SendMessage(String message, Channel DESTINATION) {
-		NewMessage.send(message, DESTINATION);
+	private void SendMessage(String message, Channel DESTINATION, User user) {
+		NewMessage.send(message, DESTINATION, user);
 	}
 
 	@Override
 	public String getHelpDescription() {
-		return "Ever want to play a sound to the entire voice channel? \n"
+		return "Audio Player - Aetreus will join voice channels and play music from YouTube";
+				
+				/*"Ever want to play a sound to the entire voice channel? \n"
 				+ "Perhaps something to announce to everyone that you have arrived \n"
 				+ "Maybe, you wish to sing a song, or delcare the longevity of various musical genres. \n"
 				+ "Well then, never fear, because I am here! \n\n"
 				+ "To designate a song to play type in the the following command \"&audio play\" and then put a link to the track withen quotation marks. \n"
 				+ "Example &audio play \"https://www.youtube.com/watch?v=ttKn1eGKTew\"";
+				*/
 	}
 	
 }

@@ -38,6 +38,11 @@ public class Message extends Command {
 	public boolean isAdminOnly() {
 		return false;
 	}
+	
+	@Override
+	public boolean isAdultRestricted() {
+		return false;
+	}
 
 	@Override
 	public boolean deleteCallMessage() {
@@ -58,6 +63,8 @@ public class Message extends Command {
 		String target = cmd.TRIMMED_RAW.replaceFirst("message ", "");
 		
 		String message = "New message from " + cmd.AUTHOR.getName() + ": " + cmd.TRIMMED_NOTE;
+		
+		System.out.println(target);
 		
 		if (GetInfo.getChannel(target) != null) {
 			SendMessage(message, GetInfo.getChannel(target));

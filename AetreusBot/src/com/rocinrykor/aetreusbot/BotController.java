@@ -13,7 +13,6 @@ import java.awt.event.ActionListener;
 import javax.security.auth.login.LoginException;
 import javax.swing.JOptionPane;
 
-import com.rocinrykor.aetreusbot.command.Command;
 import com.rocinrykor.aetreusbot.discord.BotListener;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 
@@ -72,7 +71,7 @@ public class BotController {
 			
 			jda.addEventListener(new BotListener());
 			
-			Command.init();
+			//Command.init();
 			
 			ResetPresence();
 			

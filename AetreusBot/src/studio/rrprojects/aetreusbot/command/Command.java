@@ -13,17 +13,28 @@ public abstract class Command {
 
 	public static void init() {
 		commands = new ArrayList<>();
+		
+		//Basic
 		commands.add(new Ping());
-		commands.add(new Message());
+		commands.add(new Help());
+		//commands.add(new Message()); Broken :(
 		commands.add(new Roll());
 		commands.add(new Audio());
 		commands.add(new Lab());
+		
+		//Admin
+		commands.add(new Flood());
+		commands.add(new Delete());
 		
 		//Shadowrun
 		commands.add(new Shadowrun());
 		
 		//Dungeons and Dragons
 		commands.add(new DungeonsAndDragons());
+		
+		//Adult
+		commands.add(new Adult());
+		commands.add(new Nyan());
 	}
 	
 	public abstract String getName();
@@ -38,6 +49,8 @@ public abstract class Command {
 	public abstract boolean isChannelRestricted();
 	
 	public abstract boolean isAdminOnly();
+	
+	public abstract boolean isAdultRestricted();
 	
 	public abstract boolean deleteCallMessage();
 	

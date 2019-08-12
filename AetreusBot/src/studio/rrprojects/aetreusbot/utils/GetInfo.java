@@ -17,6 +17,8 @@ public class GetInfo {
 	}
 
 	public static User GetUser(String user) {
+		System.out.println(Controller.getJda().getUsersByName(user, true).toString());
+		
 		try {
 			return Controller.getJda().getUsersByName(user, true).get(0);
 		} catch (Exception e) {
