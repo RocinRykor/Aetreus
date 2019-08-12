@@ -82,6 +82,7 @@ public static ArrayList<Channel> channelsRestricted, channelsNSFW;
 		public void onReady(ReadyEvent event) {
 			super.onReady(event);
 			Controller.PostLoadInits();
+			Controller.StartUpdateTimer();
 		}
 
 	private String CheckForPrefix(String rawInput) {

@@ -21,6 +21,7 @@ public abstract class Command {
 		commands.add(new Roll());
 		commands.add(new Audio());
 		commands.add(new Lab());
+		commands.add(new Talk());
 		
 		//Admin
 		commands.add(new Flood());

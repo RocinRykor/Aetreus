@@ -3,7 +3,6 @@ package studio.rrprojects.aetreusbot.music;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.rocinrykor.aetreusbot.BotController;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;

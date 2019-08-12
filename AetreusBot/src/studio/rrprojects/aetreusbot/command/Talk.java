@@ -1,20 +1,20 @@
-package com.rocinrykor.aetreusbot.command;
+package studio.rrprojects.aetreusbot.command;
 
 import java.awt.Color;
 import java.util.ArrayList;
 
-import com.rocinrykor.aetreusbot.BotController;
-import com.rocinrykor.aetreusbot.command.CommandParser.CommandContainer;
-import com.rocinrykor.aetreusbot.questions.AnswerHandler;
-import com.rocinrykor.aetreusbot.questions.Question;
-import com.rocinrykor.aetreusbot.questions.Question.QuestionContainer;
-
 import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.entities.MessageChannel;
+import net.dv8tion.jda.core.entities.Channel;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import studio.rrprojects.aetreusbot.command.CommandParser.CommandContainer;
+import studio.rrprojects.aetreusbot.questions.AnswerHandler;
+import studio.rrprojects.aetreusbot.questions.Question;
+import studio.rrprojects.aetreusbot.questions.Question.QuestionContainer;
+import studio.rrprojects.aetreusbot.utils.NewMessage;
 
 public class Talk extends Command {
+	
 	ArrayList<QuestionContainer> questions;
 	public Talk() {
 		questions = new ArrayList<>();
@@ -39,23 +39,23 @@ public class Talk extends Command {
 	}
 
 	@Override
-	public String getDescription() {
+	public String getAlias() {
+		return "T";
+	}
+
+	@Override
+	public String getHelpDescription() {
 		return "Have a conversation with Aetreus";
 	}
 
 	@Override
-	public String getAlias() {
-		return "T";
-	}
-	
-	@Override
 	public String getHomeChannel() {
-		return "bottesting";
+		return "BotTesting";
 	}
 
 	@Override
-	public String helpMessage() {
-		return "With each use of this command, I will ask you a question, by placing your answer in quotation marks, you and I can have a conversation.";
+	public boolean isChannelRestricted() {
+		return true;
 	}
 
 	@Override
@@ -64,12 +64,7 @@ public class Talk extends Command {
 	}
 
 	@Override
-	public boolean isChannelRestricted() {
-		return true;
-	}
-	
-	@Override
-	public boolean isAdultResricted() {
+	public boolean isAdultRestricted() {
 		return false;
 	}
 
@@ -77,24 +72,27 @@ public class Talk extends Command {
 	public boolean deleteCallMessage() {
 		return false;
 	}
-
-	@Override
-	public void execute(String primaryArg, String[] secondaryArg, String trimmedNote, MessageReceivedEvent event,
-			CommandContainer cmd, MessageChannel channel) {
-
+	
+	public void executeMain(CommandContainer cmd) {
+		String primaryArg = cmd.MAIN_ARG;
+		String trimmedNote = cmd.TRIMMED_NOTE;
+		Channel channel = cmd.DESTINATION;
+		
+		
 		if (primaryArg.equalsIgnoreCase("help")) {
-			sendMessage(helpMessage(), channel);
+			//sendMessage(helpMessage(), channel);
 			return;
 		}
-		User user = event.getAuthor();
-		ArrayList<Object> userAnswers = AnswerHandler.parseAnswer(user, questions, trimmedNote, "Talk", event, channel);
+		
+		User user = cmd.AUTHOR;
+		ArrayList<Object> userAnswers = AnswerHandler.parseAnswer(user, questions, trimmedNote, "Talk", channel);
 		
 		if (userAnswers != null) {
-			ReportAnswers(userAnswers, event);
+			ReportAnswers(userAnswers, cmd);
 		}
 	}
 
-	private void ReportAnswers(ArrayList<Object> collectedAnswers, MessageReceivedEvent event) {
+	private void ReportAnswers(ArrayList<Object> collectedAnswers, CommandContainer cmd) {
 		EmbedBuilder builder = new EmbedBuilder();
 		
 		builder.setTitle("List of Answers");
@@ -108,15 +106,11 @@ public class Talk extends Command {
 			builder.addField("Question #" + i, collectedAnswers.get(i).toString(), false);
 		}
 		
-		event.getChannel().sendMessage(builder.build()).queue();
+		//event.getChannel().sendMessage(builder.build()).queue();
 	}
-
-	public void sendMessage(EmbedBuilder builder, MessageChannel channel) {
-		BotController.sendMessage(builder, channel);
-	}
-
-	public void sendMessage(String message, MessageChannel channel) {
-		BotController.sendMessage(message, channel);
+	
+	private void SendMessage(String message, Channel DESTINATION, User user) {
+		NewMessage.send(message, DESTINATION, user);
 	}
 
 }

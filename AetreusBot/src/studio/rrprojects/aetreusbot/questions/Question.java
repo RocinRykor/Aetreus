@@ -1,4 +1,4 @@
-package com.rocinrykor.aetreusbot.questions;
+package studio.rrprojects.aetreusbot.questions;
 
 public class Question {
 	public static QuestionContainer NewQuestion(String question, String type) {

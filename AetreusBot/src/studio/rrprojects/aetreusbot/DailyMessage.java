@@ -1,4 +1,4 @@
-package com.rocinrykor.aetreusbot;
+package studio.rrprojects.aetreusbot;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -59,7 +59,7 @@ public class DailyMessage {
 	}
 
 	public static void Init() {
-		jda = BotController.getJDA();
+		jda = Controller.getJda();
 		
 		simpleDateFormat = new SimpleDateFormat(pattern);
 		

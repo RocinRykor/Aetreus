@@ -61,6 +61,30 @@ public class Controller {
 		jda.addEventListener(new BotListener());		
 	}
 	
+	public static void StartUpdateTimer() {
+		//Started by the message listener so that daily message function can be started properly
+		
+		int sleepTime = 900;
+		
+		DailyMessage.Init();
+		
+		DailyMessage.Update();
+		
+		new Thread() {
+			public void run() {
+				while (true) {
+					try {
+						Thread.sleep(sleepTime * 1000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					
+					DailyMessage.Update();
+				}
+			}
+		}.start();
+	}
+	
 	public static void PostLoadInits() {
 		//These are all the things that I need to initialize after the bot is loaded
 		CharacterFileLoader.LoadCharacters();
