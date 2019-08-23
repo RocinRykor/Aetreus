@@ -1,5 +1,6 @@
 package studio.rrprojects.aetreusbot.utils;
 
+import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Channel;
 import net.dv8tion.jda.core.entities.User;
 import studio.rrprojects.aetreusbot.InputCollection;
@@ -48,6 +49,15 @@ public class NewMessage {
 		} else {
 			return message;
 		}
+	}
+
+	public static void send(EmbedBuilder message, Channel DESTINATION) {
+		if (DESTINATION == null) {
+			return;
+		}
+		
+		DESTINATION.getJDA().getTextChannelById(DESTINATION.getId()).sendMessage(message.build()).complete();
+		
 	}
 
 }

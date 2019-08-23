@@ -10,6 +10,7 @@ import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import studio.rrprojects.aetreusbot.ConfigController;
 import studio.rrprojects.aetreusbot.Controller;
 import studio.rrprojects.aetreusbot.InputCollection;
+import studio.rrprojects.aetreusbot.dungeonsanddragons.DNDHandler;
 import studio.rrprojects.aetreusbot.utils.GetInfo;
 
 public class BotListener extends ListenerAdapter {
@@ -83,6 +84,7 @@ public static ArrayList<Channel> channelsRestricted, channelsNSFW;
 			super.onReady(event);
 			Controller.PostLoadInits();
 			Controller.StartUpdateTimer();
+			DNDHandler.InitTables();
 		}
 
 	private String CheckForPrefix(String rawInput) {

@@ -9,7 +9,7 @@ import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
 import studio.rrprojects.aetreusbot.command.Command;
 import studio.rrprojects.aetreusbot.discord.BotListener;
-import studio.rrprojects.aetreusbot.dungeonsanddragons.CharacterFileLoader;
+import studio.rrprojects.aetreusbot.dungeonsanddragons.tools.CharacterPrefFileLoader;
 import studio.rrprojects.aetreusbot.gui.MainWindowController;
 import studio.rrprojects.aetreusbot.gui.SystemTrayController;
 
@@ -64,6 +64,13 @@ public class Controller {
 	public static void StartUpdateTimer() {
 		//Started by the message listener so that daily message function can be started properly
 		
+		Boolean dailyMessageOn = false;
+		
+		if (!dailyMessageOn) {
+			return;
+		}
+		
+		
 		int sleepTime = 900;
 		
 		DailyMessage.Init();
@@ -87,7 +94,7 @@ public class Controller {
 	
 	public static void PostLoadInits() {
 		//These are all the things that I need to initialize after the bot is loaded
-		CharacterFileLoader.LoadCharacters();
+		CharacterPrefFileLoader.LoadCharacters();
 	}
 
 	public static void ShutdownBot() {

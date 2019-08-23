@@ -1,5 +1,12 @@
 package studio.rrprojects.aetreusbot.command;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+
 import net.dv8tion.jda.core.entities.Channel;
 import net.dv8tion.jda.core.entities.User;
 import studio.rrprojects.aetreusbot.command.CommandParser.CommandContainer;
@@ -50,6 +57,9 @@ public class Ping extends Command {
 	public void executeMain(CommandContainer cmd) {
 		String response = cmd.AUTHOR.getAsMention() + " Ping Recieved!";
 		
+		int x = 9;
+		System.out.println(Math.floor((float)(x-10)/2));
+			
 		SendMessage(response, cmd.DESTINATION, cmd.AUTHOR);
 	}
 	

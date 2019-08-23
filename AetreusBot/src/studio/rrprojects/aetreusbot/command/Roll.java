@@ -10,6 +10,8 @@ import javax.script.ScriptException;
 import net.dv8tion.jda.core.entities.Channel;
 import net.dv8tion.jda.core.entities.User;
 import studio.rrprojects.aetreusbot.command.CommandParser.CommandContainer;
+import studio.rrprojects.aetreusbot.dungeonsanddragons.Attributes;
+import studio.rrprojects.aetreusbot.dungeonsanddragons.Skills;
 import studio.rrprojects.aetreusbot.utils.ArgCountChecker;
 import studio.rrprojects.aetreusbot.utils.NewMessage;
 
@@ -105,8 +107,7 @@ public class Roll extends Command {
 				/*
 				 * Import from character sheet
 				 * */
-				SendMessage("I'm sorry, but that function of the command is not yet in effect, please try again later.", cmd.DESTINATION, cmd.AUTHOR);
-				return;
+				rollContainer = CharacterSheetImport(cmd, rollContainer);
 			} 
 		}
 		
@@ -130,6 +131,31 @@ public class Roll extends Command {
 
 	}
 	
+	private RollContainer CharacterSheetImport(CommandContainer cmd, RollContainer rollContainer) {
+		if(cmd.AUTHOR.isFake()) {
+			return rollContainer;
+		}
+		
+		String input = cmd.MAIN_ARG;
+		String searchString = null;
+		
+		searchString = Attributes.getAttribute(input);
+		
+		if (searchString != null) {
+			rollContainer = Attributes.ProcessRoll(searchString, cmd, rollContainer);
+		} else {
+			searchString = Skills.GetSkill(input);
+			if (searchString != null) {
+				rollContainer = Skills.ProcessRoll(searchString, cmd, rollContainer);
+			}
+		}
+		
+		System.out.println(searchString);
+		
+		
+		return rollContainer;
+	}
+
 	private RollContainer ResolveRollModifiers(RollContainer rollContainer) {
 		if (rollContainer.modDicePool != null) {
 			for (int i = 0; i < rollContainer.modDicePool.size(); i++) {
@@ -157,7 +183,7 @@ public class Roll extends Command {
 	}
 
 	private RollContainer AdvantageHandler(RollContainer rollContainer, String[] secondaryArg) {
-		int advantageValue = CheckForAdvantage(secondaryArg);
+		int advantageValue = CheckForAdvantage(secondaryArg, rollContainer);
 		
 		if (advantageValue != 0) {
 			rollContainer = RollForAdvantage(rollContainer, advantageValue);
@@ -194,7 +220,7 @@ public class Roll extends Command {
 		}
 	}
 
-	private int CheckForAdvantage(String[] input) {
+	private int CheckForAdvantage(String[] input, RollContainer rollContainer) {
 		int tmpValue = 0;
 		
 		if (input != null) {
@@ -206,6 +232,8 @@ public class Roll extends Command {
 				}
 			}
 		}
+		
+		rollContainer.advValue = tmpValue;
 		
 		return tmpValue;
 	}
@@ -322,10 +350,17 @@ public class Roll extends Command {
 			}
 		}
 		
+		String advMessage = "";
+		if (rollContainer.advValue < 0) {
+			advMessage = "with disadvantage";
+		} else if (rollContainer.advValue > 0) {
+			advMessage = "with advantage";
+		}
+		
 		int finalResult = mainDiceResult + modDiceResult + modValue;
 		String message = "```css\n"
 				+ "Roll by: " + cmd.AUTHOR.getName() + " \n"
-				+ "Rolling "+rollContainer.mainDicePool+", "+rollContainer.mainDiceSides+"-sided Dice \n\n"
+				+ "Rolling "+rollContainer.mainDicePool+", "+rollContainer.mainDiceSides+"-sided Dice " + advMessage + "\n\n"
 				+ "Final Results : " + finalResult + " \n\n"
 				+ "==BREAKDOWN==\n"
 				+ "Main Rolls: " + rollContainer.mainRollResults.toString() + "\n"
@@ -351,7 +386,7 @@ public class Roll extends Command {
 		/*
 		 * This will be used to store all the information about the rolls as the bot progresses along each step of the rolling function
 		 * */
-		return new RollContainer(0, 0, null, null, null, null, 0);
+		return new RollContainer(0, 0, null, null, null, null, 0, 0);
 	}
 
 	public static class RollContainer {
@@ -365,7 +400,9 @@ public class Roll extends Command {
 		
 		public int modValue;
 		
-		public RollContainer(int mainDicePool, int mainDiceSides, ArrayList<Integer> mainRollResults, ArrayList<Integer> modDicePool, ArrayList<Integer> modDiceSide, ArrayList<Integer> modRollResults, int modValue) {
+		public int advValue;
+		
+		public RollContainer(int mainDicePool, int mainDiceSides, ArrayList<Integer> mainRollResults, ArrayList<Integer> modDicePool, ArrayList<Integer> modDiceSide, ArrayList<Integer> modRollResults, int modValue, int advValue) {
 			this.mainDicePool = mainDicePool;
 			this.mainDiceSides = mainDiceSides;
 			this.mainRollResults = new ArrayList<>();
@@ -375,6 +412,7 @@ public class Roll extends Command {
 			this.modRollResults = new ArrayList<>();
 			
 			this.modValue = modValue;
+			this.advValue = advValue;
 		}
 	}
 
