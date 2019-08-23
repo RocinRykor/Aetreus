@@ -13,6 +13,7 @@ import studio.rrprojects.aetreusbot.command.CommandParser.CommandContainer;
 import studio.rrprojects.aetreusbot.dungeonsanddragons.Attributes;
 import studio.rrprojects.aetreusbot.dungeonsanddragons.Skills;
 import studio.rrprojects.aetreusbot.utils.ArgCountChecker;
+import studio.rrprojects.aetreusbot.utils.MessageTools;
 import studio.rrprojects.aetreusbot.utils.NewMessage;
 
 public class Roll extends Command {
@@ -75,11 +76,8 @@ public class Roll extends Command {
 		
 		RollContainer rollContainer = CreateBlankRollContainer();
 		
-		String finalMessage = "";
-		
 		User user = cmd.AUTHOR;
 		String mainArg = cmd.MAIN_ARG;
-		String[] secondaryArg = cmd.SECONDARY_ARG; 
 		
 		if (mainArg.equalsIgnoreCase("help")) {
 			SendMessage(getHelpDescription(), cmd.DESTINATION, cmd.AUTHOR);
@@ -111,6 +109,17 @@ public class Roll extends Command {
 			} 
 		}
 		
+		SecondaryPhase(rollContainer, cmd);
+		
+	}
+	
+	public void SecondaryPhase(RollContainer rollContainer, CommandContainer cmd) {
+		//Takes the processed main argument and begins resolving any secondary arguments before finally building the completed roll.
+		//This is its own function so that the attack and damage functions can use the same process
+		
+		String finalMessage = "";
+		String[] secondaryArg = cmd.SECONDARY_ARG; 
+		
 		//Step 1a: Roll mainDicePool
 		rollContainer.mainRollResults = StartRoller(rollContainer.mainDicePool, rollContainer.mainDiceSides);
 		
@@ -128,9 +137,8 @@ public class Roll extends Command {
 		
 		
 		SendMessage(finalMessage, cmd.DESTINATION, cmd.AUTHOR);
-
 	}
-	
+
 	private RollContainer CharacterSheetImport(CommandContainer cmd, RollContainer rollContainer) {
 		if(cmd.AUTHOR.isFake()) {
 			return rollContainer;
@@ -175,6 +183,10 @@ public class Roll extends Command {
 					if (CheckModifiers(secondaryArgs[i])) {
 						rollContainer = ProcessModifier(secondaryArgs, i, rollContainer);
 					}
+					
+					if (secondaryArgs[i].toLowerCase().contains("note")) {
+						rollContainer.showNotes = true;
+					}
 				}
 			}
 		}
@@ -196,7 +208,7 @@ public class Roll extends Command {
 		ArrayList<Integer> initialRoll = rollContainer.mainRollResults;
 		ArrayList<Integer> newRoll = StartRoller(rollContainer.mainDicePool, rollContainer.mainDiceSides);
 		
-		System.out.println(initialRoll.toString() + " | " + newRoll.toString());
+		rollContainer.notes.add("(Advantage Handler) Initial Set: " + initialRoll.toString() + " | Reroll Set: " + newRoll.toString());
 		
 		ArrayList<Integer> finalList = new ArrayList<>();
 		
@@ -206,6 +218,8 @@ public class Roll extends Command {
 			int result = Compare(oldValue, newValue, advantageValue);
 			finalList.add(result);
 		}
+		
+		
 		
 		rollContainer.mainRollResults = finalList;
 		
@@ -233,7 +247,7 @@ public class Roll extends Command {
 			}
 		}
 		
-		rollContainer.advValue = tmpValue;
+		rollContainer.advValue += tmpValue;
 		
 		return tmpValue;
 	}
@@ -305,6 +319,8 @@ public class Roll extends Command {
 		rollContainer.mainDicePool = 1;
 		rollContainer.mainDiceSides = 20;
 		
+		rollContainer.title = "Rolling 1, 20-Sided dice";
+		
 		return rollContainer;
 	}
 
@@ -320,6 +336,8 @@ public class Roll extends Command {
 			rollContainer.mainDicePool = 1;
 			rollContainer.mainDiceSides = (Integer)Integer.parseInt(input);
 		}
+		
+		rollContainer.title = "Rolling " + rollContainer.mainDicePool + ", " + rollContainer.mainDiceSides + "-Sided dice";
 		
 		return rollContainer;
 	}
@@ -352,23 +370,30 @@ public class Roll extends Command {
 		
 		String advMessage = "";
 		if (rollContainer.advValue < 0) {
-			advMessage = "with disadvantage";
+			advMessage = " with disadvantage";
 		} else if (rollContainer.advValue > 0) {
-			advMessage = "with advantage";
+			advMessage = " with advantage";
 		}
 		
 		int finalResult = mainDiceResult + modDiceResult + modValue;
-		String message = "```css\n"
-				+ "Roll by: " + cmd.AUTHOR.getName() + " \n"
-				+ "Rolling "+rollContainer.mainDicePool+", "+rollContainer.mainDiceSides+"-sided Dice " + advMessage + "\n\n"
+		String message = "Roll by: " + cmd.AUTHOR.getName() + " \n"
+				+ rollContainer.title + advMessage + "\n\n"
 				+ "Final Results : " + finalResult + " \n\n"
 				+ "==BREAKDOWN==\n"
 				+ "Main Rolls: " + rollContainer.mainRollResults.toString() + "\n"
 				+ "Total Main Roll Value: " + mainDiceResult + "\n\n"
 				+ "Mod Rolls: " + rollContainer.modRollResults.toString() + "\n"
 				+ "Total Mod Roll Value: " + modDiceResult + "\n\n"
-				+ "Flat Mod Value: " + modValue + "\n"
-				+ "```";
+				+ "Flat Mod Value: " + modValue + "\n";
+		
+		if (rollContainer.showNotes) {
+			message += "== NOTES ==\n";
+			for (String note : rollContainer.notes) {
+				message += note + "\n";
+			}
+		}
+		
+		message = MessageTools.BlockText(message, "css");
 		
 		return message; //FIX
 	}
@@ -386,10 +411,12 @@ public class Roll extends Command {
 		/*
 		 * This will be used to store all the information about the rolls as the bot progresses along each step of the rolling function
 		 * */
-		return new RollContainer(0, 0, null, null, null, null, 0, 0);
+		return new RollContainer("", 1, 20, null, null, null, null, 0, 0, false, new ArrayList<>());
 	}
 
 	public static class RollContainer {
+		public String title;
+		
 		public int mainDicePool;
 		public int mainDiceSides;
 		public ArrayList<Integer> mainRollResults;
@@ -402,7 +429,13 @@ public class Roll extends Command {
 		
 		public int advValue;
 		
-		public RollContainer(int mainDicePool, int mainDiceSides, ArrayList<Integer> mainRollResults, ArrayList<Integer> modDicePool, ArrayList<Integer> modDiceSide, ArrayList<Integer> modRollResults, int modValue, int advValue) {
+		public Boolean showNotes;
+		public ArrayList<String> notes;
+		
+		public RollContainer(String title, int mainDicePool, int mainDiceSides, ArrayList<Integer> mainRollResults, 
+				ArrayList<Integer> modDicePool, ArrayList<Integer> modDiceSide, ArrayList<Integer> modRollResults, int modValue, int advValue, Boolean showNotes, ArrayList<String> notes) {
+			this.title = title;
+			
 			this.mainDicePool = mainDicePool;
 			this.mainDiceSides = mainDiceSides;
 			this.mainRollResults = new ArrayList<>();
@@ -413,6 +446,9 @@ public class Roll extends Command {
 			
 			this.modValue = modValue;
 			this.advValue = advValue;
+			
+			this.showNotes = showNotes;
+			this.notes = notes;
 		}
 	}
 

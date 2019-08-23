@@ -116,7 +116,7 @@ public class Attributes extends Command{
 		
 		modValue = (int) Math.floor((float)((baseValue-10))/2);
 		
-		System.out.println("ModValue: " + modValue);
+		rollContainer.notes.add("Mod Value: " + modValue);
 		
 		boolean isSave = false; //Check for saving throw
 		
@@ -130,7 +130,15 @@ public class Attributes extends Command{
 		
 		if (isProf && isSave) {
 			profBonus = Proficiency.GetProfValue(character);
+			rollContainer.notes.add("Profciency Bonus: " + profBonus);
 		};
+		
+		String saveText = "";
+		if(isSave) {
+			saveText = " as a Saving Throw";
+		}
+		
+		rollContainer.title = "Rolling: " + searchString + saveText;
 		
 		rollContainer.mainDiceSides = 20;
 		rollContainer.mainDicePool = 1;
@@ -165,6 +173,18 @@ public class Attributes extends Command{
 		//Charisma
 		attrMap.put("charisma", "Charisma");
 		attrMap.put("cha", "Charisma");
+	}
+
+	public static int GetCharacterAttributeValue(CharacterContainer character, String input) {
+		String searchTerm = getAttribute(input);
+		
+		for (AttributeContainer attribute : character.attributes) {
+			if (attribute.attributeName.equalsIgnoreCase(searchTerm)) {
+				return attribute.value;
+			}
+		}
+		
+		return 10;
 	}
 
 }

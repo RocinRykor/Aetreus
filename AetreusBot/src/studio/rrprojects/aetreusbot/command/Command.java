@@ -4,7 +4,9 @@ import java.util.ArrayList;
 
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import studio.rrprojects.aetreusbot.command.CommandParser.CommandContainer;
+import studio.rrprojects.aetreusbot.dungeonsanddragons.Attack;
 import studio.rrprojects.aetreusbot.dungeonsanddragons.Attributes;
+import studio.rrprojects.aetreusbot.dungeonsanddragons.Damage;
 import studio.rrprojects.aetreusbot.dungeonsanddragons.DungeonsAndDragons;
 import studio.rrprojects.aetreusbot.dungeonsanddragons.Gold;
 import studio.rrprojects.aetreusbot.dungeonsanddragons.Items;
@@ -43,6 +45,8 @@ public abstract class Command {
 		commands.add(new Skills());
 		commands.add(new Attributes());
 		commands.add(new Proficiency());
+		commands.add(new Attack());
+		commands.add(new Damage());
 		
 		//Adult
 		commands.add(new Adult());

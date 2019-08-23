@@ -7,4 +7,20 @@ public class MessageTools {
 		
 		return output;
 	}
+	
+	public static String BlockText(String input) {
+		return BlockText(input, null);
+	}
+
+	public static String BlockText(String input, String type) {
+		String blockType = "";
+		if (type != null) {
+			blockType = type;
+		}
+		
+		String output = "```" + blockType + "\n" + input 
+				+ "\n```";
+		
+		return output;
+	}
 }

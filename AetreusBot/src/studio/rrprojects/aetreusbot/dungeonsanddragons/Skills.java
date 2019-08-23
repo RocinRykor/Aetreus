@@ -11,6 +11,7 @@ import studio.rrprojects.aetreusbot.command.CommandParser.CommandContainer;
 import studio.rrprojects.aetreusbot.command.Roll.RollContainer;
 import studio.rrprojects.aetreusbot.dungeonsanddragons.tools.CharacterLoader;
 import studio.rrprojects.aetreusbot.dungeonsanddragons.tools.CharacterParser.CharacterContainer;
+import studio.rrprojects.aetreusbot.dungeonsanddragons.tools.ContainerTools.ArmorContainer;
 import studio.rrprojects.aetreusbot.dungeonsanddragons.tools.ContainerTools.AttributeContainer;
 import studio.rrprojects.aetreusbot.dungeonsanddragons.tools.ContainerTools.SkillContainer;
 import studio.rrprojects.aetreusbot.utils.MessageBuilder;
@@ -105,11 +106,19 @@ public class Skills extends Command{
 		
 		modValue = (int) Math.floor((float)((baseValue-10))/2);
 		
-		System.out.println("ModValue: " + modValue);
+		rollContainer.notes.add("Mod Value: " + modValue);
+		
 			
 		if (isProf) {
 			profBonus = Proficiency.GetProfValue(character);
+			rollContainer.notes.add("Profciency Bonus: " + profBonus);
 		};
+		
+		if (searchString.equalsIgnoreCase("Stealth")) {
+			rollContainer = CheckArmorDisadvantage(rollContainer, character);
+		}
+		
+		rollContainer.title = "Rolling: " + searchString;
 		
 		rollContainer.mainDiceSides = 20;
 		rollContainer.mainDicePool = 1;
@@ -118,6 +127,22 @@ public class Skills extends Command{
 		return rollContainer;
 	}
 	
+	private static RollContainer CheckArmorDisadvantage(RollContainer rollContainer, CharacterContainer character) {
+		ArrayList<ArmorContainer> armorList = character.characterInventory.armor;  
+		
+		for (ArmorContainer armor : armorList) {
+			if(armor.equipped) {
+				if (armor.stealthDisadvantage) {
+					rollContainer.advValue -= 1;
+					rollContainer.notes.add("Disadvantage from Stealth");
+					break;
+				}
+			}
+		}
+		
+		return rollContainer;
+	}
+
 	private void SendMessage(EmbedBuilder message, Channel DESDESTINATION) {
 		NewMessage.send(message, DESDESTINATION);
 	}

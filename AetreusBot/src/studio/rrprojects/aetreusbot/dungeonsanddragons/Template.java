@@ -2,6 +2,7 @@ package studio.rrprojects.aetreusbot.dungeonsanddragons;
 
 import java.awt.Color;
 import java.util.HashMap;
+import java.util.Map;
 
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Channel;
@@ -61,21 +62,17 @@ public class Template extends Command{
 		
 		CharacterContainer character = CharacterLoader.GetPlayerData(cmd.AUTHOR.getName());
 		
-		String title = "Character Name: " + character.characterInfo.characterName;
+		HashMap<String, Runnable> subCommands = new HashMap<>();
+		subCommands.put("help", () -> HelpCommand(cmd, subCommands));
+		//subCommands.put("list", () -> TemplateList(cmd, character));
+		//subCommands.put("add", () -> TemplateAdd(cmd, character));
+		//put("remove", () -> TemplateRemove(cmd, character));
+		//subCommands.put("set", () -> TemplateSet(cmd, character));
 		
-		String header = "Character's Gold:";
-		
-		String message = "";
-		
-		HashMap<String, Integer> money = character.characterInventory.money;
-		
-		for (HashMap.Entry<String, Integer> entry : money.entrySet()) {
-			message += entry.getKey() + ": " + entry.getValue() + "\n"; 
+		if (subCommands.containsKey(cmd.MAIN_ARG.toLowerCase())) {
+			subCommands.get(cmd.MAIN_ARG.toLowerCase()).run();
+			return;
 		}
-		
-		EmbedBuilder finalMessage = MessageBuilder.BuildMessage(title, header, message, Color.BLUE);
-		
-		SendMessage(finalMessage, cmd.DESTINATION);
 	}
 	
 	private void SendMessage(EmbedBuilder message, Channel DESDESTINATION) {
@@ -84,6 +81,16 @@ public class Template extends Command{
 	
 	private void SendMessage(String message, Channel DESTINATION) {
 		NewMessage.send(message, DESTINATION);
+	}
+	
+	private void HelpCommand(CommandContainer cmd, HashMap<String, Runnable> subCommands) {
+		String message = "Template Command: Lorem ipsum dolor sit amet";
+		
+		for (Map.Entry<String, Runnable> command: subCommands.entrySet()) {
+			message += command.getKey() + "\n";
+		}
+		
+		SendMessage(message, cmd.DESTINATION);
 	}
 
 }
