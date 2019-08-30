@@ -182,7 +182,7 @@ public class Skills extends Command{
 		
 		//Intimidation
 		skillsTable.put("intimidation", "Intimidation");
-		skillsTable.put("int", "Intimidation");
+		skillsTable.put("inti", "Intimidation");
 		
 		//Investigation
 		skillsTable.put("investigation", "Investigation");

@@ -12,6 +12,7 @@ import studio.rrprojects.aetreusbot.dungeonsanddragons.Gold;
 import studio.rrprojects.aetreusbot.dungeonsanddragons.Items;
 import studio.rrprojects.aetreusbot.dungeonsanddragons.Proficiency;
 import studio.rrprojects.aetreusbot.dungeonsanddragons.Skills;
+import studio.rrprojects.aetreusbot.dungeonsanddragons.Spell;
 import studio.rrprojects.aetreusbot.dungeonsanddragons.tools.CharacterParser.CharacterContainer;
 import studio.rrprojects.aetreusbot.shadowrun.Shadowrun;
 
@@ -47,6 +48,7 @@ public abstract class Command {
 		commands.add(new Proficiency());
 		commands.add(new Attack());
 		commands.add(new Damage());
+		commands.add(new Spell());
 		
 		//Adult
 		commands.add(new Adult());

@@ -378,7 +378,6 @@ public class Roll extends Command {
 		int finalResult = mainDiceResult + modDiceResult + modValue;
 		String message = "Roll by: " + cmd.AUTHOR.getName() + " \n"
 				+ rollContainer.title + advMessage + "\n\n"
-				+ "Final Results : " + finalResult + " \n\n"
 				+ "==BREAKDOWN==\n"
 				+ "Main Rolls: " + rollContainer.mainRollResults.toString() + "\n"
 				+ "Total Main Roll Value: " + mainDiceResult + "\n\n"
@@ -392,6 +391,8 @@ public class Roll extends Command {
 				message += note + "\n";
 			}
 		}
+		
+		message += "\nFinal Results : " + finalResult + " \n";
 		
 		message = MessageTools.BlockText(message, "css");
 		
