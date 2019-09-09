@@ -114,6 +114,10 @@ public class Roll extends Command {
 	}
 	
 	public void SecondaryPhase(RollContainer rollContainer, CommandContainer cmd) {
+		SecondaryPhase(rollContainer, cmd, false);
+	}
+	
+	public RollContainer SecondaryPhase(RollContainer rollContainer, CommandContainer cmd, Boolean isReturned) {
 		//Takes the processed main argument and begins resolving any secondary arguments before finally building the completed roll.
 		//This is its own function so that the attack and damage functions can use the same process
 		
@@ -131,12 +135,17 @@ public class Roll extends Command {
 		
 		//Step 4: Resolve any roll modifiers
 		rollContainer = ResolveRollModifiers(rollContainer);
-			
+		
+		if (isReturned) {
+			return rollContainer;
+		}
+		
 		//Step 5: Build Results
 		finalMessage = BuildResults(rollContainer, cmd);
 		
 		
 		SendMessage(finalMessage, cmd.DESTINATION, cmd.AUTHOR);
+		return null;
 	}
 
 	private RollContainer CharacterSheetImport(CommandContainer cmd, RollContainer rollContainer) {
@@ -324,7 +333,7 @@ public class Roll extends Command {
 		return rollContainer;
 	}
 
-	private RollContainer mainDicePoolBreakdown(String input, RollContainer rollContainer) {
+	public RollContainer mainDicePoolBreakdown(String input, RollContainer rollContainer) {
 		String[] strArray;
 		
 		if (input.contains("d")) {

@@ -15,6 +15,7 @@ import studio.rrprojects.aetreusbot.dungeonsanddragons.tools.ContainerTools.Armo
 import studio.rrprojects.aetreusbot.dungeonsanddragons.tools.ContainerTools.AttributeContainer;
 import studio.rrprojects.aetreusbot.dungeonsanddragons.tools.ContainerTools.SkillContainer;
 import studio.rrprojects.aetreusbot.utils.MessageBuilder;
+import studio.rrprojects.aetreusbot.utils.MessageTools;
 import studio.rrprojects.aetreusbot.utils.NewMessage;
 
 public class Skills extends Command{
@@ -77,7 +78,7 @@ public class Skills extends Command{
 		ArrayList<SkillContainer> skills = character.skills;
 		
 		for (SkillContainer skill : skills) {
-			message += "Skill: " + skill.skillName + ": " + skill.proficient + "\n";
+			message += GetSkill(skill.skillName) + ": " + MessageTools.CapatalizeFirst(skill.proficient.toString()) + "\n";
 		}
 		
 		EmbedBuilder finalMessage = MessageBuilder.BuildMessage(title, header, message, Color.BLUE);
@@ -158,7 +159,8 @@ public class Skills extends Command{
 		
 		//Animal Handling
 		skillsTable.put("animal", "Animal Handling");
-		skillsTable.put("ah", "Animal Handling");
+		skillsTable.put("ani", "Animal Handling");
+		skillsTable.put("animal_handling", "Animal Handling");
 		
 		//Arcana
 		skillsTable.put("arcana", "Arcana");
@@ -215,6 +217,7 @@ public class Skills extends Command{
 		//Sleight of Hand
 		skillsTable.put("sleight", "Sleight of Hand");
 		skillsTable.put("sle", "Sleight of Hand");
+		skillsTable.put("sleight_of_hand", "Sleight of Hand");
 		
 		//Stealth
 		skillsTable.put("stealth", "Stealth");

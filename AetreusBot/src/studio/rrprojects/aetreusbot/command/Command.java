@@ -9,6 +9,7 @@ import studio.rrprojects.aetreusbot.dungeonsanddragons.Attributes;
 import studio.rrprojects.aetreusbot.dungeonsanddragons.Damage;
 import studio.rrprojects.aetreusbot.dungeonsanddragons.DungeonsAndDragons;
 import studio.rrprojects.aetreusbot.dungeonsanddragons.Gold;
+import studio.rrprojects.aetreusbot.dungeonsanddragons.Health;
 import studio.rrprojects.aetreusbot.dungeonsanddragons.Items;
 import studio.rrprojects.aetreusbot.dungeonsanddragons.Proficiency;
 import studio.rrprojects.aetreusbot.dungeonsanddragons.Skills;
@@ -49,6 +50,7 @@ public abstract class Command {
 		commands.add(new Attack());
 		commands.add(new Damage());
 		commands.add(new Spell());
+		commands.add(new Health());
 		
 		//Adult
 		commands.add(new Adult());

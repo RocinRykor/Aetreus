@@ -149,11 +149,13 @@ public class Attack extends Command {
 
 	private int ParseProficiency(WeaponContainer weapon, CharacterContainer character) {
 		String weapontype = weapon.type;
-		
+		String weaponName = weapon.weaponName;
 		Boolean isProficient = false;
 		
 		for (String proficiency: character.characterDescriptionInfo.proficiencies) {
 			if (proficiency.toLowerCase().contains(weapontype.toLowerCase())) {
+				isProficient = true;
+			} else if (proficiency.toLowerCase().contains(weaponName.toLowerCase())) {
 				isProficient = true;
 			}
 		}

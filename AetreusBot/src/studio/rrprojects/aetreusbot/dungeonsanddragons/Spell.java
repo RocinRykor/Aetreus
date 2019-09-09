@@ -329,7 +329,7 @@ public class Spell extends Command {
 					}
 				}
 			} else {
-				if (jsonObj.get(searchCategory).asString().toLowerCase().contains(searchTerm.toLowerCase())) {
+				if (jsonObj.get(searchCategory).toString().toLowerCase().contains(searchTerm.toLowerCase())) {
 					tmpArray.add(jsonObj);
 				}
 			}
