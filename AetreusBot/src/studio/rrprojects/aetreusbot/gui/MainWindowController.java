@@ -5,6 +5,8 @@ import java.awt.TextArea;
 import java.awt.TextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -12,6 +14,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 
@@ -21,6 +24,9 @@ import studio.rrprojects.aetreusbot.InputCollection;
 import java.awt.Component;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import javax.swing.JToggleButton;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 public class MainWindowController {
 
@@ -28,6 +34,7 @@ public class MainWindowController {
 	private static TextField inputField;
 	
 	private static JFrame frmAetreusBot;
+	private final static JToggleButton tglbtnFudgeButton = new JToggleButton("Fudge Rolls");
 	/**
 	 * @wbp.parser.entryPoint
 	 */
@@ -36,7 +43,7 @@ public class MainWindowController {
         frmAetreusBot = new JFrame("Frame Testing");
         frmAetreusBot.setResizable(false);
         frmAetreusBot.setTitle("Aetreus Bot");
-        frmAetreusBot.setSize(400, 400);
+        frmAetreusBot.setSize(405, 422);
         frmAetreusBot.getContentPane().setLayout(new GridLayout(0, 1, 0, 0));
         
         JPanel panel = new JPanel();
@@ -88,6 +95,22 @@ public class MainWindowController {
         clearButton.setBounds(6, 279, 116, 47);
         panel.add(clearButton);
         
+        tglbtnFudgeButton.setBounds(105, 337, 159, 31);
+        tglbtnFudgeButton.addChangeListener(new ChangeListener() {
+			
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				if (tglbtnFudgeButton.isSelected())  {
+					tglbtnFudgeButton.setText("FUDGE (ON)");
+				 	Controller.setFudge(true);
+				} else {
+		 			tglbtnFudgeButton.setText("FUDGE (OFF)");
+					Controller.setFudge(false);
+		 		}
+			}
+		});
+        panel.add(tglbtnFudgeButton);
+        
         JMenuBar menuBar = new JMenuBar();
         frmAetreusBot.setJMenuBar(menuBar);
         
@@ -112,7 +135,7 @@ public class MainWindowController {
 	public static JFrame getFrmAetruesBot() {
 		return frmAetreusBot;
 	}
-
+	
 	protected static void ClearButtonEvent() {
 		InputCollection.ClearArray();
 	}
@@ -164,5 +187,4 @@ public class MainWindowController {
 			}
 		});
 	}
-
 }

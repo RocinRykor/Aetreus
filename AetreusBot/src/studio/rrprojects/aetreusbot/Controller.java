@@ -18,6 +18,7 @@ public class Controller {
 	static SystemTrayController tray;
 	static MainWindowController window;
 	private static JDA jda;
+	private static boolean isFudge;
 	
 	private static String mainDir = "";
 	
@@ -112,6 +113,14 @@ public class Controller {
 
 	public void setMainDir(String mainDir) {
 		Controller.mainDir = mainDir;
+	}
+
+	public static void setFudge(boolean b) {
+		isFudge = b;
+	}
+	
+	public static boolean getFudge() {
+		return isFudge;
 	}
 
 

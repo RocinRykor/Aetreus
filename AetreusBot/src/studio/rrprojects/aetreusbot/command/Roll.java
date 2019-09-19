@@ -9,6 +9,7 @@ import javax.script.ScriptException;
 
 import net.dv8tion.jda.core.entities.Channel;
 import net.dv8tion.jda.core.entities.User;
+import studio.rrprojects.aetreusbot.Controller;
 import studio.rrprojects.aetreusbot.command.CommandParser.CommandContainer;
 import studio.rrprojects.aetreusbot.dungeonsanddragons.Attributes;
 import studio.rrprojects.aetreusbot.dungeonsanddragons.Skills;
@@ -414,6 +415,19 @@ public class Roll extends Command {
 	
 	private int RollDice(int sides) {
 		int dieValue = (int) ((Math.random() * sides) + 1);
+		
+		//!!! CHEATING BE HAPPENING HERE
+		if (Controller.getFudge()) {
+			//If dice rolled is less than d20, always return max value, else roll top half of die
+			if (sides < 20) {
+				dieValue = sides;
+			} else {
+				int halfMaxValue = sides/2;
+				int rollValue = (int) ((Math.random() * halfMaxValue) + 1);
+				dieValue = rollValue + halfMaxValue;
+			}
+		}
+		//!!! END OF CHEATING
 		return dieValue;
 	}
 	

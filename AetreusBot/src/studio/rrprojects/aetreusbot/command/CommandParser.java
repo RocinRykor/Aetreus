@@ -270,7 +270,7 @@ public class CommandParser {
 		
 		String incomingChannelName = event.getTextChannel().getName();
 		
-		if (incomingChannelName.equalsIgnoreCase("bottesting") || incomingChannelName.equalsIgnoreCase(command.getHomeChannel())) {
+		if (incomingChannelName.equalsIgnoreCase("bottesting") || incomingChannelName.equalsIgnoreCase(command.getHomeChannel()) || incomingChannelName.equalsIgnoreCase("gm-screen")) {
 			return true;
 		} else {
 			return false;
