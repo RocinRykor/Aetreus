@@ -21,7 +21,5 @@ public class Ping extends BasicCommand {
     }
 
     @Override
-    public void executeMain(CommandContainer cmd) {
-        MessageUtils.SendMessage("PONG!", cmd.DESTINATION);
-    }
+    public void executeMain(CommandContainer cmd) { MessageUtils.SendMessage("PONG!", cmd.DESTINATION); }
 }

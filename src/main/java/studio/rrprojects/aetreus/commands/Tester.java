@@ -23,5 +23,8 @@ public class Tester extends BasicCommand {
 
     @Override
     public void executeMain(CommandContainer cmd) {
+
+        System.out.println("Changing something so I have something to push");
+
     }
 }
