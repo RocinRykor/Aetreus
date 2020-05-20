@@ -19,6 +19,7 @@ public abstract class GameCommand {
         commands.add(new Roll());
         commands.add(new DNDRoller());
         commands.add(new ShadowrunThirdRoller());
+        commands.add(new Priority());
 
         System.out.println("Game Commands Loaded: " + commands.size());
     }

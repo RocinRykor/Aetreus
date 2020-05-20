@@ -49,6 +49,8 @@ public class MyMessageBuilder {
             }
         }
         String dashLine = "";
+        int maxLength = 25;
+        if (longestLineLength > maxLength) { longestLineLength = maxLength; }
         for (int i = 0; i < longestLineLength; i++) {
             dashLine += "=";
         }
