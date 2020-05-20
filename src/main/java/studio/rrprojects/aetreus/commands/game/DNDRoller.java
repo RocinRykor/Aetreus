@@ -28,7 +28,7 @@ public class DNDRoller extends GameCommand {
 
     @Override
     public String getHelpDescription() {
-        return "Rolls a specified amount of dice - defualts to a d20 - used for Dungeons and Dragons - guaranteed to be *RANDOM* as it uses new RANDOM.ORG Technology";
+        return "Rolls a specified amount of dice - defaults to a d20 - used for Dungeons and Dragons - guaranteed to be *RANDOM* as it uses new RANDOM.ORG Technology";
     }
 
     @Override
@@ -39,17 +39,16 @@ public class DNDRoller extends GameCommand {
     public void executeMain(CommandContainer cmd) {
         RollContainer rollContainer = CreateBlankRollContainer();
 
-        User user = cmd.AUTHOR;
         String mainArg = cmd.MAIN_ARG;
 
-        rollContainer = defaultRoll(rollContainer);
+        defaultRoll(rollContainer);
 
         /*
          * Step 1: Check mainArg for a number, else check for stat or skill and import from character sheet as needed
          * Step 1a: Roll mainDicePool
          * Step 2: Check secondaryArgs for Advantage or Disadvantage and calculate as needed
          * Step 3: Check secondaryArgs for additional roll modifiers, execute as needed
-         * Step 4: Check secondaryArgsd for flat modifiers, calculate total as needed
+         * Step 4: Check secondaryArgs for flat modifiers, calculate total as needed
          * Step 5: Build final results
          *
          * */
@@ -63,7 +62,7 @@ public class DNDRoller extends GameCommand {
                 /*
                  * Import from character sheet
                  * */
-                rollContainer = CharacterSheetImport(cmd, rollContainer);
+                CharacterSheetImport(cmd, rollContainer);
             }
         }
 
@@ -75,65 +74,38 @@ public class DNDRoller extends GameCommand {
         SecondaryPhase(rollContainer, cmd, false);
     }
 
-    public RollContainer SecondaryPhase(RollContainer rollContainer, CommandContainer cmd, Boolean isReturned) {
+    public void SecondaryPhase(RollContainer rollContainer, CommandContainer cmd, Boolean isReturned) {
         //Takes the processed main argument and begins resolving any secondary arguments before finally building the completed roll.
         //This is its own function so that the attack and damage functions can use the same process
 
-        String finalMessage = "";
+        String finalMessage;
         String[] secondaryArg = cmd.SECONDARY_ARG;
 
         //Step 1a: Roll mainDicePool
         rollContainer.mainRollResults = StartRoller(rollContainer.mainDicePool, rollContainer.mainDiceSides);
 
         //Step 2: Check secondaryArgs for Advantage or Disadvantage and calculate as needed
-        rollContainer = AdvantageHandler(rollContainer, secondaryArg);
+        AdvantageHandler(rollContainer, secondaryArg);
 
         //Step 3: Check secondaryArgs for additional roll modifiers and flat modifiers
         rollContainer = ModChecker(rollContainer, secondaryArg);
 
         //Step 4: Resolve any roll modifiers
-        rollContainer = ResolveRollModifiers(rollContainer);
+        ResolveRollModifiers(rollContainer);
 
-        if (isReturned) {
-            return rollContainer;
-        }
+        if (isReturned) return;
 
         //Step 5: Build Results
         finalMessage = BuildResults(rollContainer, cmd);
 
 
         SendMessage(finalMessage, cmd.DESTINATION, cmd.AUTHOR);
-        return null;
     }
 
-    private RollContainer CharacterSheetImport(CommandContainer cmd, RollContainer rollContainer) {
-        if(cmd.AUTHOR.isFake()) {
-            return rollContainer;
-        }
-
-        String input = cmd.MAIN_ARG;
-        String searchString = null;
-        /*
-        searchString = Attributes.getAttribute(input);
-
-        if (searchString != null) {
-            rollContainer = Attributes.ProcessRoll(searchString, cmd, rollContainer);
-        } else {
-            searchString = Skills.GetSkill(input);
-            if (searchString != null) {
-                rollContainer = Skills.ProcessRoll(searchString, cmd, rollContainer);
-            }
-        }
-
-        System.out.println(searchString);
-
-         */
-
-
-        return rollContainer;
+    private void CharacterSheetImport(CommandContainer cmd, RollContainer rollContainer) {
     }
 
-    private RollContainer ResolveRollModifiers(RollContainer rollContainer) {
+    private void ResolveRollModifiers(RollContainer rollContainer) {
         if (rollContainer.modDicePool != null) {
             for (int i = 0; i < rollContainer.modDicePool.size(); i++) {
                 int dicePool = rollContainer.modDicePool.get(i);
@@ -142,7 +114,6 @@ public class DNDRoller extends GameCommand {
             }
         }
 
-        return rollContainer;
     }
 
     private RollContainer ModChecker(RollContainer rollContainer, String[] secondaryArgs) {
@@ -167,13 +138,13 @@ public class DNDRoller extends GameCommand {
         int advantageValue = CheckForAdvantage(secondaryArg, rollContainer);
 
         if (advantageValue != 0) {
-            rollContainer = RollForAdvantage(rollContainer, advantageValue);
+            RollForAdvantage(rollContainer, advantageValue);
         }
 
         return rollContainer;
     }
 
-    private RollContainer RollForAdvantage(RollContainer rollContainer, int advantageValue) {
+    private void RollForAdvantage(RollContainer rollContainer, int advantageValue) {
         ArrayList<Integer> initialRoll = rollContainer.mainRollResults;
         ArrayList<Integer> newRoll = StartRoller(rollContainer.mainDicePool, rollContainer.mainDiceSides);
 
@@ -192,7 +163,6 @@ public class DNDRoller extends GameCommand {
 
         rollContainer.mainRollResults = finalList;
 
-        return rollContainer;
     }
 
     private int Compare(int oldValue, int newValue, int advantageValue) {
@@ -207,10 +177,10 @@ public class DNDRoller extends GameCommand {
         int tmpValue = 0;
 
         if (input != null) {
-            for (int i = 0; i < input.length; i++) {
-                if (input[i].contains("dis")) {
+            for (String s : input) {
+                if (s.contains("dis")) {
                     tmpValue -= 1;
-                } else if (input[i].contains("adv")) {
+                } else if (s.contains("adv")) {
                     tmpValue += 1;
                 }
             }
@@ -241,10 +211,9 @@ public class DNDRoller extends GameCommand {
 
         if(temp.contains("d")) {
             //Split the modifier back up
-            String tmpPrefix = temp.substring(0, 1);
             String tmpSuffix = temp.substring(1);
 
-            String[] splitArray = new String[2];
+            String[] splitArray;
 
             String tmp = tmpSuffix.replace("d", " ");
             System.out.println(tmp);
@@ -277,20 +246,15 @@ public class DNDRoller extends GameCommand {
     }
 
     private boolean CheckModifiers(String input) {
-        if (input.startsWith("+") || input.startsWith("-")) {
-            return true;
-        } else {
-            return false;
-        }
+        return input.startsWith("+") || input.startsWith("-");
     }
 
-    private RollContainer defaultRoll(RollContainer rollContainer) {
+    private void defaultRoll(RollContainer rollContainer) {
         rollContainer.mainDicePool = 1;
         rollContainer.mainDiceSides = 20;
 
         rollContainer.title = "Rolling 1, 20-Sided dice";
 
-        return rollContainer;
     }
 
     public RollContainer mainDicePoolBreakdown(String input, RollContainer rollContainer) {
@@ -299,11 +263,11 @@ public class DNDRoller extends GameCommand {
         if (input.contains("d")) {
             String temp = input.replace("d", " ");
             strArray = temp.split(" ");
-            rollContainer.mainDicePool = (Integer)Integer.parseInt(strArray[0]);
-            rollContainer.mainDiceSides = (Integer)Integer.parseInt(strArray[1]);
+            rollContainer.mainDicePool = Integer.parseInt(strArray[0]);
+            rollContainer.mainDiceSides = Integer.parseInt(strArray[1]);
         } else {
             rollContainer.mainDicePool = 1;
-            rollContainer.mainDiceSides = (Integer)Integer.parseInt(input);
+            rollContainer.mainDiceSides = Integer.parseInt(input);
         }
 
         rollContainer.title = "Rolling " + rollContainer.mainDicePool + ", " + rollContainer.mainDiceSides + "-Sided dice";
@@ -345,7 +309,7 @@ public class DNDRoller extends GameCommand {
         }
 
         int finalResult = mainDiceResult + modDiceResult + modValue;
-        String message = "Roll by: " + cmd.AUTHOR.getName() + " \n"
+        StringBuilder message = new StringBuilder("Roll by: " + cmd.AUTHOR.getName() + " \n"
                 + rollContainer.title + advMessage + "\n"
                 + "===========\n\n"
                 + "> BREAKDOWN"
@@ -353,21 +317,20 @@ public class DNDRoller extends GameCommand {
                 + "> Total Main Roll Value: " + mainDiceResult + "\n\n"
                 + "> Mod Rolls: " + rollContainer.modRollResults.toString() + "\n"
                 + "> Total Mod Roll Value: " + modDiceResult + "\n\n"
-                + "> Flat Mod Value: " + modValue + "\n";
+                + "> Flat Mod Value: " + modValue + "\n");
 
         if (rollContainer.showNotes) {
-            message += "> == NOTES ==\n";
+            message.append("> == NOTES ==\n");
             for (String note : rollContainer.notes) {
-                message += "> " + note + "\n";
+                message.append("> ").append(note).append("\n");
             }
         }
 
-        message += "\nFinal Results : " + finalResult + " \n"
-                + "===========";
+        message.append("\nFinal Results : ").append(finalResult).append(" \n").append("===========");
 
-        message = MessageUtils.BlockText(message, "md");
+        message = new StringBuilder(MessageUtils.BlockText(message.toString(), "md"));
 
-        return message; //FIX
+        return message.toString(); //FIX
     }
 
     private void SendMessage(String message, MessageChannel DESTINATION, User user) {
@@ -375,7 +338,6 @@ public class DNDRoller extends GameCommand {
     }
 
     private int RollDice(int sides) {
-        int dieValue = (int) ((Math.random() * sides) + 1);
 
         /*//!!! CHEATING BE HAPPENING HERE
         if (Controller.getFudge()) {
@@ -389,7 +351,7 @@ public class DNDRoller extends GameCommand {
             }
         }
         *///!!! END OF CHEATING
-        return dieValue;
+        return (int) ((Math.random() * sides) + 1);
     }
 
     public RollContainer CreateBlankRollContainer() {

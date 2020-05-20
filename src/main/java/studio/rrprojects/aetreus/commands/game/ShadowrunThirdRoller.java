@@ -47,7 +47,7 @@ public class ShadowrunThirdRoller extends GameCommand {
             RunError(cmd);
             return;
         }
-        String testType = "default";
+        String testType;
         if (cmd.SECONDARY_ARG == null) {
             testType = "default";
         } else {
@@ -109,7 +109,6 @@ public class ShadowrunThirdRoller extends GameCommand {
     private DiceContainer BuildDiceContainer(int dicePool, boolean usesRuleOfSix) {
         ArrayList<Integer> arrayList = new ArrayList<>();
         int ones = 0;
-        String note = "";
 
         for (int i = 0; i < dicePool; i++) {
             int tempValue = RandomUtils.getRandomRange(1, 6);
@@ -249,8 +248,7 @@ public class ShadowrunThirdRoller extends GameCommand {
             diceContainer.MESSAGE.add("< = = = WARNING - CRITICAL GLITCH! = = = >");
         }
 
-        String output = diceContainer.MESSAGE.build(true);
-        return output;
+        return diceContainer.MESSAGE.build(true);
     }
 
     private void EmbedMessage(String output, Color color, CommandContainer cmd) {
@@ -290,7 +288,7 @@ public class ShadowrunThirdRoller extends GameCommand {
     }
 
     // Container
-    private class DiceContainer {
+    private static class DiceContainer {
         ArrayList<Integer> DICE_RESULTS;
         int ONES;
         boolean RuleOfOnes;

@@ -59,9 +59,8 @@ public class CommandParser {
 
         MessageChannel DESTINATION;
 
-        JDA JDA = null;
+        JDA JDA;
 
-        String MAIN_COMMAND = command;
         String MAIN_ARG;
         String[] SECONDARY_ARG = null;
         String NOTE_ARG;
@@ -77,10 +76,10 @@ public class CommandParser {
 
 
         if (raw.contains("\"")) { //Check if beheaded string has a note and if so extract it.
-            Integer quotationIndex = raw.indexOf("\"");
+            int quotationIndex = raw.indexOf("\"");
 
             TRIMMED_RAW = raw.substring(0, quotationIndex);
-            NOTE_ARG = raw.substring(quotationIndex, raw.length());
+            NOTE_ARG = raw.substring(quotationIndex);
 
             TRIMMED_NOTE = NOTE_ARG.replace("\"", "");
 
@@ -95,9 +94,7 @@ public class CommandParser {
 
             if (argBreakdown.length > 1) {
                 SECONDARY_ARG = new String[argBreakdown.length - 1];
-                for (int i = 0; i < SECONDARY_ARG.length; i++) {
-                    SECONDARY_ARG[i] = argBreakdown[i + 1];
-                }
+                System.arraycopy(argBreakdown, 1, SECONDARY_ARG, 0, SECONDARY_ARG.length);
             }
 
         } else {
@@ -106,7 +103,7 @@ public class CommandParser {
         }
 
 
-        return new CommandContainer(AUTHOR, CHANNEL, TIME, DESTINATION, JDA, MAIN_COMMAND, MAIN_ARG, SECONDARY_ARG, TRIMMED_RAW, TRIMMED_NOTE, event);
+        return new CommandContainer(AUTHOR, CHANNEL, TIME, DESTINATION, JDA, command, MAIN_ARG, SECONDARY_ARG, TRIMMED_RAW, TRIMMED_NOTE, event);
     }
 }
 

@@ -13,9 +13,7 @@ public class MessageUtils {
             blockType = type;
         }
 
-        String output = "```" + blockType + "\n" + input
+        return "```" + blockType + "\n" + input
                 + "\n```";
-
-        return output;
     }
 }

@@ -15,7 +15,6 @@ public class ConfigController {
     private String botToken;
     private String botPrefix;
     private String botSecondPrefix;
-    private String botMessage;
 
     public void Initialize() {
         System.out.println("Config Controller Initialization");
@@ -30,7 +29,8 @@ public class ConfigController {
 
         //Quick test to ensure the dir is valid
         File mainDir = new File(configDir);
-        if (!mainDir.exists()) mainDir.mkdirs();
+        if (!mainDir.exists()) //noinspection ResultOfMethodCallIgnored
+            mainDir.mkdirs();
 
         String configPath = configDir + File.separator + configName;
         fileConfig = new File(configPath);
@@ -53,8 +53,6 @@ public class ConfigController {
         try {
             reader = new FileReader(fileConfig);
             prop.load(reader);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -62,19 +60,19 @@ public class ConfigController {
         setBotToken(prop.getProperty("botToken"));
         setBotPrefix(prop.getProperty("botPrefix"));
         setBotSecondPrefix(prop.getProperty("botSecondPrefix"));
-        setBotMessage(prop.getProperty("botMessage"));
 
         System.out.println("Config Loaded!");
     }
 
     private void CreateConfigFile() {
-        HashMap<String, String> variableTable = new HashMap<String, String>();
+        HashMap<String, String> variableTable = new HashMap<>();
         variableTable.put("botPrefix", "&");
         variableTable.put("botSecondPrefix", String.valueOf('!'));
         variableTable.put("botToken", "CHANGE ME BEFORE RELOADING THE BOT");
         variableTable.put("botMessage", "Say \"& Help\" to begin.");
 
         try {
+            //noinspection ResultOfMethodCallIgnored
             fileConfig.createNewFile();
         } catch (IOException e) {
             e.printStackTrace();
@@ -101,9 +99,6 @@ public class ConfigController {
     public String getBotSecondPrefix() {
         return botSecondPrefix;
     }
-    public String getBotMessage() {
-        return botMessage;
-    }
 
     //SETTERS
     public void setBotToken(String botToken) {
@@ -116,10 +111,6 @@ public class ConfigController {
 
     public void setBotSecondPrefix(String botSecondPrefix) {
         this.botSecondPrefix = botSecondPrefix;
-    }
-
-    public void setBotMessage(String botMessage) {
-        this.botMessage = botMessage;
     }
 
 

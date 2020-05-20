@@ -72,11 +72,11 @@ public class Main {
     public static ConfigController getConfig() { return config; }
     public static String getDirMainDir() { return dirMainDir; }
     public static JDA getJda() { return jda; }
-    public static GUIController getGUI() { return gui; }
+
     public static CommandController getCommand() { return command; }
 
     // MAIN
     public static void main(String[] args) {
-        Main main = new Main();
+        new Main();
     }
 }
