@@ -48,10 +48,6 @@ public class Priority extends GameCommand {
         SendMessage(priority.Build(new MyMessageBuilder()), cmd.DESTINATION);
     }
 
-    private Boolean RaceChecker(ArrayList<String> priorityPool) {
-        return !priorityPool.get(0).equalsIgnoreCase("A") && !priorityPool.get(0).equalsIgnoreCase("B");
-    }
-
     public void Initialize() {
         //Race Table
         tableRace = new HashMap<>();
@@ -69,7 +65,7 @@ public class Priority extends GameCommand {
         tableMagic.put("Not Magic", "E");
 
         //Attribute Table
-        tableAttributes = new HashMap<String, String>();
+        tableAttributes = new HashMap<>();
         tableAttributes.put("A", "30");
         tableAttributes.put("B", "27");
         tableAttributes.put("C", "24");
@@ -77,7 +73,7 @@ public class Priority extends GameCommand {
         tableAttributes.put("E", "18");
 
         //Skill Table
-        tableSkills = new HashMap<String, String>();
+        tableSkills = new HashMap<>();
         tableSkills.put("A", "50");
         tableSkills.put("B", "40");
         tableSkills.put("C", "34");
@@ -85,7 +81,7 @@ public class Priority extends GameCommand {
         tableSkills.put("E", "27");
 
         //Resources Table
-        tableResources = new HashMap<String, String>();
+        tableResources = new HashMap<>();
         tableResources.put("A", "1,000,000¥");
         tableResources.put("B", "400,000¥");
         tableResources.put("C", "90,000¥");
@@ -93,7 +89,7 @@ public class Priority extends GameCommand {
         tableResources.put("E", "5,000¥");
     }
 
-    private class PriorityTableContainer {
+    private static class PriorityTableContainer {
         ArrayList<String> priorityPool = new ArrayList<>();
         HashMap<String, String> optionTable = new HashMap<>();
         HashMap<String, String> valueTable = new HashMap<>();
@@ -198,7 +194,7 @@ public class Priority extends GameCommand {
         }
 
         public String Build(MyMessageBuilder myMessageBuilder) {
-            for (Map.Entry value: valueTable.entrySet())
+            for (Map.Entry <String, String> value: valueTable.entrySet())
                 myMessageBuilder.add(String.format("%s: %s (%s)", value.getKey(), value.getValue(), optionTable.get(value.getKey())));
 
             return myMessageBuilder.build(false);
