@@ -48,17 +48,15 @@ public class MyMessageBuilder {
                 longestLineLength = lineLength;
             }
         }
-        String dashLine = "";
+        StringBuilder dashLine = new StringBuilder();
         int maxLength = 25;
         if (longestLineLength > maxLength) { longestLineLength = maxLength; }
-        for (int i = 0; i < longestLineLength; i++) {
-            dashLine += "=";
-        }
+        dashLine.append("=".repeat(longestLineLength));
 
         StringBuilder output = new StringBuilder();
 
         for (String line : message) {
-            String tmpLine = "";
+            String tmpLine;
 
             if (line.equalsIgnoreCase("[DL]")) {
                 tmpLine = dashLine + "\n";
