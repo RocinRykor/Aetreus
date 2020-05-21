@@ -14,6 +14,7 @@ public abstract class AdminCommand {
         commands = new ArrayList<>();
 
         commands.add(new Admin());
+        commands.add(new Delete());
 
         System.out.println("Admin Commands Loaded: " + commands.size());
     }
