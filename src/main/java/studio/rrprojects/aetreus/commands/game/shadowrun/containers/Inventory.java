@@ -9,7 +9,7 @@ public class Inventory {
     //Armor armor;
     //Vehicles vehicles;
     Equipment equipment;
-    //Credsticks credsticks;
+    Credsticks credsticks;
     //Cyberware cyberware;
 
     public Inventory(JsonObject inventory) {
@@ -19,7 +19,7 @@ public class Inventory {
         //armor = new Armor(inventory.get("armor").asObject());
         //vehicles = new Vehicles(inventory.get("vehicles").asObject());
         equipment = new Equipment(inventory.get("equipment").asObject());
-        //credsticks = new Credsticks(inventory.get("credsticks").asObject());
+        credsticks = new Credsticks(inventory.get("credsticks").asObject());
         //cyberware = new Cyberware(inventory.get("cyberware").asObject());
     }
 
@@ -45,5 +45,13 @@ public class Inventory {
 
     public void setEquipment(Equipment equipment) {
         this.equipment = equipment;
+    }
+
+    public Credsticks getCredsticks() {
+        return credsticks;
+    }
+
+    public void setCredsticks(Credsticks credsticks) {
+        this.credsticks = credsticks;
     }
 }
