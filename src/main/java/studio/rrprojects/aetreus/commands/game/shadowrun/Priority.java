@@ -1,5 +1,6 @@
-package studio.rrprojects.aetreus.commands.game;
+package studio.rrprojects.aetreus.commands.game.shadowrun;
 
+import studio.rrprojects.aetreus.commands.game.GameCommand;
 import studio.rrprojects.aetreus.discord.CommandContainer;
 import studio.rrprojects.aetreus.utils.MyMessageBuilder;
 

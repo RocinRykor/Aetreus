@@ -1,6 +1,7 @@
-package studio.rrprojects.aetreus.commands.game;
+package studio.rrprojects.aetreus.commands.game.shadowrun;
 
 import net.dv8tion.jda.api.EmbedBuilder;
+import studio.rrprojects.aetreus.commands.game.GameCommand;
 import studio.rrprojects.aetreus.discord.CommandContainer;
 import studio.rrprojects.aetreus.utils.MyMessageBuilder;
 import studio.rrprojects.aetreus.utils.RandomUtils;
