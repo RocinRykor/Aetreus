@@ -14,7 +14,7 @@ public class CharacterContainer {
     Skills skills;
     Inventory inventory;
     JsonObject spells;
-    JsonObject condition;
+    ConditionContainer condition;
     Contacts contacts;
 
 
@@ -27,7 +27,7 @@ public class CharacterContainer {
         skills = new Skills(mainObj.get("skills").asObject());
         inventory = new Inventory(mainObj.get("inventory").asObject());
         spells = mainObj.get("spells").asObject();
-        condition = mainObj.get("condition").asObject();
+        condition = new ConditionContainer(mainObj.get("condition").asObject());
         contacts = new Contacts(mainObj.get("contacts").asObject());
 
         return this;
@@ -82,11 +82,11 @@ public class CharacterContainer {
         this.spells = spells;
     }
 
-    public JsonObject getCondition() {
+    public ConditionContainer getCondition() {
         return condition;
     }
 
-    public void setCondition(JsonObject condition) {
+    public void setCondition(ConditionContainer condition) {
         this.condition = condition;
     }
 

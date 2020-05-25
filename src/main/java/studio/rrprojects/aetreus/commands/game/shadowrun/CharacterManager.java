@@ -2,6 +2,7 @@ package studio.rrprojects.aetreus.commands.game.shadowrun;
 
 import net.dv8tion.jda.api.entities.User;
 import studio.rrprojects.aetreus.commands.game.GameCommand;
+import studio.rrprojects.aetreus.commands.game.shadowrun.containers.Character;
 import studio.rrprojects.aetreus.commands.game.shadowrun.containers.CharacterContainer;
 import studio.rrprojects.aetreus.discord.CommandContainer;
 import studio.rrprojects.aetreus.main.Main;
@@ -63,7 +64,7 @@ public class CharacterManager extends GameCommand {
         MyMessageBuilder message = new MyMessageBuilder();
         message.add(String.format("%s, by %s", character.getCharacter().getName(), cmd.AUTHOR.getName()));
         message.add(String.format("%s %s, Age %s", character.getCharacter().getSex(), character.getCharacter().getRace(), character.getCharacter().getAge()));
-
+        message.add(character.getCondition().Display());
 
         /*
         message.add(character.getAttributes().getAllAttributes());
