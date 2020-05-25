@@ -70,6 +70,7 @@ public class CharacterManager extends GameCommand {
         message.add(character.getSkills().getActiveSkills().getAllSkills());
         message.add(character.getSkills().getKnowledgeSkills().getAllSkills());
         message.add(character.getContacts().getAllContacts());
+        message.add(character.getInventory().getWeapons().getAllWeapons());
          */
 
         character.WriteTo(filePath);
