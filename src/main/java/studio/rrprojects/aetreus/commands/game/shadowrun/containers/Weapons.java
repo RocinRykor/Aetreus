@@ -42,7 +42,7 @@ public class Weapons {
             String tmpString = String.format("%s, %s - Damage: %s%s (%s) ",
                     weapon.getKey(), value.getWeapon_type(), damage.threshold, damage.amount, damage.type);
             if (value.modifications.modificationList.size() > 0) {
-                for (Map.Entry<String, WeaponModificationContainer> mod: value.modifications.modificationList.entrySet()) {
+                for (Map.Entry<String, ModificationContainer> mod: value.modifications.modificationList.entrySet()) {
                     tmpString += String.format(", %s: %s", mod.getKey(), mod.getValue().effect);
                 }
             }

@@ -22,13 +22,13 @@ public class CharacterContainer {
         FileReader reader = new FileReader(new File((filePath)));
         mainObj = (JsonObject) Json.parse(reader);
 
-        character = new Character(mainObj.get("character").asObject());
-        attributes = new Attributes(mainObj.get("attributes").asObject());
-        skills = new Skills(mainObj.get("skills").asObject());
-        inventory = new Inventory(mainObj.get("inventory").asObject());
+        character = new Character(mainObj.get("character").asObject(), this);
+        attributes = new Attributes(mainObj.get("attributes").asObject(), this);
+        skills = new Skills(mainObj.get("skills").asObject(), this);
+        inventory = new Inventory(mainObj.get("inventory").asObject(), this);
         spells = mainObj.get("spells").asObject();
-        condition = new ConditionContainer(mainObj.get("condition").asObject());
-        contacts = new Contacts(mainObj.get("contacts").asObject());
+        condition = new ConditionContainer(mainObj.get("condition").asObject(), this);
+        contacts = new Contacts(mainObj.get("contacts").asObject(), this);
 
         return this;
     }

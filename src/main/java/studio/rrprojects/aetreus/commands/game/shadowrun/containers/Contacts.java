@@ -6,10 +6,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Contacts {
+    private final CharacterContainer parent;
     JsonObject jsonObject;
     HashMap<String, ContactContainer> contactList;
 
-    public Contacts(JsonObject contacts) {
+    public Contacts(JsonObject contacts, CharacterContainer characterContainer) {
+        parent = characterContainer;
         jsonObject = contacts;
         contactList = new HashMap<>();
 
@@ -40,5 +42,9 @@ public class Contacts {
 
     public void setContactList(HashMap<String, ContactContainer> contactList) {
         this.contactList = contactList;
+    }
+
+    public CharacterContainer getParent() {
+        return parent;
     }
 }

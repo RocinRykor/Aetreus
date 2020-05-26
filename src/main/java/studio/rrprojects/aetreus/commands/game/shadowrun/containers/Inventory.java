@@ -3,20 +3,22 @@ package studio.rrprojects.aetreus.commands.game.shadowrun.containers;
 import com.eclipsesource.json.JsonObject;
 
 public class Inventory {
+    private final CharacterContainer parent;
     JsonObject jsonObject;
 
     Weapons weapons;
-    //Armor armor;
+    Armor armor;
     //Vehicles vehicles;
     Equipment equipment;
     Credsticks credsticks;
     //Cyberware cyberware;
 
-    public Inventory(JsonObject inventory) {
+    public Inventory(JsonObject inventory, CharacterContainer characterContainer) {
+        parent = characterContainer;
         jsonObject = inventory;
 
         weapons = new Weapons(inventory.get("weapons").asObject());
-        //armor = new Armor(inventory.get("armor").asObject());
+        armor = new Armor(inventory.get("armor").asObject());
         //vehicles = new Vehicles(inventory.get("vehicles").asObject());
         equipment = new Equipment(inventory.get("equipment").asObject());
         credsticks = new Credsticks(inventory.get("credsticks").asObject());
@@ -51,7 +53,13 @@ public class Inventory {
         return credsticks;
     }
 
-    public void setCredsticks(Credsticks credsticks) {
-        this.credsticks = credsticks;
+    public void setCredsticks(Credsticks credsticks) { this.credsticks = credsticks; }
+
+    public Armor getArmor() {
+        return armor;
+    }
+
+    public CharacterContainer getParent() {
+        return parent;
     }
 }

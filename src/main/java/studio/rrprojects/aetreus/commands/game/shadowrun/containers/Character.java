@@ -3,6 +3,7 @@ package studio.rrprojects.aetreus.commands.game.shadowrun.containers;
 import com.eclipsesource.json.JsonObject;
 
 public class Character {
+    private final CharacterContainer parent;
     JsonObject jsonObject;
     String name;
     String race;
@@ -13,7 +14,8 @@ public class Character {
     int karma;
     Career career;
 
-    public Character(JsonObject character) {
+    public Character(JsonObject character, CharacterContainer characterContainer) {
+        parent = characterContainer;
         jsonObject = character;
         name = character.getString("name", "unknown");
         race = character.getString("race", "unknown");
@@ -95,5 +97,9 @@ public class Character {
 
     public void setCareer(Career career) {
         this.career = career;
+    }
+
+    public CharacterContainer getParent() {
+        return parent;
     }
 }

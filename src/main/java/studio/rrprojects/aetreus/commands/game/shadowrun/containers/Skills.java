@@ -3,11 +3,13 @@ package studio.rrprojects.aetreus.commands.game.shadowrun.containers;
 import com.eclipsesource.json.JsonObject;
 
 public class Skills {
+    private final CharacterContainer parent;
     JsonObject jsonObject;
     ActiveSkills activeSkills;
     KnowledgeSkills knowledgeSkills;
 
-    public Skills(JsonObject skills) {
+    public Skills(JsonObject skills, CharacterContainer characterContainer) {
+        parent = characterContainer;
         jsonObject = skills;
         activeSkills = new ActiveSkills(skills.get("active").asObject());
         knowledgeSkills = new KnowledgeSkills(skills.get("knowledge").asObject());
@@ -35,5 +37,9 @@ public class Skills {
 
     public void setKnowledgeSkills(KnowledgeSkills knowledgeSkills) {
         this.knowledgeSkills = knowledgeSkills;
+    }
+
+    public CharacterContainer getParent() {
+        return parent;
     }
 }

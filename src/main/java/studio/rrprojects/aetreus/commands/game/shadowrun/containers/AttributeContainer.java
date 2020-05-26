@@ -46,4 +46,12 @@ public class AttributeContainer {
     public void setModifier(int modifier) {
         this.modifier = modifier;
     }
+
+    public int getTotal() {
+        if (override != 0) {
+            return override;
+        } else {
+            return base+modifier;
+        }
+    }
 }

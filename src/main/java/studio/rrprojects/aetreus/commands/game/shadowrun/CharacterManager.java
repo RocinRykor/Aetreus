@@ -2,7 +2,6 @@ package studio.rrprojects.aetreus.commands.game.shadowrun;
 
 import net.dv8tion.jda.api.entities.User;
 import studio.rrprojects.aetreus.commands.game.GameCommand;
-import studio.rrprojects.aetreus.commands.game.shadowrun.containers.Character;
 import studio.rrprojects.aetreus.commands.game.shadowrun.containers.CharacterContainer;
 import studio.rrprojects.aetreus.discord.CommandContainer;
 import studio.rrprojects.aetreus.main.Main;
@@ -71,8 +70,8 @@ public class CharacterManager extends GameCommand {
         message.add(character.getSkills().getKnowledgeSkills().getAllSkills());
         message.add(character.getContacts().getAllContacts());
         message.add(character.getInventory().getWeapons().getAllWeapons());
-        message.add(character.getCondition().Display());
         message.add(character.getInventory().getCredsticks().getAllCredsticks());
+        message.add(character.getCondition().Display());
          */
 
         character.WriteTo(filePath);

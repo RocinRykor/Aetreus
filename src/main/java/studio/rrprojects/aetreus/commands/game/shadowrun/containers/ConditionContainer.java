@@ -3,11 +3,13 @@ package studio.rrprojects.aetreus.commands.game.shadowrun.containers;
 import com.eclipsesource.json.JsonObject;
 
 public class ConditionContainer {
+    CharacterContainer parent;
     JsonObject jsonObject;
     int stun;
     int physical;
     int overflow;
-    public ConditionContainer(JsonObject condition) {
+    public ConditionContainer(JsonObject condition, CharacterContainer characterContainer) {
+        parent = characterContainer;
         jsonObject = condition;
         stun = condition.getInt("stun", 0);
         physical = condition.getInt("physical", 0);
@@ -57,14 +59,15 @@ public class ConditionContainer {
                 "PHYS: %s (%d/10)", counterToEmoji(stun, emojiStun), stun,
                 counterToEmoji(physical, emojiPhysical), physical);
         if (overflow > 0) {
-            output += String.format("\nOVER: %s (%d/10)", counterToEmoji(overflow, emojiOverflow), overflow);
+            int maxCount = parent.getAttributes().getAttribute("BOD");
+            output += String.format("\nOVER: %s (%d/%d)", counterToEmoji(overflow, emojiOverflow, maxCount), overflow, maxCount);
         }
 
         return output;
     }
 
-    private Object counterToEmoji(int count, String emojiCode) {
-        int countBlank = 10-count;
+    private Object counterToEmoji(int count, String emojiCode, int maxCount) {
+        int countBlank = maxCount-count;
         String emojiBlank = ":black_circle:";
 
         StringBuilder string= new StringBuilder();
@@ -74,6 +77,13 @@ public class ConditionContainer {
         for (int i = 0; i < countBlank; i++) {
             string.append(emojiBlank).append(" ");
         }
+
         return string.toString();
+
+        //TODO - Max overflow at character's body
+    }
+
+    private Object counterToEmoji(int count, String emojiCode) {
+       return counterToEmoji(count, emojiCode, 10);
     }
 }

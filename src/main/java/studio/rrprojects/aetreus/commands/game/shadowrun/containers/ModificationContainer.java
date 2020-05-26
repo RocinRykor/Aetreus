@@ -2,10 +2,10 @@ package studio.rrprojects.aetreus.commands.game.shadowrun.containers;
 
 import com.eclipsesource.json.JsonObject;
 
-public class WeaponModificationContainer {
+public class ModificationContainer {
     JsonObject jsonObject;
     String effect;
-    public WeaponModificationContainer(JsonObject modification) {
+    public ModificationContainer(JsonObject modification) {
         jsonObject = modification;
         effect = modification.getString("effect", "unknown");
     }

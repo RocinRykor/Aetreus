@@ -18,7 +18,7 @@ public class WeaponContainer {
     float streetIndex;
     String legal;
     int recoil_compensation;
-    WeaponModifications modifications;
+    Modifications modifications;
 
     public WeaponContainer(JsonObject weapon) {
         jsonObject = weapon;
@@ -35,7 +35,7 @@ public class WeaponContainer {
         streetIndex = weapon.getFloat("streetIndex", 0);
         legal = weapon.getString("legal", "unknown");
         recoil_compensation = weapon.getInt("recoil_compensation", 0);
-        modifications = new WeaponModifications(weapon.get("modifications").asObject());
+        modifications = new Modifications(weapon.get("modifications").asObject());
     }
 
     public JsonObject getJsonObject() {
@@ -150,11 +150,11 @@ public class WeaponContainer {
         this.recoil_compensation = recoil_compensation;
     }
 
-    public WeaponModifications getModifications() {
+    public Modifications getModifications() {
         return modifications;
     }
 
-    public void setModifications(WeaponModifications modifications) {
+    public void setModifications(Modifications modifications) {
         this.modifications = modifications;
     }
 }
