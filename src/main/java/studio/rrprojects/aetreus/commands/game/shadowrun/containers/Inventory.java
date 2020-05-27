@@ -8,7 +8,7 @@ public class Inventory {
 
     Weapons weapons;
     Armor armor;
-    //Vehicles vehicles;
+    Vehicles vehicles;
     Equipment equipment;
     Credsticks credsticks;
     //Cyberware cyberware;
@@ -17,11 +17,11 @@ public class Inventory {
         parent = characterContainer;
         jsonObject = inventory;
 
-        weapons = new Weapons(inventory.get("weapons").asObject());
-        armor = new Armor(inventory.get("armor").asObject());
-        //vehicles = new Vehicles(inventory.get("vehicles").asObject());
-        equipment = new Equipment(inventory.get("equipment").asObject());
-        credsticks = new Credsticks(inventory.get("credsticks").asObject());
+        weapons = new Weapons(inventory.get("weapons").asObject(), parent);
+        armor = new Armor(inventory.get("armor").asObject(), parent);
+        vehicles = new Vehicles(inventory.get("vehicles").asObject(), parent);
+        equipment = new Equipment(inventory.get("equipment").asObject(), parent);
+        credsticks = new Credsticks(inventory.get("credsticks").asObject(), parent);
         //cyberware = new Cyberware(inventory.get("cyberware").asObject());
     }
 

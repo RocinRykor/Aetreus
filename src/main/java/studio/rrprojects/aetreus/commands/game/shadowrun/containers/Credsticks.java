@@ -6,10 +6,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Credsticks {
+    private final CharacterContainer parent;
     JsonObject jsonObject;
     HashMap<String, CredstickContainer> credstickList;
 
-    public Credsticks(JsonObject credsticks) {
+    public Credsticks(JsonObject credsticks, CharacterContainer characterContainer) {
+        parent = characterContainer;
         jsonObject = credsticks;
         credstickList = new HashMap<>();
         for (JsonObject.Member credstick :credsticks) {
@@ -31,6 +33,10 @@ public class Credsticks {
 
     public void setCredstickList(HashMap<String, CredstickContainer> credstickList) {
         this.credstickList = credstickList;
+    }
+
+    public CharacterContainer getParent() {
+        return parent;
     }
 
     public String getAllCredsticks() {

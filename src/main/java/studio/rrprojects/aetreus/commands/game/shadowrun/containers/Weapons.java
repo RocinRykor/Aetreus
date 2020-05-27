@@ -6,10 +6,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Weapons {
+    private final CharacterContainer parent;
     JsonObject jsonObject;
     HashMap<String, WeaponContainer> weaponList;
 
-    public Weapons(JsonObject weapons) {
+    public Weapons(JsonObject weapons, CharacterContainer characterContainer) {
+        parent = characterContainer;
         jsonObject = weapons;
         weaponList = new HashMap<>();
         for (JsonObject.Member weapon: weapons) {
@@ -31,6 +33,10 @@ public class Weapons {
 
     public void setWeaponList(HashMap<String, WeaponContainer> weaponList) {
         this.weaponList = weaponList;
+    }
+
+    public CharacterContainer getParent() {
+        return parent;
     }
 
     public String getAllWeapons() {
