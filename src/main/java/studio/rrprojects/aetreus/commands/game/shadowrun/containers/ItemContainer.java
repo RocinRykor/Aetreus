@@ -9,7 +9,7 @@ public class ItemContainer {
     String notes;
     public ItemContainer(JsonObject item) {
         jsonObject = item;
-        rating = item.getInt("rating", 1);
+        rating = item.getInt("force", 1);
         quantity = item.getInt("quantity", 1);
         notes = item.getString("notes", "Unknown");
     }

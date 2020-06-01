@@ -13,7 +13,7 @@ public class CharacterContainer {
     Attributes attributes;
     Skills skills;
     Inventory inventory;
-    JsonObject spells;
+    Spells spells;
     ConditionContainer condition;
     Contacts contacts;
 
@@ -26,7 +26,7 @@ public class CharacterContainer {
         attributes = new Attributes(mainObj.get("attributes").asObject(), this);
         skills = new Skills(mainObj.get("skills").asObject(), this);
         inventory = new Inventory(mainObj.get("inventory").asObject(), this);
-        spells = mainObj.get("spells").asObject();
+        spells = new Spells(mainObj.get("spells").asObject(), this);
         condition = new ConditionContainer(mainObj.get("condition").asObject(), this);
         contacts = new Contacts(mainObj.get("contacts").asObject(), this);
 
@@ -74,11 +74,11 @@ public class CharacterContainer {
         this.inventory = inventory;
     }
 
-    public JsonObject getSpells() {
+    public Spells getSpells() {
         return spells;
     }
 
-    public void setSpells(JsonObject spells) {
+    public void setSpells(Spells spells) {
         this.spells = spells;
     }
 

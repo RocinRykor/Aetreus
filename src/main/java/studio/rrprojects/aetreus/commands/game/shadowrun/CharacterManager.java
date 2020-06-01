@@ -63,7 +63,7 @@ public class CharacterManager extends GameCommand {
         MyMessageBuilder message = new MyMessageBuilder();
         message.add(String.format("%s, by %s", character.getCharacter().getName(), cmd.AUTHOR.getName()));
         message.add(String.format("%s %s, Age %s", character.getCharacter().getSex(), character.getCharacter().getRace(), character.getCharacter().getAge()));
-        message.add(character.getInventory().getEquipment().getAllEquipment());
+        message.add(character.getSpells().getAllAdeptPowers());
         /*
         message.add(character.getAttributes().getAllAttributes());
         message.add(character.getSkills().getActiveSkills().getAllSkills());

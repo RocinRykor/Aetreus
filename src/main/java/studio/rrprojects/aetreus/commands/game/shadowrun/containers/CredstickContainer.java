@@ -14,7 +14,7 @@ public class CredstickContainer {
     public CredstickContainer(JsonObject credstick) {
         jsonObject = credstick;
         is_fake = credstick.getBoolean("is_fake", true);
-        rating = credstick.getInt("rating", 1);
+        rating = credstick.getInt("force", 1);
         nuyen = credstick.getInt("nuyen", 0);
         JsonObject permitList = credstick.get("permits").asObject();
         for (JsonObject.Member permit: permitList) {
