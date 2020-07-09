@@ -16,12 +16,13 @@ public class CommandContainer {
         public final String MAIN_COMMAND;
         public final String MAIN_ARG;
         public final String[] SECONDARY_ARG;
+        public final String RAW;
         public final String TRIMMED_RAW;
         public final String TRIMMED_NOTE;
         public final MessageReceivedEvent EVENT;
 
 
-        public CommandContainer(User AUTHOR, MessageChannel CHANNEL, OffsetDateTime TIME, MessageChannel DESTINATION, JDA JDA, String MAIN_COMMAND, String MAIN_ARG, String[] SECONDARY_ARG, String TRIMMED_RAW, String TRIMMED_NOTE, MessageReceivedEvent EVENT) {
+        public CommandContainer(User AUTHOR, MessageChannel CHANNEL, OffsetDateTime TIME, MessageChannel DESTINATION, JDA JDA, String MAIN_COMMAND, String MAIN_ARG, String[] SECONDARY_ARG, String RAW, String TRIMMED_RAW, String TRIMMED_NOTE, MessageReceivedEvent EVENT) {
             this.AUTHOR = AUTHOR;
             this.CHANNEL = CHANNEL;
             this.TIME = TIME;
@@ -30,6 +31,7 @@ public class CommandContainer {
             this.MAIN_COMMAND = MAIN_COMMAND;
             this.MAIN_ARG = MAIN_ARG;
             this.SECONDARY_ARG = SECONDARY_ARG;
+            this.RAW = RAW;
             this.TRIMMED_RAW = TRIMMED_RAW;
             this.TRIMMED_NOTE = TRIMMED_NOTE;
             this.EVENT = EVENT;

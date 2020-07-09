@@ -64,6 +64,7 @@ public class CommandParser {
         String MAIN_ARG;
         String[] SECONDARY_ARG = null;
         String NOTE_ARG;
+        String RAW;
         String TRIMMED_RAW;
         String TRIMMED_NOTE = null;
 
@@ -73,6 +74,8 @@ public class CommandParser {
         TIME = event.getMessage().getTimeCreated();
         JDA = event.getJDA();
         DESTINATION = CHANNEL;
+
+        RAW = raw;
 
 
         if (raw.contains("\"")) { //Check if beheaded string has a note and if so extract it.
@@ -103,7 +106,7 @@ public class CommandParser {
         }
 
 
-        return new CommandContainer(AUTHOR, CHANNEL, TIME, DESTINATION, JDA, command, MAIN_ARG, SECONDARY_ARG, TRIMMED_RAW, TRIMMED_NOTE, event);
+        return new CommandContainer(AUTHOR, CHANNEL, TIME, DESTINATION, JDA, command, MAIN_ARG, SECONDARY_ARG, RAW, TRIMMED_RAW, TRIMMED_NOTE, event);
     }
 }
 
