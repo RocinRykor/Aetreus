@@ -24,10 +24,10 @@ public abstract class ShadowrunCharacterCommand {
     public abstract String getName();
     public abstract String getAlias();
     public abstract String getHelpDescription();
-    public void executeMain(ShadowrunCommandContainer cmd, CharacterContainer character) {}
+    public void executeMain(ShadowrunCommandContainer cmd, CharacterContainer character, CommandContainer commandContainer) {}
     public void executeInitial(CommandContainer cmd, CharacterContainer character) {
         ShadowrunCommandContainer src = new ShadowrunCommandContainer(cmd.RAW, cmd.DESTINATION);
-        executeMain(src, character);
+        executeMain(src, character, cmd);
     }
     public void SendMessage(String message, MessageChannel destination) {
         MessageUtils.SendMessage(message, destination);

@@ -73,6 +73,10 @@ public class ShadowrunThirdRoller extends GameCommand {
     }
 
     // TESTS
+    public void RollDicePackage(RollCharacter.DicePackageSR dicePackage, CommandContainer commandContainer) {
+        SuccessTest(dicePackage.dicePool, dicePackage.totalTarget, commandContainer);
+    }
+
     private void SuccessTest(int dicePool, int targetValue, CommandContainer cmd) {
         DiceContainer diceContainer = BuildDiceContainer(dicePool, true);
 
@@ -273,13 +277,13 @@ public class ShadowrunThirdRoller extends GameCommand {
         float dicePool = diceContainer.DICE_RESULTS.size();
         float successes = diceContainer.SUCCESSES;
         float slidingGreenFloat = (successes/dicePool);
-        System.out.println(slidingGreenFloat);
+        //System.out.println(slidingGreenFloat);
         slidingGreenFloat *= 255;
         int slidingGreenValue = Math.round(slidingGreenFloat);
         if (slidingGreenValue < 0) { slidingGreenValue = 0; }
         if (slidingGreenValue > 255) { slidingGreenValue = 255; }
 
-        System.out.println(slidingGreenValue);
+        //System.out.println(slidingGreenValue);
         return new Color(0, slidingGreenValue,0);
     }
 

@@ -55,21 +55,24 @@ public class Attributes {
         this.parent = parent;
     }
 
-    public int getAttribute(String searchTerm) {
-        if (attributeList.containsKey(searchTerm)) {
-            return attributeList.get(searchTerm).getTotal();
-        }
-
-        //Assuming the initial search failed - perform a more detailed search
-        System.out.println(String.format("Search of: %s failed! - Searching Manually!", searchTerm));
+    public AttributeMember getAttribute(String searchTerm) {
         for (Map.Entry<String, AttributeContainer> attribute : attributeList.entrySet()) {
             if (attribute.getKey().toLowerCase().contains(searchTerm.toLowerCase())) {
-                return attribute.getValue().getTotal();
+                return new AttributeMember(attribute.getKey(), attribute.getValue());
             }
         }
 
-        //If both failed return Error and 0
+        //If both failed return Error and Null
         System.out.println(String.format("ERROR UNABLE TO FIND ATTRIBUTE %s", searchTerm));
-        return 0;
+        return null;
+    }
+
+    public boolean containsAttribute(String searchTerm) {
+        for (Map.Entry<String, AttributeContainer> attribute : attributeList.entrySet()) {
+            if (attribute.getKey().toLowerCase().contains(searchTerm.toLowerCase())) {
+                return true;
+            }
+        }
+        return false;
     }
 }

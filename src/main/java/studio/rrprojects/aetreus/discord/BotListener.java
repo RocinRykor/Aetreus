@@ -36,9 +36,16 @@ public class BotListener extends ListenerAdapter {
         String inputRaw = event.getMessage().getContentRaw();
         boolean isBot = event.getAuthor().isBot();
 
-        String processedInput = processShortcutPrefix(inputRaw);
+        String processedInput;
+        try {
+            processedInput = processShortcutPrefix(inputRaw);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
 
-        System.out.println("processedInput = " + processedInput);
+
+        //System.out.println("processedInput = " + processedInput);
         String inputPrefix = CheckForPrefix(processedInput);
         String inputBeheaded;
 
@@ -48,11 +55,15 @@ public class BotListener extends ListenerAdapter {
             return;
         }
 
-        System.out.println("InputBeheaded = " + inputBeheaded);
+        //System.out.println("InputBeheaded = " + inputBeheaded);
         command.ProcessInput(inputBeheaded, event);
     }
 
     private String processShortcutPrefix(String input) {
+        if (input.length() == 0) {
+          return input;
+        }
+
         String key = String.valueOf(input.charAt(0));
 
         String output;
@@ -64,8 +75,8 @@ public class BotListener extends ListenerAdapter {
             output = input;
         }
 
-        System.out.println("Input: " + input);
-        System.out.println("Output: " + output);
+        //System.out.println("Input: " + input);
+        //System.out.println("Output: " + output);
         return output;
     }
 

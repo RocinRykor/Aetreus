@@ -46,4 +46,41 @@ public class KnowledgeSkills {
         }
         return String.valueOf(output);
     }
+
+    public int getSkillByName(String searchTerm) {
+        if (skillList.containsKey(searchTerm)) {
+            return skillList.get(searchTerm).level;
+        }
+
+        //Assuming the initial search failed - perform a more detailed search
+        System.out.println(String.format("KnowledgeSkills.java: Search of: %s failed! - Searching Manually!", searchTerm));
+        for (Map.Entry<String, KnowledgeSkillContainer> skill : skillList.entrySet()) {
+            if (skill.getKey().toLowerCase().contains(searchTerm.toLowerCase())) {
+                return skill.getValue().getLevel();
+            }
+        }
+
+        //If both failed return Error and 0
+        System.out.println(String.format("ERROR UNABLE TO FIND ATTRIBUTE %s", searchTerm));
+        return 0;
+    }
+
+    public Object getSkill(String searchTerm) {
+        //Look at general Skill
+        for (Map.Entry<String, KnowledgeSkillContainer> skill : skillList.entrySet()) {
+            if (skill.getKey().toLowerCase().contains(searchTerm.toLowerCase())) {
+                return new KnowledgeSkillMember(skill.getKey(), skill.getValue());
+            }
+        }
+        return null;
+    }
+
+    public boolean containsSkill(String searchTerm) {
+        for (Map.Entry<String, KnowledgeSkillContainer> skill : skillList.entrySet()) {
+            if (skill.getKey().toLowerCase().contains(searchTerm.toLowerCase())) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

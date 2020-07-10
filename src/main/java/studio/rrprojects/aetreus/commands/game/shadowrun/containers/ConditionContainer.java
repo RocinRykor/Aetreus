@@ -59,7 +59,7 @@ public class ConditionContainer {
                 "PHYS: %s (%d/10)", counterToEmoji(stun, emojiStun), stun,
                 counterToEmoji(physical, emojiPhysical), physical);
         if (overflow > 0) {
-            int maxCount = parent.getAttributes().getAttribute("BOD");
+            int maxCount = parent.getAttributes().getAttribute("BOD").container.getTotal();
             output += String.format("\nOVER: %s (%d/%d)", counterToEmoji(overflow, emojiOverflow, maxCount), overflow, maxCount);
         }
 
@@ -85,5 +85,30 @@ public class ConditionContainer {
 
     private Object counterToEmoji(int count, String emojiCode) {
        return counterToEmoji(count, emojiCode, 10);
+    }
+
+    public int getWoundModifier() {
+        int physicalTrack = getPhysical();
+        int stunTrack = getStun();
+        int totalMod = 0;
+
+        totalMod = calculateMod(stunTrack);
+        totalMod += calculateMod(physicalTrack);
+
+        return totalMod;
+    }
+
+    private int calculateMod(int damageTrack) {
+        if (damageTrack > 0) {
+            if (damageTrack < 3) {
+                return 1;
+            } else if (damageTrack < 6) {
+                return 2;
+            } else {
+                return 3;
+            }
+        } else {
+            return 0;
+        }
     }
 }
