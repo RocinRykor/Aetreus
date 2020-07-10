@@ -2,8 +2,10 @@ package studio.rrprojects.aetreus.commands.game.shadowrun.containers;
 
 import com.eclipsesource.json.JsonObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class Credsticks {
     private final CharacterContainer parent;
@@ -39,16 +41,16 @@ public class Credsticks {
         return parent;
     }
 
-    public String getAllCredsticks() {
-        String output = "";
+    public ArrayList<CredstickMember> getAllCredsticks() {
+        ArrayList<CredstickMember> output = new ArrayList();
         for (Map.Entry<String, CredstickContainer> credstick : credstickList.entrySet()) {
-            String tmpString = String.format("Name: %s (Rating: %d) - Amount: %d¥", credstick.getKey(), credstick.getValue().rating, credstick.getValue().nuyen);
-            if(credstick.getValue().is_fake) {
-                tmpString += " (FAKE)";
-            }
-            output += tmpString + "\n";
+            output.add(new CredstickMember(credstick.getKey(), credstick.getValue()));
         }
 
         return output;
+    }
+
+    public CredstickMember getPrimaryCredstick() {
+        return getAllCredsticks().get(0);
     }
 }

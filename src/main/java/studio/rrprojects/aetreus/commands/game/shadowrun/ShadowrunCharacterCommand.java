@@ -16,6 +16,7 @@ public abstract class ShadowrunCharacterCommand {
         commands = new ArrayList<>();
 
         commands.add(new RollCharacter());
+        commands.add(new MoneyCharacter());
 
         System.out.println("Shadowrun Character Commands Loaded: " + commands.size());
         SkillTable.InitTables();

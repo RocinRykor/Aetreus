@@ -24,7 +24,7 @@ public class BotListener extends ListenerAdapter {
         //This Table will allow for shortcuts
         shortcutPrefixTable = new HashMap<>();
         shortcutPrefixTable.put("%", "&character roll ");
-        shortcutPrefixTable.put("$", "&character money ");
+        shortcutPrefixTable.put("_", "&character money ");
         shortcutPrefixTable.put(">", "&character load ");
     }
 

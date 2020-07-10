@@ -16,10 +16,13 @@ public class CharacterContainer {
     Spells spells;
     ConditionContainer condition;
     Contacts contacts;
+    FileReader reader;
+    File file;
 
 
     public CharacterContainer BuildCharacter(String filePath) throws IOException {
-        FileReader reader = new FileReader(new File((filePath)));
+        file = new File(filePath);
+        reader = new FileReader(file);
         mainObj = (JsonObject) Json.parse(reader);
 
         character = new Character(mainObj.get("character").asObject(), this);
@@ -98,7 +101,35 @@ public class CharacterContainer {
         this.contacts = contacts;
     }
 
+    public FileReader getReader() {
+        return reader;
+    }
+
+    public File getFile() {
+        return file;
+    }
+
     public void WriteTo(String filePath) {
+        FileWriter writer;
+        try {
+            writer = new FileWriter(new File(filePath));
+            mainObj.writeTo(writer, WriterConfig.PRETTY_PRINT);
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void SaveInfo(String filePath) {
+        JsonObject outputObj = new JsonObject();
+        outputObj.add("character", character.jsonObject);
+        outputObj.add("attributes", attributes.jsonObject);
+        outputObj.add("skills", skills.jsonObject);
+        outputObj.add("inventory", inventory.jsonObject);
+        outputObj.add("spells", spells.jsonObject);
+        outputObj.add("condition", condition.jsonObject);
+        outputObj.add("contacts", contacts.jsonObject);
+
         FileWriter writer;
         try {
             writer = new FileWriter(new File(filePath));

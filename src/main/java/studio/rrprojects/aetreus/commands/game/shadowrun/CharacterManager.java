@@ -43,6 +43,7 @@ public class CharacterManager extends GameCommand {
         HashMap<String, Runnable> subcommands = new HashMap<>();
         subcommands.put("load", () -> LoadCharacter(cmd));
         subcommands.put("get", ()-> getCharacter(cmd));
+        subcommands.put("save", ()-> saveCharacter(cmd));
         //subcommands.put("list", ()-> listGames(cmd));
 
         if (subcommands.containsKey(input)) {
@@ -75,6 +76,18 @@ public class CharacterManager extends GameCommand {
             SendMessage("I'm sorry, but that doesn't seem to be a valid command.", cmd.DESTINATION);
             return;
         }
+    }
+
+    private void saveCharacter(CommandContainer cmd) {
+        if (!HasValidCharacter(cmd.AUTHOR)) {
+            return;
+        }
+
+        String filePath = Main.getDirMainDir() + File.separator + "Shadowrun" + File.separator + "Zerk.json";
+
+        CharacterContainer character = characterTable.get(cmd.AUTHOR);
+
+        character.SaveInfo(filePath);
     }
 
     private void getCharacter(CommandContainer cmd) {
