@@ -84,25 +84,43 @@ public class ActiveSkills {
         return false;
     }
 
-    public Object getSkill(String searchTerm) {
+    public ActiveSkillMember getSkill(String searchTerm) {
         //Look at general Skill
         for (Map.Entry<String, ActiveSkillContainer> skill : skillList.entrySet()) {
             if (skill.getKey().toLowerCase().contains(searchTerm.toLowerCase())) {
                 return new ActiveSkillMember(skill.getKey(), skill.getValue());
             }
-            /*
-            //Look at each Specialization for the skill
-            JsonObject specializations = skill.getValue().jsonObject.get("specializations").asObject();
-            for (JsonObject.Member spec:specializations) {
-                if (spec.getName().toLowerCase().contains(searchTerm.toLowerCase())) {
-                    return new ActiveSkillMember(spec.getName(), spec.getValue().asObject());
-                }
-            }
-             */
         }
 
         //If both failed return Error and Null
-        System.out.println(String.format("ERROR UNABLE TO FIND ATTRIBUTE %s", searchTerm));
+        System.out.println(String.format("ERROR UNABLE TO FIND SKILL %s", searchTerm));
+        return null;
+    }
+
+    public boolean containsSpecialization(String searchTerm) {
+        //For now this will have to manual search all active skills every time
+        //Look at Specialization List
+        for (Map.Entry<String, ActiveSkillContainer> skill : skillList.entrySet()) {
+            HashMap<String, SkillSpecializationContainer> specializationList = skill.getValue().specializationList;
+            for (Map.Entry<String, SkillSpecializationContainer> specialization : specializationList.entrySet()) {
+                if (specialization.getKey().toLowerCase().contains(searchTerm.toLowerCase())) {
+                    System.out.println("Found!");
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public SpecializationMember getSpecialization(String searchTerm) {
+        for (Map.Entry<String, ActiveSkillContainer> skill : skillList.entrySet()) {
+            HashMap<String, SkillSpecializationContainer> specializationList = skill.getValue().specializationList;
+            for (Map.Entry<String, SkillSpecializationContainer> specialization : specializationList.entrySet()) {
+                if (specialization.getKey().toLowerCase().contains(searchTerm.toLowerCase())) {
+                    return new SpecializationMember(specialization.getKey(), specialization.getValue());
+                }
+            }
+        }
         return null;
     }
 }

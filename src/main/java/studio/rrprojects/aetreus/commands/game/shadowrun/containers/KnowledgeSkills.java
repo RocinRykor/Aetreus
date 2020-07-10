@@ -65,7 +65,7 @@ public class KnowledgeSkills {
         return 0;
     }
 
-    public Object getSkill(String searchTerm) {
+    public KnowledgeSkillMember getSkill(String searchTerm) {
         //Look at general Skill
         for (Map.Entry<String, KnowledgeSkillContainer> skill : skillList.entrySet()) {
             if (skill.getKey().toLowerCase().contains(searchTerm.toLowerCase())) {

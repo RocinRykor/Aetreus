@@ -3,9 +3,6 @@ package studio.rrprojects.aetreus.commands.game.shadowrun;
 import studio.rrprojects.aetreus.commands.game.shadowrun.containers.*;
 import studio.rrprojects.aetreus.discord.CommandContainer;
 
-import java.util.HashMap;
-import java.util.jar.Attributes;
-
 public class RollCharacter extends ShadowrunCharacterCommand{
     public RollCharacter() {
         super();
@@ -56,6 +53,9 @@ public class RollCharacter extends ShadowrunCharacterCommand{
         } else if (member instanceof ActiveSkillMember) {
             result = ((ActiveSkillMember) member).getName();
             parsedValue = ((ActiveSkillMember) member).getContainer().getLevel();
+        } else if (member instanceof SpecializationMember) {
+            result = ((SpecializationMember) member).getName();
+            parsedValue = ((SpecializationMember) member).getContainer().getLevel();
         } else if (member instanceof KnowledgeSkillMember) {
             result = ((KnowledgeSkillMember) member).getName();
             parsedValue = ((KnowledgeSkillMember) member).getContainer().getLevel();
@@ -64,6 +64,11 @@ public class RollCharacter extends ShadowrunCharacterCommand{
         note = String.format("Search Term: `%s`\n" +
                 "Matching Attribute: '%s'\n" +
                 "Value: %d", searchTerm, result, parsedValue);
+
+        if (parsedValue == 0) {
+            SendMessage("I'm sorry I didn't find that search term on your sheet", cmd.DESTINATION);
+            return;
+        }
 
         //Calculate Threshold
         //Start with any damage to player
@@ -94,6 +99,11 @@ public class RollCharacter extends ShadowrunCharacterCommand{
         //Active Skills
         if (character.getSkills().getActiveSkills().containsSkill(searchTerm)) {
             return character.getSkills().getActiveSkills().getSkill(searchTerm);
+        }
+
+        //Check Active Skill Specialization;
+        if (character.getSkills().getActiveSkills().containsSpecialization(searchTerm)) {
+            return character.getSkills().getActiveSkills().getSpecialization(searchTerm);
         }
 
         //Knowledge Skills
