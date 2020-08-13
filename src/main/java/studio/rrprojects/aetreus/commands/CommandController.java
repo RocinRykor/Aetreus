@@ -2,11 +2,9 @@ package studio.rrprojects.aetreus.commands;
 
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import studio.rrprojects.aetreus.commands.admin.AdminCommand;
-import studio.rrprojects.aetreus.commands.game.GameCommand;
+import studio.rrprojects.aetreus.commands.game.shadowrun.GameCommand;
 import studio.rrprojects.aetreus.discord.CommandContainer;
 import studio.rrprojects.aetreus.discord.CommandParser;
-
-import java.util.ArrayList;
 
 public class CommandController {
     CommandParser parser;

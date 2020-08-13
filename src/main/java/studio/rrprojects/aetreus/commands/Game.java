@@ -2,7 +2,7 @@ package studio.rrprojects.aetreus.commands;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Activity;
-import studio.rrprojects.aetreus.commands.game.GameCommand;
+import studio.rrprojects.aetreus.commands.game.shadowrun.GameCommand;
 import studio.rrprojects.aetreus.discord.CommandContainer;
 import studio.rrprojects.aetreus.main.Main;
 import studio.rrprojects.aetreus.utils.MyMessageBuilder;

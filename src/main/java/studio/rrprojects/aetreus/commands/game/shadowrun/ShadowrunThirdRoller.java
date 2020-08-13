@@ -1,7 +1,6 @@
 package studio.rrprojects.aetreus.commands.game.shadowrun;
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import studio.rrprojects.aetreus.commands.game.GameCommand;
 import studio.rrprojects.aetreus.discord.CommandContainer;
 import studio.rrprojects.aetreus.utils.MyMessageBuilder;
 import studio.rrprojects.aetreus.utils.RandomUtils;
@@ -232,6 +231,23 @@ public class ShadowrunThirdRoller extends GameCommand {
         diceContainer.MESSAGE.addWithUnderLine("Total Initiative: " + (baseScore + modValue));
 
         return true;
+    }
+
+    public void RollInit(int valueInit, int valueReactionTotal, CommandContainer commandContainer) {
+        DiceContainer diceContainer = BuildDiceContainer(valueInit, false);
+
+        int baseScore = 0;
+        for (int i: diceContainer.DICE_RESULTS) {
+            baseScore += i;
+        }
+
+        diceContainer.MESSAGE.add("> Total Dice Result: " + baseScore);
+        diceContainer.MESSAGE.add("> Mod Value: " + valueReactionTotal);
+        diceContainer.MESSAGE.addBlankLine();
+        diceContainer.MESSAGE.addWithUnderLine("Total Initiative: " + (baseScore + valueReactionTotal));
+
+        String output = ResultBuilder(diceContainer);
+        EmbedMessage(output, Color.CYAN, commandContainer);
     }
 
     private String ResultBuilder(DiceContainer diceContainer) {

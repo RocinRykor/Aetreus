@@ -1,7 +1,6 @@
 package studio.rrprojects.aetreus.commands.game.shadowrun;
 
 import net.dv8tion.jda.api.entities.User;
-import studio.rrprojects.aetreus.commands.game.GameCommand;
 import studio.rrprojects.aetreus.commands.game.shadowrun.containers.CharacterContainer;
 import studio.rrprojects.aetreus.discord.CommandContainer;
 import studio.rrprojects.aetreus.main.Main;
@@ -119,7 +118,13 @@ public class CharacterManager extends GameCommand {
     }
 
     private void LoadCharacter(CommandContainer cmd) {
-        String filePath = Main.getDirMainDir() + File.separator + "Shadowrun" + File.separator + "Zerk.json";
+        String characterName = "";
+
+        if (cmd.SECONDARY_ARG[0] != null) {
+            characterName = cmd.SECONDARY_ARG[0];
+        }
+
+        String filePath = Main.getDirMainDir() + File.separator + "Shadowrun" + File.separator + characterName + ".json";
 
         CharacterContainer character = null;
 

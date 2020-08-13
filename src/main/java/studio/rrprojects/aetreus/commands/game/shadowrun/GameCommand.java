@@ -1,9 +1,9 @@
-package studio.rrprojects.aetreus.commands.game;
+package studio.rrprojects.aetreus.commands.game.shadowrun;
 
 import net.dv8tion.jda.api.entities.MessageChannel;
-import studio.rrprojects.aetreus.commands.game.shadowrun.CharacterManager;
-import studio.rrprojects.aetreus.commands.game.shadowrun.Priority;
-import studio.rrprojects.aetreus.commands.game.shadowrun.ShadowrunThirdRoller;
+import studio.rrprojects.aetreus.commands.game.DNDRoller;
+import studio.rrprojects.aetreus.commands.game.NoteRecorder;
+import studio.rrprojects.aetreus.commands.game.Roll;
 import studio.rrprojects.aetreus.discord.CommandContainer;
 import studio.rrprojects.aetreus.utils.MessageUtils;
 
@@ -21,6 +21,8 @@ public abstract class GameCommand {
         commands.add(new ShadowrunThirdRoller());
         commands.add(new Priority());
         commands.add(new CharacterManager());
+        commands.add(new NoteRecorder());
+        commands.add(new HostRoller());
 
         System.out.println("Game Commands Loaded: " + commands.size());
     }

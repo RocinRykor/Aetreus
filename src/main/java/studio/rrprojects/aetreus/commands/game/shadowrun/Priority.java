@@ -1,6 +1,5 @@
 package studio.rrprojects.aetreus.commands.game.shadowrun;
 
-import studio.rrprojects.aetreus.commands.game.GameCommand;
 import studio.rrprojects.aetreus.discord.CommandContainer;
 import studio.rrprojects.aetreus.utils.MyMessageBuilder;
 
@@ -40,10 +39,17 @@ public class Priority extends GameCommand {
     public void executeMain(CommandContainer cmd) {
         PriorityTableContainer priority = new PriorityTableContainer();
 
+        System.out.println("Priority Table: Start");
+
+        System.out.println("Priority Table: Race");
         priority.getRace(tableRace);
+        System.out.println("Priority Table: Magic");
         priority.getMagic(tableMagic);
+        System.out.println("Priority Table: Attributes");
         priority.getAttributes(tableAttributes);
+        System.out.println("Priority Table: Skills");
         priority.getSkills(tableSkills);
+        System.out.println("Priority Table: Resources");
         priority.getResources(tableResources);
 
         SendMessage(priority.Build(new MyMessageBuilder()), cmd.DESTINATION);
@@ -59,10 +65,12 @@ public class Priority extends GameCommand {
         tableRace.put("Human", "E");
 
         //Magic Table
+        //*Duplicates to even out magic distribution
         tableMagic = new HashMap<>();
         tableMagic.put("Full Magician", "A");
         tableMagic.put("Aspected Magician", "B");
         tableMagic.put("Adept", "B");
+        tableMagic.put("Mundane", "D");
         tableMagic.put("Not Magic", "E");
 
         //Attribute Table
@@ -94,6 +102,7 @@ public class Priority extends GameCommand {
         ArrayList<String> priorityPool = new ArrayList<>();
         HashMap<String, String> optionTable = new HashMap<>();
         HashMap<String, String> valueTable = new HashMap<>();
+        Boolean humanSelected;
 
         PriorityTableContainer(){
             priorityPool.add("A");
@@ -116,7 +125,9 @@ public class Priority extends GameCommand {
         }
 
         public void getRace(HashMap<String, String> raceMap) {
+            humanSelected = false;
             ArrayList<String> raceArray = new ArrayList<>();
+            raceArray.add("Human");
             raceArray.add("Human");
             raceArray.add("Dwarf");
             raceArray.add("Ork");
@@ -125,6 +136,9 @@ public class Priority extends GameCommand {
             Collections.shuffle(raceArray);
 
             String selectedValue = raceArray.get(0);
+            if (selectedValue.equalsIgnoreCase("Human")) {
+                humanSelected = true;
+            }
             String selectedOption = raceMap.get(selectedValue);
 
             valueTable.replace("Race", selectedValue);
@@ -137,12 +151,17 @@ public class Priority extends GameCommand {
         public void getMagic(HashMap<String, String> magicMap) {
             ArrayList<String> magicArray = new ArrayList<>();
             magicArray.add("Not Magic");
+            magicArray.add("Not Magic");
+            magicArray.add("Not Magic");
             magicArray.add("Adept");
             magicArray.add("Aspected Magician");
             magicArray.add("Full Magician");
             Collections.shuffle(magicArray);
 
             String selectedValue = magicArray.get(0);
+            if (selectedValue.equalsIgnoreCase("Not Magic") && humanSelected) {
+                selectedValue = "Mundane";
+            }
             String selectedOption = magicMap.get(selectedValue);
 
             if (!priorityPool.contains(selectedOption)) {

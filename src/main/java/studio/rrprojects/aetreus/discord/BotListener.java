@@ -5,15 +5,18 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import studio.rrprojects.aetreus.commands.CommandController;
+import studio.rrprojects.aetreus.commands.game.NoteRecorder;
 import studio.rrprojects.aetreus.config.ConfigController;
 import studio.rrprojects.aetreus.main.Main;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class BotListener extends ListenerAdapter {
     CommandController command;
     HashMap<String, String> shortcutPrefixTable;
+    NoteRecorder globalListener;
 
     public void Initialize() {
         command = Main.getCommand();
@@ -33,6 +36,7 @@ public class BotListener extends ListenerAdapter {
     @Override
     public void onMessageReceived(@Nonnull MessageReceivedEvent event) {
         super.onMessageReceived(event);
+
         String inputRaw = event.getMessage().getContentRaw();
         boolean isBot = event.getAuthor().isBot();
 
@@ -52,11 +56,18 @@ public class BotListener extends ListenerAdapter {
         if (inputPrefix != null && !isBot) {
             inputBeheaded = processedInput.replaceFirst(inputPrefix, "");
         } else {
+            ProcessGlobalListener(event);
             return;
         }
 
         //System.out.println("InputBeheaded = " + inputBeheaded);
         command.ProcessInput(inputBeheaded, event);
+    }
+
+    private void ProcessGlobalListener(MessageReceivedEvent event) {
+        if (globalListener != null) {
+            globalListener.ProcessEvent(event);
+        }
     }
 
     private String processShortcutPrefix(String input) {
@@ -101,5 +112,13 @@ public class BotListener extends ListenerAdapter {
         } else {
             return null;
         }
+    }
+
+    public void AddGlobalListener(NoteRecorder listener) {
+        globalListener = listener;
+    }
+
+    public void RemoveGlobalListener() {
+        globalListener = null;
     }
 }

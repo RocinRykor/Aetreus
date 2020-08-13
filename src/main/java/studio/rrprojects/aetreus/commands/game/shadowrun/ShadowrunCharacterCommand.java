@@ -17,9 +17,21 @@ public abstract class ShadowrunCharacterCommand {
 
         commands.add(new RollCharacter());
         commands.add(new MoneyCharacter());
+        commands.add(new DamageCharacter());
+        commands.add(new InitiativeCharacter());
 
         System.out.println("Shadowrun Character Commands Loaded: " + commands.size());
         SkillTable.InitTables();
+        Ready();
+    }
+
+    public static void Ready() {
+        for (ShadowrunCharacterCommand command: commands) {
+            command.Initialize();
+        }
+    }
+
+    public void Initialize() {
     }
 
     public abstract String getName();

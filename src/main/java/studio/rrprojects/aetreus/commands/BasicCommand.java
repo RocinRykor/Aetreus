@@ -1,8 +1,6 @@
 package studio.rrprojects.aetreus.commands;
 
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
-import studio.rrprojects.aetreus.commands.game.GameCommand;
 import studio.rrprojects.aetreus.discord.CommandContainer;
 import studio.rrprojects.aetreus.utils.MessageUtils;
 

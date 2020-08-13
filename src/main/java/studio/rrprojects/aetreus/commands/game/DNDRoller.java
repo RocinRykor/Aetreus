@@ -2,6 +2,7 @@ package studio.rrprojects.aetreus.commands.game;
 
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
+import studio.rrprojects.aetreus.commands.game.shadowrun.GameCommand;
 import studio.rrprojects.aetreus.discord.CommandContainer;
 import studio.rrprojects.aetreus.utils.ArgCountChecker;
 import studio.rrprojects.aetreus.utils.MessageUtils;

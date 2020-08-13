@@ -72,6 +72,7 @@ public class Main {
     public static ConfigController getConfig() { return config; }
     public static String getDirMainDir() { return dirMainDir; }
     public static JDA getJda() { return jda; }
+    public static BotListener getListener() { return listener;}
 
     public static CommandController getCommand() { return command; }
 

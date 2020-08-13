@@ -1,6 +1,7 @@
 package studio.rrprojects.aetreus.commands.game;
 
 import studio.rrprojects.aetreus.commands.Game;
+import studio.rrprojects.aetreus.commands.game.shadowrun.GameCommand;
 import studio.rrprojects.aetreus.discord.CommandContainer;
 
 import java.util.ArrayList;
