@@ -24,7 +24,7 @@ public class DNDRoller extends GameCommand {
 
     @Override
     public String getAlias() {
-        return "dndr";
+        return "basicroll";
     }
 
     @Override

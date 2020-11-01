@@ -10,7 +10,6 @@ import studio.rrprojects.aetreus.config.ConfigController;
 import studio.rrprojects.aetreus.main.Main;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class BotListener extends ListenerAdapter {
@@ -36,6 +35,8 @@ public class BotListener extends ListenerAdapter {
     @Override
     public void onMessageReceived(@Nonnull MessageReceivedEvent event) {
         super.onMessageReceived(event);
+
+        System.out.println("Messaged Received!");
 
         String inputRaw = event.getMessage().getContentRaw();
         boolean isBot = event.getAuthor().isBot();

@@ -6,7 +6,7 @@ import studio.rrprojects.aetreus.utils.MessageUtils;
 
 import java.util.ArrayList;
 
-public  abstract class BasicCommand {
+public abstract class BasicCommand {
     public static ArrayList<BasicCommand> commands;
 
     public static void init() {
