@@ -21,9 +21,9 @@ public class Main {
     public Main(){
         Initialize();
         LoadConfigs();
-        LoadGUI();
         LoadCommand();
         LoadDiscord();
+        LoadGUI();
     }
 
     // INIT
@@ -40,7 +40,7 @@ public class Main {
     }
 
     private void LoadGUI() {
-        gui= new GUIController();
+        gui= new GUIController(jda);
         gui.Initialize();
     }
 
@@ -73,7 +73,6 @@ public class Main {
     public static String getDirMainDir() { return dirMainDir; }
     public static JDA getJda() { return jda; }
     public static BotListener getListener() { return listener;}
-
     public static CommandController getCommand() { return command; }
 
     // MAIN

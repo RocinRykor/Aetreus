@@ -1,6 +1,6 @@
 package studio.rrprojects.aetreus.commands.game;
 
-import studio.rrprojects.aetreus.commands.Game;
+import studio.rrprojects.aetreus.commands.basic.ChangeGame;
 import studio.rrprojects.aetreus.commands.game.shadowrun.GameCommand;
 import studio.rrprojects.aetreus.discord.CommandContainer;
 
@@ -29,7 +29,7 @@ public class Roll extends GameCommand {
 
     @Override
     public void executeMain(CommandContainer cmd) {
-        String currentGame = Game.getCurrentGame();
+        String currentGame = ChangeGame.getCurrentGame();
         String searchTerm = currentGame+"roll";
         System.out.println(searchTerm);
 

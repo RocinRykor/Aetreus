@@ -2,6 +2,7 @@ package studio.rrprojects.aetreus.commands;
 
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import studio.rrprojects.aetreus.commands.admin.AdminCommand;
+import studio.rrprojects.aetreus.commands.basic.BasicCommand;
 import studio.rrprojects.aetreus.commands.game.shadowrun.GameCommand;
 import studio.rrprojects.aetreus.discord.CommandContainer;
 import studio.rrprojects.aetreus.discord.CommandParser;
@@ -26,7 +27,11 @@ public class CommandController {
     }
 
     public void ProcessInput(String inputBeheaded, MessageReceivedEvent event) {
-        CommandContainer container = parser.Parse(inputBeheaded, event);
+        ProcessInput(inputBeheaded, event, event.getTextChannel().getName());
+    }
+
+    public void ProcessInput(String inputBeheaded, MessageReceivedEvent event, String textChannelName) {
+        CommandContainer container = parser.Parse(inputBeheaded, event, textChannelName);
 
         String mainCommand = container.MAIN_COMMAND;
         boolean commandFound = false;
@@ -82,4 +87,22 @@ public class CommandController {
 
     }
 
+    public String GetHelpDescriptions() {
+        String string = "Basic Commands --- \n";
+        for (BasicCommand command : BasicCommand.commands) {
+            string += String.format("%s| Alias: %s| %s\n", command.getName(), command.getAlias(), command.getHelpDescription());
+        }
+
+        string += "\n\nAdmin Commands --- \n";
+        for (AdminCommand command : AdminCommand.commands) {
+            string += String.format("%s| Alias: %s| %s\n", command.getName(), command.getAlias(), command.getHelpDescription());
+        }
+
+        string += "\n\nGame Commands --- \n";
+        for (GameCommand command : GameCommand.commands) {
+            string += String.format("%s| Alias: %s| %s\n", command.getName(), command.getAlias(), command.getHelpDescription());
+        }
+
+        return string;
+    }
 }

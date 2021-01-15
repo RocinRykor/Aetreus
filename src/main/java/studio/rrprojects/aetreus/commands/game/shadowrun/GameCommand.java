@@ -20,9 +20,9 @@ public abstract class GameCommand {
         commands.add(new DNDRoller());
         commands.add(new ShadowrunThirdRoller());
         commands.add(new Priority());
-        commands.add(new CharacterManager());
         commands.add(new NoteRecorder());
         commands.add(new HostRoller());
+        commands.add(new SpellInfo());
 
         System.out.println("Game Commands Loaded: " + commands.size());
     }

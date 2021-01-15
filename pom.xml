@@ -25,6 +25,17 @@
         </repository>
 
     </repositories>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.google.cloud</groupId>
+                <artifactId>libraries-bom</artifactId>
+                <version>5.3.0</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <properties>
         <maven.compiler.source>1.11</maven.compiler.source>
@@ -36,7 +47,7 @@
         <dependency>
             <groupId>net.dv8tion</groupId>
             <artifactId>JDA</artifactId>
-            <version>4.1.1_101</version>
+            <version>4.2.0_222</version>
         </dependency>
 
         <dependency>
@@ -49,7 +60,7 @@
         <dependency>
             <groupId>com.sedmelluq</groupId>
             <artifactId>lavaplayer</artifactId>
-            <version>1.3.55</version>
+            <version>1.3.63</version>
         </dependency>
 
         <!-- Minimal JSON -->
@@ -57,6 +68,26 @@
             <groupId>com.eclipsesource.minimal-json</groupId>
             <artifactId>minimal-json</artifactId>
             <version>0.9.5</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.json/json -->
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20200518</version>
+        </dependency>
+
+        <!-- Google TTS -->
+        <dependency>
+            <groupId>com.google.cloud</groupId>
+            <artifactId>google-cloud-texttospeech</artifactId>
+            <version>0.101.0-beta</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.cloud</groupId>
+            <artifactId>google-cloud-speech</artifactId>
+            <version>1.20.0</version>
         </dependency>
 
     </dependencies>

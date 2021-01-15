@@ -71,11 +71,6 @@ public class ShadowrunThirdRoller extends GameCommand {
         subcommands.get(testType).run();
     }
 
-    // TESTS
-    public void RollDicePackage(RollCharacter.DicePackageSR dicePackage, CommandContainer commandContainer) {
-        SuccessTest(dicePackage.dicePool, dicePackage.totalTarget, commandContainer);
-    }
-
     private void SuccessTest(int dicePool, int targetValue, CommandContainer cmd) {
         DiceContainer diceContainer = BuildDiceContainer(dicePool, true);
 

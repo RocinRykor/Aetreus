@@ -36,8 +36,6 @@ public class BotListener extends ListenerAdapter {
     public void onMessageReceived(@Nonnull MessageReceivedEvent event) {
         super.onMessageReceived(event);
 
-        System.out.println("Messaged Received!");
-
         String inputRaw = event.getMessage().getContentRaw();
         boolean isBot = event.getAuthor().isBot();
 
@@ -49,7 +47,6 @@ public class BotListener extends ListenerAdapter {
             return;
         }
 
-
         //System.out.println("processedInput = " + processedInput);
         String inputPrefix = CheckForPrefix(processedInput);
         String inputBeheaded;
@@ -57,12 +54,34 @@ public class BotListener extends ListenerAdapter {
         if (inputPrefix != null && !isBot) {
             inputBeheaded = processedInput.replaceFirst(inputPrefix, "");
         } else {
-            ProcessGlobalListener(event);
+            ProcessGlobalListener(event); //Check for Notes
+            //Check if message contains a curly brace code
+            if (CheckForCurlyBraces(processedInput)) {
+                ProcessCurlyBrackets(processedInput, event);
+            }
             return;
         }
 
         //System.out.println("InputBeheaded = " + inputBeheaded);
         command.ProcessInput(inputBeheaded, event);
+    }
+
+    private void ProcessCurlyBrackets(String input, MessageReceivedEvent event) {
+        //Remove the curly bracket segment from the code and try running it as a command.
+        int firstPos = input.indexOf("{") + 1; //Adds one so that it clips off the bracket
+        int secondPos = input.indexOf("}");
+
+        if (secondPos < firstPos) {
+            return;
+        }
+
+        String substring = input.substring(firstPos, secondPos);
+
+        command.ProcessInput(substring, event, "rolling");
+    }
+
+    private boolean CheckForCurlyBraces(String input) {
+        return input.contains("{") && input.contains("}");
     }
 
     private void ProcessGlobalListener(MessageReceivedEvent event) {

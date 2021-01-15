@@ -9,7 +9,7 @@ import java.time.OffsetDateTime;
 
 public class CommandParser {
 
-    public CommandContainer Parse(String input, MessageReceivedEvent event) {
+    public CommandContainer Parse(String input, MessageReceivedEvent event, String textChannelName) {
         System.out.println("Processing: " + input);
         String raw = input;
 
@@ -22,7 +22,7 @@ public class CommandParser {
         String mainCommand = breakdown[0];
 
         String commandMods = RemoveFrontSpaces(raw.replaceFirst(mainCommand, ""));
-        return ModParser(mainCommand, commandMods, event);
+        return ModParser(mainCommand, commandMods, event, textChannelName);
 
     }
 
@@ -39,7 +39,7 @@ public class CommandParser {
     }
 
     // CONTAINERS
-    private CommandContainer ModParser(String command, String raw, MessageReceivedEvent event) {
+    private CommandContainer ModParser(String command, String raw, MessageReceivedEvent event, String textChannelName) {
         //All Info that will be needed in the final container
         /*
          * Author
@@ -55,9 +55,8 @@ public class CommandParser {
 
         User AUTHOR;
         MessageChannel CHANNEL;
-        OffsetDateTime TIME;
-
         MessageChannel DESTINATION;
+        OffsetDateTime TIME;
 
         JDA JDA;
 
@@ -73,7 +72,8 @@ public class CommandParser {
         CHANNEL = event.getTextChannel();
         TIME = event.getMessage().getTimeCreated();
         JDA = event.getJDA();
-        DESTINATION = CHANNEL;
+        //DESTINATION = CHANNEL;
+        DESTINATION = event.getJDA().getTextChannelsByName(textChannelName, true).get(0); //This shit is gonna break private messaging, TODO fix this
 
         RAW = raw;
 
