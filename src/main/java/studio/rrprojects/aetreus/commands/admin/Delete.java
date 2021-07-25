@@ -7,6 +7,8 @@ import studio.rrprojects.aetreus.discord.CommandContainer;
 
 import java.util.ArrayList;
 
+import static java.lang.Thread.sleep;
+
 public class Delete extends AdminCommand {
     @Override
     public String getName() {
@@ -77,6 +79,16 @@ public class Delete extends AdminCommand {
                         System.out.println("ERROR: CANNOT DELETE");
                     }
 
+                }
+
+
+                //We need a rate limiters
+
+                try {
+                    int waitTimeInSecs = 2;
+                    sleep((waitTimeInSecs * 1000));
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             }
 

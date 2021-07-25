@@ -22,7 +22,7 @@ public abstract class GameCommand {
         commands.add(new Priority());
         commands.add(new NoteRecorder());
         commands.add(new HostRoller());
-        commands.add(new SpellInfo());
+        //commands.add(new SpellInfo());
 
         System.out.println("Game Commands Loaded: " + commands.size());
     }

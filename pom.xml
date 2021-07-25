@@ -24,6 +24,12 @@
             <url>https://jcenter.bintray.com</url>
         </repository>
 
+        <repository>
+            <id>dv8tion</id>
+            <name>m2-dv8tion</name>
+            <url>https://m2.dv8tion.net/releases</url>
+        </repository>
+
     </repositories>
     <dependencyManagement>
         <dependencies>
@@ -47,7 +53,7 @@
         <dependency>
             <groupId>net.dv8tion</groupId>
             <artifactId>JDA</artifactId>
-            <version>4.2.0_222</version>
+            <version>4.3.0_298</version>
         </dependency>
 
         <dependency>

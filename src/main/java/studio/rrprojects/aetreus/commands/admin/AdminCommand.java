@@ -27,7 +27,7 @@ public abstract class AdminCommand {
     public abstract String getHelpDescription();
     public void executeMain(CommandContainer cmd) {}
     public void checkRole(CommandContainer cmd) {
-        Role adminRole = Main.getJda().getGuilds().get(0).getRolesByName("Admins", true).get(0);
+        Role adminRole = Main.getJda().getGuilds().get(0).getRolesByName("Admin", true).get(0);
         boolean hasRole = cmd.JDA.getGuilds().get(0).getMember(cmd.AUTHOR).getRoles().contains(adminRole);
 
         if (!hasRole) {

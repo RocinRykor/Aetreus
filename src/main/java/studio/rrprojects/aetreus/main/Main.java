@@ -52,7 +52,7 @@ public class Main {
     private void LoadDiscord() {
         {
             try {
-                jda = new JDABuilder(config.getBotToken()).build();
+                jda = JDABuilder.createDefault(config.getBotToken()).build();
                 listener = new BotListener();
             } catch (LoginException e) {
                 e.printStackTrace();

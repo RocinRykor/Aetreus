@@ -11,6 +11,6 @@ public class GUIController {
 
     public void Initialize() {
         System.out.println("GUI Controller Initialization");
-        MainWindow window = new MainWindow("Aetreus Text Channel Integration v1", jda);
+        //MainWindow window = new MainWindow("Aetreus Text Channel Integration v1", jda);
     }
 }
