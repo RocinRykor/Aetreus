@@ -5,6 +5,7 @@ import studio.rrprojects.aetreus.discord.CommandContainer;
 import studio.rrprojects.aetreus.main.Main;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public abstract class AdminCommand {
     public static ArrayList<AdminCommand> commands;
@@ -28,7 +29,7 @@ public abstract class AdminCommand {
     public void executeMain(CommandContainer cmd) {}
     public void checkRole(CommandContainer cmd) {
         Role adminRole = Main.getJda().getGuilds().get(0).getRolesByName("Admin", true).get(0);
-        boolean hasRole = cmd.JDA.getGuilds().get(0).getMember(cmd.AUTHOR).getRoles().contains(adminRole);
+        boolean hasRole = Objects.requireNonNull(cmd.JDA.getGuilds().get(0).getMember(cmd.AUTHOR)).getRoles().contains(adminRole);
 
         if (!hasRole) {
             cmd.EVENT.getMessage().delete().queue();
